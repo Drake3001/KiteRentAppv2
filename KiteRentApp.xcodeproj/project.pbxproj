@@ -16,9 +16,22 @@
 		441ADD042ED0E39800123048 /* KiteRentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiteRentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 441ADD032ED0E39800123048 /* KiteRentApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		441ADD062ED0E39800123048 /* KiteRentApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */,
+			);
 			path = KiteRentApp;
 			sourceTree = "<group>";
 		};
@@ -277,6 +290,7 @@
 				DEVELOPMENT_TEAM = 7Q9QC54784;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KiteRentApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -309,6 +323,7 @@
 				DEVELOPMENT_TEAM = 7Q9QC54784;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KiteRentApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
