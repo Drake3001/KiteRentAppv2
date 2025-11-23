@@ -8,8 +8,35 @@
 import SwiftUI
 
 struct KiteListView: View {
+    @State private var text = "Ładowanie..."
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView {
+            Text(text)
+                .padding()
+        }
+        .task {
+            await loadKites()
+        }
+    }
+    
+    func loadKites() async {
+        do {
+            let kites = try await KiteManager.shared.getAllKites()
+            
+            text = kites.map { kite in
+                """
+                ID: \(kite.kiteId)
+                Nazwa: \(kite.name)
+                Status: \(kite.status.rawValue)
+                Zdjęcie: \(kite.zdjecie)
+                
+                """
+            }.joined(separator: "---------------------\n")
+            
+        } catch {
+            text = "Błąd: \(error.localizedDescription)"
+        }
     }
 }
 

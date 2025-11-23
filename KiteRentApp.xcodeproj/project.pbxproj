@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */; };
+		441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD202ED0F3E900123048 /* FirebaseAuth */; };
+		441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD382ED2606400123048 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		441ADD042ED0E39800123048 /* KiteRentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiteRentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +29,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */,
+				441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */,
+				441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +42,7 @@
 			isa = PBXGroup;
 			children = (
 				441ADD062ED0E39800123048 /* KiteRentApp */,
+				441ADD1F2ED0F3E900123048 /* Frameworks */,
 				441ADD052ED0E39800123048 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +53,13 @@
 				441ADD042ED0E39800123048 /* KiteRentApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		441ADD1F2ED0F3E900123048 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +82,9 @@
 			);
 			name = KiteRentApp;
 			packageProductDependencies = (
+				441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */,
+				441ADD202ED0F3E900123048 /* FirebaseAuth */,
+				441ADD382ED2606400123048 /* FirebaseFirestore */,
 			);
 			productName = KiteRentApp;
 			productReference = 441ADD042ED0E39800123048 /* KiteRentApp.app */;
@@ -94,6 +114,9 @@
 			);
 			mainGroup = 441ADCFB2ED0E39800123048;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 441ADD052ED0E39800123048 /* Products */;
 			projectDirPath = "";
@@ -251,6 +274,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7Q9QC54784;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -282,6 +306,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7Q9QC54784;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -328,6 +353,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		441ADD202ED0F3E900123048 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		441ADD382ED2606400123048 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 441ADCFC2ED0E39800123048 /* Project object */;
 }

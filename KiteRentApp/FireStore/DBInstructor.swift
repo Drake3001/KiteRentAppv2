@@ -6,3 +6,19 @@
 //
 
 import Foundation
+
+struct DBInstructor: Codable {
+    let instructorId: String
+    let name: String
+    let surname: String
+    let phoneNumber: String?
+    let dateCreated: Date?
+    
+    enum CodingKeys: String, CodingKey {
+        case instructorId = "instructor_id"
+        case name = "name"
+        case surname = "surname"
+        case phoneNumber = "phone_number"
+        case dateCreated = "date_created"
+    }
+}
