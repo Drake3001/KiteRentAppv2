@@ -1,0 +1,39 @@
+[
+    {
+        "id": 1,
+        "name": "Duotone Evo 10",
+        "imageName": "kite1",
+        "state": "free"
+    },
+    {
+        "id": 2,
+        "name": "North Reach 9",
+        "imageName": "kite2",
+        "state": "free"
+    },
+    {
+        "id": 3,
+        "name": "Duotone Juice 15",
+        "imageName": "kite3",
+        "state": "free"
+    },
+    {
+        "id": 4,
+        "name": "Harlem Force 9",
+        "imageName": "kite4",
+        "state": "used",
+        "currentUser": "Witold Kowalski"
+    },
+    {
+        "id": 5,
+        "name": "Naish Pivot 10",
+        "imageName": "kite5",
+        "state": "free"
+    },
+    {
+        "id": 6,
+        "name": "Orbit 9",
+        "imageName": "kite6",
+        "state": "serviced"
+    }
+]
