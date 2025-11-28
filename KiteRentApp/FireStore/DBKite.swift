@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum KiteStatus: String, Codable {
+/*enum KiteStatus: String, Codable {
     case wolny
     case zajety
     case niedostepny
@@ -27,5 +27,34 @@ struct DBKite: Codable {
         case status = "status"
         case dateCreated = "date_created"
     }
+}*/
+
+struct DBKite: Identifiable, Codable {
+    var id: String
+    var name: String
+    var imageName: String
+    var state: KiteState
+    var dateCreated: Date?
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case name = "name"
+        case imageName = "image_name"
+        case state = "state"
+        case dateCreated = "date_created"
+    }
+    
 }
+
+enum KiteState: String, Codable {
+    case free
+    case used
+    case serviced
+}
+
+/*enum KiteState: String, Codable, Decodable {
+    case free
+    case used
+    case serviced
+}*/
 

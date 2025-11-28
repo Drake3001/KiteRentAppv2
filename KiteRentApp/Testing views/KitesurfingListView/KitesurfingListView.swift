@@ -2,36 +2,26 @@ import SwiftUI
 
 struct KitesurfingListView: View {
     @State var searchText = ""
-    @State private var selectedKite: Kite? = nil
+    @State private var selectedKite: DBKite? = nil
     @State private var showPopup: Bool = false
+    @State private var kites: [DBKite] = []
+    @State private var loadingError: String?
 
-    var kites: [Kite]
-        
-    //private let columns = [
-      //  GridItem(.flexible(), spacing: 16),
-        //GridItem(.flexible(), spacing: 16)
-    //]
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 16)
     ]
 
-    
     var body: some View {
-        ZStack {   // <-- Needed for overlay popup
+        ZStack {
             VStack(spacing: 0) {
                 HeaderView()
                     .offset(y: -20)
 
                 SearchBarView(text: $searchText)
                 Spacer()
-                FilterRowView()
+                // Pass the current count into the filter row (update FilterRowView to accept this)
+                FilterRowView(numberOfKites: visibleKites.count)
                 Spacer()
-                
-                var visibleKites: [Kite] {
-                    searchText.isEmpty
-                        ? kites
-                        : kites.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-                }
 
                 VStack {
                     ScrollView {
@@ -42,7 +32,7 @@ struct KitesurfingListView: View {
                                         selectedKite = kite
                                         showPopup = kite.state == .free
                                     } label: {
-                                        KiteCard(kite: kite)
+                                        KiteCard(kite: kite) // Update KiteCard to accept DBKite
                                             .contentShape(Rectangle())
                                     }
                                     .buttonStyle(.plain)
@@ -58,18 +48,47 @@ struct KitesurfingListView: View {
             }
             .background(Color.white)
 
-           
             if showPopup, let kite = selectedKite {
                 Color.black.opacity(0.35)
                     .ignoresSafeArea()
                     .onTapGesture { withAnimation { showPopup = false } }
 
-                KiteReservationView(showPopup: $showPopup, kite: kite)
-                .transition(.scale)
-                .zIndex(10)
+                KiteReservationView(showPopup: $showPopup, kite: kite) // Update to accept DBKite
+                    .transition(.scale)
+                    .zIndex(10)
             }
         }
         .animation(.spring(), value: showPopup)
+        .task {
+            await loadKites()
+        }
+        .alert("Error", isPresented: .constant(loadingError != nil), actions: {
+            Button("OK") { loadingError = nil }
+        }, message: {
+            Text(loadingError ?? "")
+        })
+    }
+
+    private var visibleKites: [DBKite] {
+        if searchText.isEmpty {
+            return kites
+        } else {
+            return kites.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
+
+    private func loadKites() async {
+        do {
+            let fetched = try await KiteManager.shared.getAllKites()
+            // Ensure UI updates on main actor
+            await MainActor.run {
+                self.kites = fetched
+            }
+        } catch {
+            await MainActor.run {
+                self.loadingError = error.localizedDescription
+            }
+        }
     }
 }
 
@@ -92,6 +111,6 @@ extension Color {
 
 struct KitesurfingListView_Previews: PreviewProvider {
     static var previews: some View {
-        KitesurfingListView(kites: kites)
+        KitesurfingListView()
     }
 }

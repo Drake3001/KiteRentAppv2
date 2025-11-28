@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct AddKiteView: View {
-    @State private var kiteId: String = ""
+    @State private var id: String = ""
     @State private var name: String = ""
-    @State private var zdjecie: String = ""
-    @State private var status: KiteStatus = .wolny
+    @State private var imageName: String = ""
+    @State private var state: KiteState = .free
     @State private var isSaving = false
     @State private var message: String = ""
     
@@ -19,14 +19,14 @@ struct AddKiteView: View {
         NavigationView {
             Form {
                 Section(header: Text("Kite Info")) {
-                    TextField("Kite ID", text: $kiteId)
+                    TextField("Kite ID", text: $id)
                     TextField("Nazwa", text: $name)
-                    TextField("URL zdjęcia", text: $zdjecie)
+                    TextField("URL zdjęcia", text: $imageName)
                     
-                    Picker("Status", selection: $status) {
-                        Text("Wolny").tag(KiteStatus.wolny)
-                        Text("Zajęty").tag(KiteStatus.zajety)
-                        Text("Niedostępny").tag(KiteStatus.niedostepny)
+                    Picker("Status", selection: $state) {
+                        Text("Wolny").tag(KiteState.free)
+                        Text("Zajęty").tag(KiteState.used)
+                        Text("Niedostępny").tag(KiteState.serviced)
                     }
                 }
                 
@@ -38,7 +38,7 @@ struct AddKiteView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
-                .disabled(kiteId.isEmpty || name.isEmpty)
+                .disabled(id.isEmpty || name.isEmpty)
                 
                 if !message.isEmpty {
                     Text(message)
@@ -56,10 +56,10 @@ struct AddKiteView: View {
         
         Task {
             let newKite = DBKite(
-                kiteId: kiteId,
+                id: id,
                 name: name,
-                zdjecie: zdjecie,
-                status: status,
+                imageName: imageName,
+                state: state,
                 dateCreated: Date()
             )
             
@@ -76,9 +76,13 @@ struct AddKiteView: View {
     }
     
     func clearForm() {
-        kiteId = ""
+        id = ""
         name = ""
-        zdjecie = ""
-        status = .wolny
+        imageName = ""
+        state = .free
     }
+}
+
+#Preview {
+    AddKiteView()
 }

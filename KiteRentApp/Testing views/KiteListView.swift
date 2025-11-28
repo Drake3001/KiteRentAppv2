@@ -26,10 +26,10 @@ struct KiteListView: View {
             
             text = kites.map { kite in
                 """
-                ID: \(kite.kiteId)
+                ID: \(kite.id)
                 Nazwa: \(kite.name)
-                Status: \(kite.status.rawValue)
-                Zdjęcie: \(kite.zdjecie)
+                Status: \(kite.state.rawValue)
+                Zdjęcie: \(kite.imageName)
                 
                 """
             }.joined(separator: "---------------------\n")

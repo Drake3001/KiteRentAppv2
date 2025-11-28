@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Kite: Identifiable, Decodable {
+struct Kite: Identifiable, Codable {
     var id: Int
     var name: String
     var imageName: String
@@ -15,9 +15,9 @@ struct Kite: Identifiable, Decodable {
     var currentUser: String?
 }
 
-enum KiteState: String, Decodable {
+/*enum KiteState: String, Codable {
     case free
     case used
     case serviced
-}
+}*/
 

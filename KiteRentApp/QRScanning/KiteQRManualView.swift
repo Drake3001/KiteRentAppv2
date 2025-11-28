@@ -49,3 +49,7 @@ struct KiteQRManualView: View {
         generatedQR = QRGenerator.generateQRCode(from: inputKiteId)
     }
 }
+
+#Preview {
+    KiteQRManualView()
+}

@@ -82,7 +82,7 @@ struct StartScreenView: View {
                 }
         )
         .fullScreenCover(isPresented: $isShowingHistoryView) {
-            KitesurfingListView(kites: kites)
+            KitesurfingListView()
         }
     }
 }
