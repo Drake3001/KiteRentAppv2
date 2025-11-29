@@ -34,6 +34,9 @@ struct DBKite: Identifiable, Codable {
     var name: String
     var imageName: String
     var state: KiteState
+    var brand: String
+    var kiteModel: String
+    var size: String
     var dateCreated: Date?
     
     enum CodingKeys: String, CodingKey {
@@ -41,6 +44,9 @@ struct DBKite: Identifiable, Codable {
         case name = "name"
         case imageName = "image_name"
         case state = "state"
+        case brand = "brand"
+        case kiteModel = "kite_model"
+        case size = "size"
         case dateCreated = "date_created"
     }
     

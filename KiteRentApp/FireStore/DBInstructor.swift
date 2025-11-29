@@ -7,12 +7,17 @@
 
 import Foundation
 
-struct DBInstructor: Codable {
+struct DBInstructor: Codable, Identifiable {
+    var id: String {instructorId}
     let instructorId: String
     let name: String
     let surname: String
     let phoneNumber: String?
     let dateCreated: Date?
+    
+    var shortName: String {
+        "\(name) \(surname.prefix(1))"
+    }
     
     enum CodingKeys: String, CodingKey {
         case instructorId = "instructor_id"

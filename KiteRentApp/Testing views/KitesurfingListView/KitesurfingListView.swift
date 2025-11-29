@@ -1,11 +1,9 @@
 import SwiftUI
 
 struct KitesurfingListView: View {
-    @State var searchText = ""
+    @StateObject private var viewModel = KitesurfingListViewModel()
     @State private var selectedKite: DBKite? = nil
     @State private var showPopup: Bool = false
-    @State private var kites: [DBKite] = []
-    @State private var loadingError: String?
 
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 16)
@@ -17,34 +15,16 @@ struct KitesurfingListView: View {
                 HeaderView()
                     .offset(y: -20)
 
-                SearchBarView(text: $searchText)
-                Spacer()
-                // Pass the current count into the filter row (update FilterRowView to accept this)
-                FilterRowView(numberOfKites: visibleKites.count)
+                SearchBarView(text: $viewModel.searchText)
+
                 Spacer()
 
-                VStack {
-                    ScrollView {
-                        VStack {
-                            LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(visibleKites) { kite in
-                                    Button {
-                                        selectedKite = kite
-                                        showPopup = kite.state == .free
-                                    } label: {
-                                        KiteCard(kite: kite) // Update KiteCard to accept DBKite
-                                            .contentShape(Rectangle())
-                                    }
-                                    .buttonStyle(.plain)
-                                    .allowsHitTesting(kite.state == .free)
-                                }
-                            }
-                            .padding()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .background(Color(hex: "F7F8FA"))
+                FilterRowView(numberOfKites: viewModel.filteredKites.count)
+
+                Spacer()
+
+                content
+                    .background(Color(hex: "F7F8FA"))
             }
             .background(Color.white)
 
@@ -53,40 +33,47 @@ struct KitesurfingListView: View {
                     .ignoresSafeArea()
                     .onTapGesture { withAnimation { showPopup = false } }
 
-                KiteReservationView(showPopup: $showPopup, kite: kite) // Update to accept DBKite
+                KiteReservationView(showPopup: $showPopup, kite: kite)
                     .transition(.scale)
                     .zIndex(10)
             }
         }
         .animation(.spring(), value: showPopup)
         .task {
-            await loadKites()
+            await viewModel.loadKites()
         }
-        .alert("Error", isPresented: .constant(loadingError != nil), actions: {
-            Button("OK") { loadingError = nil }
+        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), actions: {
+            Button("OK") { viewModel.errorMessage = nil }
         }, message: {
-            Text(loadingError ?? "")
+            Text(viewModel.errorMessage ?? "")
         })
     }
 
-    private var visibleKites: [DBKite] {
-        if searchText.isEmpty {
-            return kites
-        } else {
-            return kites.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
-
-    private func loadKites() async {
-        do {
-            let fetched = try await KiteManager.shared.getAllKites()
-            // Ensure UI updates on main actor
-            await MainActor.run {
-                self.kites = fetched
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.isLoading {
+            VStack {
+                ProgressView("Ładowanie…")
+                    .padding()
             }
-        } catch {
-            await MainActor.run {
-                self.loadingError = error.localizedDescription
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(viewModel.filteredKites) { kite in
+                        Button {
+                            selectedKite = kite
+                            showPopup = kite.state == .free
+                        } label: {
+                            KiteCard(kite: kite)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .allowsHitTesting(kite.state == .free)
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
             }
         }
     }

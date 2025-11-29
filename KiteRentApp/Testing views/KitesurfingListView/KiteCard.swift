@@ -59,7 +59,7 @@ struct KiteCard: View {
 
 struct KiteCard_Previews: PreviewProvider {
     static var previews: some View {
-        KiteCard(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, dateCreated: nil))
+        KiteCard(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
             .previewLayout(.sizeThatFits)
             .padding()
     }
