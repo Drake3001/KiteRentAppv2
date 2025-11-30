@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import FirebaseFirestore
 /*enum KiteStatus: String, Codable {
     case wolny
     case zajety
@@ -30,7 +30,8 @@ struct DBKite: Codable {
 }*/
 
 struct DBKite: Identifiable, Codable {
-    var id: String
+//    var id: String
+    @DocumentID var id: String?
     var name: String
     var imageName: String
     var state: KiteState
@@ -49,6 +50,12 @@ struct DBKite: Identifiable, Codable {
         case size = "size"
         case dateCreated = "date_created"
     }
+    
+//    init(from document: DocumentSnapshot) throws {
+//        let data = try document.data(as: DBKite.self)
+//        self = data
+//        self.id = document.documentID
+//    }
     
 }
 
