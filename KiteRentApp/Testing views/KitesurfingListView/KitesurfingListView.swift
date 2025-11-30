@@ -33,9 +33,17 @@ struct KitesurfingListView: View {
                     .ignoresSafeArea()
                     .onTapGesture { withAnimation { showPopup = false } }
 
-                KiteReservationView(showPopup: $showPopup, kite: kite)
-                    .transition(.scale)
-                    .zIndex(10)
+                KiteReservationView(
+                    showPopup: $showPopup,
+                    kite: kite,
+                    onReservationCreated: {
+                        Task {
+                            await viewModel.loadKites()
+                        }
+                    }
+                )
+                .transition(.scale)
+                .zIndex(10)
             }
         }
         .animation(.spring(), value: showPopup)

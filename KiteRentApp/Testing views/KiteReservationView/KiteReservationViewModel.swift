@@ -69,7 +69,12 @@ final class KiteReservationViewModel: ObservableObject {
         )
 
         do {
+            // Tworzenie rezerwacji
             try await RentalManager.shared.createNewRental(rental: rental)
+            
+            // Zmiana statusu kite z free na used
+            try await KiteManager.shared.updateKiteState(kiteId: kiteId, state: .used)
+            
             self.createdRentalId = rentalId
             self.didCreateReservation = true
         } catch {

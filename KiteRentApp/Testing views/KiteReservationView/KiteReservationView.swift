@@ -17,6 +17,7 @@ struct KiteReservationView: View {
     let hours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
     
     var kite: DBKite
+    var onReservationCreated: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 10) {
@@ -50,7 +51,8 @@ struct KiteReservationView: View {
                 kiteId: kite.id,
                 startTime: makeDate(hour: startHour, minute: startMinute),
                 endTime: makeDate(hour: endHour, minute: endMinute),
-                selectedInstructorId: selectedInstructor?.instructorId ?? viewModel.selectedInstructorId
+                selectedInstructorId: selectedInstructor?.instructorId ?? viewModel.selectedInstructorId,
+                onReservationCreated: onReservationCreated
             )
             
             if let error = viewModel.errorMessage {
@@ -76,33 +78,6 @@ struct KiteReservationView: View {
         comps.hour = hour
         comps.minute = minute
         return Calendar.current.date(from: comps) ?? Date()
-    }
-    
-    private static func initTime() -> (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
-        let now = Date()
-        let currHour = Calendar.current.component(.hour, from: now)
-        let currMinute = Calendar.current.component(.minute, from: now)
-        
-        let roundedMinutes = (currMinute / 15) * 15
-        let adjustedMinute = roundedMinutes == currMinute ? currMinute : currMinute + (15 - roundedMinutes)
-        
-        var endHour = currHour + AppConstants.defaultLessonDurationHours
-        var endMinute = adjustedMinute + AppConstants.defaultLessonDurationMinutes
-        if (endMinute > 59) {
-            endMinute -= 1
-            endHour += 1
-        }
-        
-        return (currHour, adjustedMinute, endHour, endMinute)
-        
-        func normalizeHour(hour: Int) -> Int{
-            var normalizedHour: Int
-            normalizedHour = hour < AppConstants.defaultWorkStartHour ? AppConstants.defaultWorkEndHour : hour
-            
-            normalizedHour = hour > AppConstants.defaultWorkStartHour ? AppConstants.defaultWorkEndHour : hour
-            
-            return normalizedHour
-        }
     }
 }
 

@@ -26,37 +26,26 @@ final class KiteManager {
     func getAllKites() async throws -> [DBKite] {
         let snapshot = try await kiteCollection.getDocuments()
         
-        var kites: [DBKite] = []
-        
-        for document in snapshot.documents {
-            var data = document.data()
-            
-            if let timestamp = data["date_created"] as? Timestamp {
-                data["date_created"] = timestamp.dateValue().timeIntervalSince1970
-            }
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let kite = try JSONDecoder().decode(DBKite.self, from: jsonData)
-            kites.append(kite)
+        return try snapshot.documents.map { document in
+            var kite = try document.data(as: DBKite.self)
+            // Ensure ID matches document ID for consistency
+            kite.id = document.documentID
+            return kite
         }
-        
-        return kites
     }
 
     
     func getKite(kiteId: String) async throws -> DBKite {
-        let snapshot = try await kiteDocument(kiteId: kiteId).getDocument()
-        
-        guard var data = snapshot.data() else {
-            throw URLError(.badServerResponse)
-        }
-        
-        if let timestamp = data["date_created"] as? Timestamp {
-            data["date_created"] = timestamp.dateValue().timeIntervalSince1970
-        }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-        return try JSONDecoder().decode(DBKite.self, from: jsonData)
+        let document = try await kiteDocument(kiteId: kiteId).getDocument()
+        var kite = try document.data(as: DBKite.self)
+        kite.id = document.documentID
+        return kite
+    }
+    
+    func updateKiteState(kiteId: String, state: KiteState) async throws {
+        try await kiteDocument(kiteId: kiteId).updateData([
+            "state": state.rawValue
+        ])
     }
 
 }

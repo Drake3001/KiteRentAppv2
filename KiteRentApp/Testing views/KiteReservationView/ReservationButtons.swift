@@ -9,6 +9,7 @@ struct ReservationButtons: View {
     let startTime: Date
     let endTime: Date
     let selectedInstructorId: String?
+    var onReservationCreated: (() -> Void)? = nil
     
     var isLargeScreen: Bool {
         hSizeClass == .regular
@@ -43,6 +44,7 @@ struct ReservationButtons: View {
                 )
                 if viewModel.didCreateReservation {
                     showPopup = false
+                    onReservationCreated?()
                 }
             }
         } label: {

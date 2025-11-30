@@ -24,43 +24,14 @@ final class RentalManager {
     }
     
     func getRental(rentalId: String) async throws -> DBRental {
-        let snapshot = try await rentalDocument(rentalId: rentalId).getDocument()
-        
-        guard var data = snapshot.data() else {
-            throw URLError(.badServerResponse)
-        }
-        
-        if let startTimestamp = data["start_time"] as? Timestamp {
-            data["start_time"] = startTimestamp.dateValue().timeIntervalSince1970
-        }
-        if let endTimestamp = data["end_time"] as? Timestamp {
-            data["end_time"] = endTimestamp.dateValue().timeIntervalSince1970
-        }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-        return try JSONDecoder().decode(DBRental.self, from: jsonData)
+        try await rentalDocument(rentalId: rentalId).getDocument(as: DBRental.self)
     }
     
     func getAllRentals() async throws -> [DBRental] {
         let snapshot = try await rentalCollection.getDocuments()
         
-        var rentals: [DBRental] = []
-        
-        for document in snapshot.documents {
-            var data = document.data()
-            
-            if let startTimestamp = data["start_time"] as? Timestamp {
-                data["start_time"] = startTimestamp.dateValue().timeIntervalSince1970
-            }
-            if let endTimestamp = data["end_time"] as? Timestamp {
-                data["end_time"] = endTimestamp.dateValue().timeIntervalSince1970
-            }
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let rental = try JSONDecoder().decode(DBRental.self, from: jsonData)
-            rentals.append(rental)
+        return try snapshot.documents.map { document in
+            try document.data(as: DBRental.self)
         }
-        
-        return rentals
     }
 }

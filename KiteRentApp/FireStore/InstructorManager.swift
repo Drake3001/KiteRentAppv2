@@ -6,8 +6,6 @@
 //
 
 import Foundation
-
-import Foundation
 import FirebaseFirestore
 
 final class InstructorManager {
@@ -26,37 +24,14 @@ final class InstructorManager {
     }
     
     func getInstructor(instructorId: String) async throws -> DBInstructor {
-        let snapshot = try await instructorDocument(instructorId: instructorId).getDocument()
-        
-        guard var data = snapshot.data() else {
-            throw URLError(.badServerResponse)
-        }
-        
-        if let timestamp = data["date_created"] as? Timestamp {
-            data["date_created"] = timestamp.dateValue().timeIntervalSince1970
-        }
-        
-        let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-        return try JSONDecoder().decode(DBInstructor.self, from: jsonData)
+        try await instructorDocument(instructorId: instructorId).getDocument(as: DBInstructor.self)
     }
     
     func getAllInstructors() async throws -> [DBInstructor] {
         let snapshot = try await instructorCollection.getDocuments()
         
-        var instructors: [DBInstructor] = []
-        
-        for document in snapshot.documents {
-            var data = document.data()
-            
-            if let timestamp = data["date_created"] as? Timestamp {
-                data["date_created"] = timestamp.dateValue().timeIntervalSince1970
-            }
-            
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let instructor = try JSONDecoder().decode(DBInstructor.self, from: jsonData)
-            instructors.append(instructor)
+        return try snapshot.documents.map { document in
+            try document.data(as: DBInstructor.self)
         }
-        
-        return instructors
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 struct DBInstructor: Codable, Identifiable {
-    var id: String {instructorId}
+    var id: String { instructorId }
     let instructorId: String
     let name: String
     let surname: String
