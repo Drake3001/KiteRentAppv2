@@ -4,6 +4,12 @@ struct ReservationButtons: View {
     @Binding var showPopup: Bool
     @Environment(\.horizontalSizeClass) var hSizeClass
     
+    let viewModel: KiteReservationViewModel
+    let kiteId: String
+    let startTime: Date
+    let endTime: Date
+    let selectedInstructorId: String?
+    
     var isLargeScreen: Bool {
         hSizeClass == .regular
     }
@@ -25,15 +31,36 @@ struct ReservationButtons: View {
     }
     
     private var confirmButton: some View {
-        Button("Potwierdź") {
-            showPopup = false
+        let isDisabled = viewModel.isLoading || startTime > endTime
+
+        return Button {
+            Task {
+                await viewModel.confirmReservation(
+                    kiteId: kiteId,
+                    instructorId: selectedInstructorId,
+                    startTime: startTime,
+                    endTime: endTime
+                )
+                if viewModel.didCreateReservation {
+                    showPopup = false
+                }
+            }
+        } label: {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            } else {
+                Text("Potwierdź")
+                    .frame(maxWidth: .infinity)
+            }
         }
         .padding(.vertical, 10)
-        .frame(maxWidth: .infinity)
-        .background(Color.blue.opacity(0.9))
-        .foregroundColor(.white)
+        .background(isDisabled ? Color.gray.opacity(0.5) : Color.blue.opacity(0.9))   
+        .foregroundColor(.white.opacity(isDisabled ? 0.6 : 1.0))
         .cornerRadius(10)
+        .disabled(isDisabled)
     }
+
     
     private var closeButton: some View {
         Button("Zamknij") {

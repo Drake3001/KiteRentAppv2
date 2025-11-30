@@ -10,7 +10,7 @@ struct KiteReservationView: View {
     @State private var endHour = 10
     @State private var endMinute = 30
     
-    let minutes = Array(stride(from: 0, through: 60, by: 5))
+    let minutes = Array(stride(from: 0, through: 55, by: 5))
     let hours = Array(6..<22)
     
     var kite: DBKite
@@ -41,7 +41,19 @@ struct KiteReservationView: View {
                 minute: $endMinute
             )
             
-            ReservationButtons(showPopup: $showPopup)
+            ReservationButtons(
+                showPopup: $showPopup,
+                viewModel: viewModel,
+                kiteId: kite.id,
+                startTime: makeDate(hour: startHour, minute: startMinute),
+                endTime: makeDate(hour: endHour, minute: endMinute),
+                selectedInstructorId: selectedInstructor?.instructorId ?? viewModel.selectedInstructorId
+            )
+            
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+            }
         }
         .padding(20)
         .frame(maxWidth: 280)
@@ -54,6 +66,13 @@ struct KiteReservationView: View {
                 selectedInstructor = first
             }
         }
+    }
+    
+    private func makeDate(hour: Int, minute: Int) -> Date {
+        var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        comps.hour = hour
+        comps.minute = minute
+        return Calendar.current.date(from: comps) ?? Date()
     }
 }
 

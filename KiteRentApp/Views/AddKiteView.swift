@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddKiteView: View {
-    @State private var id: String = ""
     @State private var name: String = ""
     @State private var imageName: String = ""
     @State private var state: KiteState = .free
@@ -22,9 +21,6 @@ struct AddKiteView: View {
         NavigationView {
             Form {
                 Section(header: Text("Kite Info")) {
-                    TextField("Kite ID", text: $id)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
                     TextField("Nazwa", text: $name)
                         .autocorrectionDisabled(true)
                     TextField("URL zdjęcia", text: $imageName)
@@ -73,7 +69,6 @@ struct AddKiteView: View {
     }
     
     private var isSaveDisabled: Bool {
-        id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
         name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
         brand.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
         kiteModel.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
@@ -86,7 +81,7 @@ struct AddKiteView: View {
         
         Task {
             let newKite = DBKite(
-                id: id.trimmingCharacters(in: .whitespacesAndNewlines),
+                id: UUID().uuidString,
                 name: name.trimmingCharacters(in: .whitespacesAndNewlines),
                 imageName: imageName.trimmingCharacters(in: .whitespacesAndNewlines),
                 state: state,
@@ -109,7 +104,6 @@ struct AddKiteView: View {
     }
     
     func clearForm() {
-        id = ""
         name = ""
         imageName = ""
         state = .free
