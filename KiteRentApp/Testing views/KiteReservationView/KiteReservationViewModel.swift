@@ -76,4 +76,89 @@ final class KiteReservationViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
+    
+    
+}
+
+extension KiteReservationViewModel {
+
+    /// Returns rounded start time based on current date + computed end time.
+    /// Uses AppConstants for working hours and default lesson duration.
+    static func initTime()
+    -> (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int)
+    {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // --- 1. Round start minutes according to custom rules ---
+        let hour = calendar.component(.hour, from: now)
+        let minute = calendar.component(.minute, from: now)
+        
+        let prevQuarter = (minute / 15) * 15
+        let nextQuarter = prevQuarter + 15
+        let diffToPrev = minute - prevQuarter
+        let diffToNext = nextQuarter - minute
+        
+        let startMinute: Int
+        if diffToNext <= 5 {
+            // If ≤5 min to next quarter, round up
+            startMinute = nextQuarter
+        } else if diffToPrev < 10 {
+            // If <10 min to previous quarter, round down
+            startMinute = prevQuarter
+        } else {
+            // Otherwise, round to nearest 15
+            startMinute = minute % 15 < 8 ? prevQuarter : nextQuarter
+        }
+        
+        // Handle minute overflow
+        let startHour = startMinute == 60 ? hour + 1 : hour
+        let normalizedStartMinute = startMinute == 60 ? 0 : startMinute
+        
+        // --- 2. Build start date and clamp to work hours ---
+        var startComps = calendar.dateComponents([.year, .month, .day], from: now)
+        startComps.hour = startHour
+        startComps.minute = normalizedStartMinute
+        var startDate = calendar.date(from: startComps)!
+        startDate = clampToWorkHours(startDate)
+        
+        // --- 3. Compute end date by adding lesson duration ---
+        var endDate = calendar.date(byAdding: .hour,
+                                    value: AppConstants.defaultLessonDurationHours,
+                                    to: startDate)!
+        endDate = calendar.date(byAdding: .minute,
+                                value: AppConstants.defaultLessonDurationMinutes,
+                                to: endDate)!
+        endDate = clampToWorkHours(endDate)
+        
+        let endHour = calendar.component(.hour, from: endDate)
+        let endMinute = calendar.component(.minute, from: endDate)
+        
+        return (startHour: calendar.component(.hour, from: startDate),
+                startMinute: calendar.component(.minute, from: startDate),
+                endHour: endHour,
+                endMinute: endMinute)
+    }
+    
+    /// Ensures a date stays within working hours defined by AppConstants.
+    static func clampToWorkHours(_ date: Date) -> Date {
+        let calendar = Calendar.current
+        
+        let workStart = AppConstants.defaultWorkStartHour
+        let workEnd = AppConstants.defaultWorkEndHour
+        
+        var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        
+        if comps.hour! < workStart {
+            comps.hour = workStart
+            comps.minute = 0
+        }
+        
+        if comps.hour! >= workEnd {
+            comps.hour = workEnd
+            comps.minute = 0
+        }
+        
+        return calendar.date(from: comps) ?? date
+    }
 }
