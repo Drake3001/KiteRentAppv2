@@ -34,4 +34,26 @@ final class RentalManager {
             try document.data(as: DBRental.self)
         }
     }
+    
+    /// Pobiera wszystkie aktywne rezerwacje (endTime > teraz)
+    func getActiveRentals() async throws -> [DBRental] {
+        let now = Date()
+        let allRentals = try await getAllRentals()
+        
+        // Filtruj tylko aktywne rezerwacje (endTime > teraz)
+        return allRentals.filter { rental in
+            rental.endTime > now
+        }
+    }
+    
+    /// Pobiera aktywny rental dla konkretnego kiteId
+    func getActiveRentalForKite(kiteId: String) async throws -> DBRental? {
+        let now = Date()
+        let allRentals = try await getAllRentals()
+        
+        // Znajdź aktywny rental dla tego kitesa (endTime > teraz)
+        return allRentals.first { rental in
+            rental.kiteId == kiteId && rental.endTime > now
+        }
+    }
 }

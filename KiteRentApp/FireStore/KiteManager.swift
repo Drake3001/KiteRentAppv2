@@ -47,6 +47,31 @@ final class KiteManager {
             "state": state.rawValue
         ])
     }
+    
+    /// Synchronizuje statusy kites z aktywnymi rezerwacjami
+    /// Zmienia status z "used" na "free" dla kites bez aktywnych rezerwacji
+    func syncKiteStatesWithRentals() async throws {
+        // Pobierz wszystkie aktywne rezerwacje
+        let activeRentals = try await RentalManager.shared.getActiveRentals()
+        let activeKiteIds = Set(activeRentals.map { $0.kiteId })
+        
+        // Pobierz wszystkie kites
+        let allKites = try await getAllKites()
+        
+        // Aktualizuj statusy kites
+        for kite in allKites {
+            let hasActiveRental = activeKiteIds.contains(kite.id)
+            
+            // Jeśli kite ma aktywną rezerwację, upewnij się że jest "used"
+            if hasActiveRental && kite.state != .used {
+                try await updateKiteState(kiteId: kite.id, state: .used)
+            }
+            // Jeśli kite nie ma aktywnej rezerwacji i jest "used", zmień na "free"
+            else if !hasActiveRental && kite.state == .used {
+                try await updateKiteState(kiteId: kite.id, state: .free)
+            }
+        }
+    }
 
 }
 

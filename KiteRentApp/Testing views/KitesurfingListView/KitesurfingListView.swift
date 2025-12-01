@@ -49,6 +49,10 @@ struct KitesurfingListView: View {
         .animation(.spring(), value: showPopup)
         .task {
             await viewModel.loadKites()
+            viewModel.startAutoRefresh()
+        }
+        .onDisappear {
+            viewModel.stopAutoRefresh()
         }
         .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), actions: {
             Button("OK") { viewModel.errorMessage = nil }
@@ -73,8 +77,11 @@ struct KitesurfingListView: View {
                             selectedKite = kite
                             showPopup = kite.state == .free
                         } label: {
-                            KiteCard(kite: kite)
-                                .contentShape(Rectangle())
+                            KiteCard(
+                                kite: kite,
+                                instructor: viewModel.getInstructorForKite(kiteId: kite.id)
+                            )
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .allowsHitTesting(kite.state == .free)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct KiteCard: View {
     var kite: DBKite
+    var instructor: DBInstructor? = nil
 
     var tintColor: Color {
         switch kite.state {
@@ -37,6 +38,19 @@ struct KiteCard: View {
                     .font(.body)
                     .fontWeight(.medium)
                     .lineLimit(1)
+                
+                if kite.state == .used, let instructor = instructor {
+                    Text(instructor.shortName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else if kite.state == .serviced {
+                    Text("Serviced")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                }
 
                 Spacer(minLength: 0)
             }
@@ -59,8 +73,15 @@ struct KiteCard: View {
 
 struct KiteCard_Previews: PreviewProvider {
     static var previews: some View {
-        KiteCard(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
-            .previewLayout(.sizeThatFits)
-            .padding()
+        VStack {
+            KiteCard(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+            KiteCard(
+                kite: DBKite(id: "demo2", name: "Used Kite", imageName: "demo", state: .used, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
+                instructor: DBInstructor(instructorId: "1", name: "Jan", surname: "Kowalski", phoneNumber: nil, dateCreated: nil)
+            )
+            KiteCard(kite: DBKite(id: "demo3", name: "Serviced Kite", imageName: "demo", state: .serviced, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+        }
+        .previewLayout(.sizeThatFits)
+        .padding()
     }
 }
