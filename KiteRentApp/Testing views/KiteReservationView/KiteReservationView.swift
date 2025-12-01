@@ -48,7 +48,7 @@ struct KiteReservationView: View {
             ReservationButtons(
                 showPopup: $showPopup,
                 viewModel: viewModel,
-                kiteId: kite.id,
+                kiteId: kite.id!,
                 startTime: makeDate(hour: startHour, minute: startMinute),
                 endTime: makeDate(hour: endHour, minute: endMinute),
                 selectedInstructorId: selectedInstructor?.instructorId ?? viewModel.selectedInstructorId,

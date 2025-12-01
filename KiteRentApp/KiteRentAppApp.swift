@@ -15,7 +15,7 @@ struct KiteRentAppApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                ScanKiteView()
+                QRScannerView()
             }
         }
     }

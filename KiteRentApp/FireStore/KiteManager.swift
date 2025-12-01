@@ -20,7 +20,7 @@ final class KiteManager {
     }
     
     func createNewKite(kite: DBKite) async throws {
-        try kiteDocument(kiteId: kite.id).setData(from: kite, merge: false)
+        try kiteDocument(kiteId: kite.id!).setData(from: kite, merge: false)
     }
     
     func getAllKites() async throws -> [DBKite] {
