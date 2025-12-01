@@ -48,27 +48,47 @@ final class KiteManager {
         ])
     }
     
-    /// Synchronizuje statusy kites z aktywnymi rezerwacjami
-    /// Zmienia status z "used" na "free" dla kites bez aktywnych rezerwacji
+
     func syncKiteStatesWithRentals() async throws {
-        // Pobierz wszystkie aktywne rezerwacje
         let activeRentals = try await RentalManager.shared.getActiveRentals()
         let activeKiteIds = Set(activeRentals.map { $0.kiteId })
         
-        // Pobierz wszystkie kites
         let allKites = try await getAllKites()
         
-        // Aktualizuj statusy kites
         for kite in allKites {
             let hasActiveRental = activeKiteIds.contains(kite.id)
             
-            // Jeśli kite ma aktywną rezerwację, upewnij się że jest "used"
             if hasActiveRental && kite.state != .used {
                 try await updateKiteState(kiteId: kite.id, state: .used)
             }
-            // Jeśli kite nie ma aktywnej rezerwacji i jest "used", zmień na "free"
             else if !hasActiveRental && kite.state == .used {
                 try await updateKiteState(kiteId: kite.id, state: .free)
+            }
+        }
+    }
+    
+    /// Nasłuchuje zmian w kolekcji kites i wywołuje callback przy każdej zmianie
+    func listenToKites(completion: @escaping (Result<[DBKite], Error>) -> Void) -> ListenerRegistration {
+        return kiteCollection.addSnapshotListener { snapshot, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                completion(.failure(NSError(domain: "KiteManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No snapshot"])))
+                return
+            }
+            
+            do {
+                let kites = try snapshot.documents.map { document in
+                    var kite = try document.data(as: DBKite.self)
+                    kite.id = document.documentID
+                    return kite
+                }
+                completion(.success(kites))
+            } catch {
+                completion(.failure(error))
             }
         }
     }

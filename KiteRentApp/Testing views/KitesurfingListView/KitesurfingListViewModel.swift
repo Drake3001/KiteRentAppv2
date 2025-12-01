@@ -1,17 +1,19 @@
 import Foundation
 import Combine
+import FirebaseFirestore
 
 @MainActor
 final class KitesurfingListViewModel: ObservableObject {
     @Published var kites: [DBKite] = []
     @Published var searchText: String = ""
-    @Published var isLoading: Bool = false
+    @Published var isLoading: Bool = true
     @Published var errorMessage: String?
     
     @Published var activeRentals: [String: DBInstructor] = [:]
     
-    private var refreshTimer: Timer?
-    private let refreshInterval: TimeInterval = 5 * 60 
+    private var kiteListener: ListenerRegistration?
+    private var rentalListener: ListenerRegistration?
+    private var instructors: [DBInstructor] = []
 
     var filteredKites: [DBKite] {
         guard !searchText.isEmpty else { return kites }
@@ -21,60 +23,82 @@ final class KitesurfingListViewModel: ObservableObject {
     func getInstructorForKite(kiteId: String) -> DBInstructor? {
         return activeRentals[kiteId]
     }
-
-    func loadKites() async {
-        guard !isLoading else { return }
-        isLoading = true
-        errorMessage = nil
+    
+    /// Uruchamia listenery dla kites i rentals
+    func startListening() {
+        stopListening()
+        
+        // Najpierw załaduj instruktorów (tylko raz)
+        Task {
+            await loadInstructors()
+            
+            // Następnie uruchom listenery
+            setupKiteListener()
+            setupRentalListener()
+        }
+    }
+    
+    /// Zatrzymuje wszystkie listenery
+    func stopListening() {
+        kiteListener?.remove()
+        kiteListener = nil
+        
+        rentalListener?.remove()
+        rentalListener = nil
+    }
+    
+    private func setupKiteListener() {
+        kiteListener = KiteManager.shared.listenToKites { [weak self] result in
+            Task { @MainActor [weak self] in
+                switch result {
+                case .success(let kites):
+                    self?.kites = kites
+                    self?.isLoading = false
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                    self?.isLoading = false
+                }
+            }
+        }
+    }
+    
+    private func setupRentalListener() {
+        rentalListener = RentalManager.shared.listenToActiveRentals { [weak self] result in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let activeRentals):
+                    await self.updateActiveRentalsWithInstructors(activeRentals: activeRentals)
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    
+    private func loadInstructors() async {
         do {
-            try await KiteManager.shared.syncKiteStatesWithRentals()
-            
-            let fetched = try await KiteManager.shared.getAllKites()
-            self.kites = fetched
-            
-            await loadActiveRentalsWithInstructors()
+            self.instructors = try await InstructorManager.shared.getAllInstructors()
         } catch {
             self.errorMessage = error.localizedDescription
         }
-        isLoading = false
     }
     
-    private func loadActiveRentalsWithInstructors() async {
-        do {
-            let activeRentalsList = try await RentalManager.shared.getActiveRentals()
-            
-            let allInstructors = try await InstructorManager.shared.getAllInstructors()
-            let instructorMap = Dictionary(uniqueKeysWithValues: allInstructors.map { ($0.instructorId, $0) })
-            
-            var rentalsMap: [String: DBInstructor] = [:]
-            for rental in activeRentalsList {
-                if let instructor = instructorMap[rental.instructorId] {
-                    rentalsMap[rental.kiteId] = instructor
-                }
-            }
-            
-            self.activeRentals = rentalsMap
-        } catch {
-            self.activeRentals = [:]
-        }
-    }
-    
-    func startAutoRefresh() {
-        stopAutoRefresh() 
+    private func updateActiveRentalsWithInstructors(activeRentals: [DBRental]) async {
+        let instructorMap = Dictionary(uniqueKeysWithValues: instructors.map { ($0.instructorId, $0) })
         
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                await self?.loadKites()
+        var rentalsMap: [String: DBInstructor] = [:]
+        for rental in activeRentals {
+            if let instructor = instructorMap[rental.instructorId] {
+                rentalsMap[rental.kiteId] = instructor
             }
         }
-    }
-    
-    func stopAutoRefresh() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
+        
+        self.activeRentals = rentalsMap
     }
     
     deinit {
-        stopAutoRefresh()
+        stopListening()
     }
 }

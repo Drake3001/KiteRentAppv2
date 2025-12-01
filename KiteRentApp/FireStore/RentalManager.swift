@@ -35,25 +35,51 @@ final class RentalManager {
         }
     }
     
-    /// Pobiera wszystkie aktywne rezerwacje (endTime > teraz)
     func getActiveRentals() async throws -> [DBRental] {
         let now = Date()
         let allRentals = try await getAllRentals()
         
-        // Filtruj tylko aktywne rezerwacje (endTime > teraz)
         return allRentals.filter { rental in
             rental.endTime > now
         }
     }
     
-    /// Pobiera aktywny rental dla konkretnego kiteId
     func getActiveRentalForKite(kiteId: String) async throws -> DBRental? {
         let now = Date()
         let allRentals = try await getAllRentals()
         
-        // Znajdź aktywny rental dla tego kitesa (endTime > teraz)
         return allRentals.first { rental in
             rental.kiteId == kiteId && rental.endTime > now
+        }
+    }
+    
+    /// Nasłuchuje zmian w aktywnych rezerwacjach (endTime > teraz) i wywołuje callback
+    func listenToActiveRentals(completion: @escaping (Result<[DBRental], Error>) -> Void) -> ListenerRegistration {
+        // Nasłuchuj wszystkich rezerwacji, filtruj aktywne po stronie klienta
+        return rentalCollection.addSnapshotListener { snapshot, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                completion(.failure(NSError(domain: "RentalManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "No snapshot"])))
+                return
+            }
+            
+            do {
+                let allRentals = try snapshot.documents.map { document in
+                    try document.data(as: DBRental.self)
+                }
+                
+                // Filtruj tylko aktywne rezerwacje (endTime > teraz)
+                let now = Date()
+                let activeRentals = allRentals.filter { $0.endTime > now }
+                
+                completion(.success(activeRentals))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
 }
