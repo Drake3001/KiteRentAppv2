@@ -37,7 +37,9 @@ struct KitesurfingListView: View {
                     showPopup: $showPopup,
                     kite: kite,
                     onReservationCreated: {
-                        // Listenery automatycznie zaktualizują dane
+                        Task {
+                            await viewModel.loadKites()
+                        }
                     }
                 )
                 .transition(.scale)
@@ -45,11 +47,8 @@ struct KitesurfingListView: View {
             }
         }
         .animation(.spring(), value: showPopup)
-        .onAppear {
-            viewModel.startListening()
-        }
-        .onDisappear {
-            viewModel.stopListening()
+        .task {
+            await viewModel.loadKites()
         }
         .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), actions: {
             Button("OK") { viewModel.errorMessage = nil }
@@ -74,11 +73,8 @@ struct KitesurfingListView: View {
                             selectedKite = kite
                             showPopup = kite.state == .free
                         } label: {
-                            KiteCard(
-                                kite: kite,
-                                instructor: viewModel.getInstructorForKite(kiteId: kite.id)
-                            )
-                            .contentShape(Rectangle())
+                            KiteCard(kite: kite)
+                                .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .allowsHitTesting(kite.state == .free)
