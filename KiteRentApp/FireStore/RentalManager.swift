@@ -34,4 +34,22 @@ final class RentalManager {
             try document.data(as: DBRental.self)
         }
     }
+    
+    func getActiveRentals() async throws -> [DBRental] {
+           let now = Date()
+           let allRentals = try await getAllRentals()
+           
+           return allRentals.filter { rental in
+               rental.endTime > now
+           }
+       }
+    
+    func getActiveRentalForKite(kiteId: String) async throws -> DBRental? {
+           let now = Date()
+           let allRentals = try await getAllRentals()
+           
+           return allRentals.first { rental in
+               rental.kiteId == kiteId && rental.endTime > now
+           }
+       }
 }
