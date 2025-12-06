@@ -10,13 +10,31 @@ final class KitesurfingListViewModel: ObservableObject {
     
     @Published var activeRentals: [String: DBInstructor] = [:]
     
+    @Published var isSortAscending: Bool = false
+    
 //    private var refreshTimer: Timer?
 //    private let refreshInterval: TimeInterval = 1 * 60
     
-    var filteredKites: [DBKite] {
-        guard !searchText.isEmpty else { return kites }
-        return kites.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    var filteredAndOrderedKites: [DBKite] {
+        let base: [DBKite]
+        if searchText.isEmpty {
+            base = kites
+        } else {
+            base = kites.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+        let sizeSorted: [DBKite]
+        if isSortAscending {
+            sizeSorted =  base.sorted { Int($0.size)! < Int($1.size)! }
+        }
+        else {
+            sizeSorted = base.sorted { Int($0.size)! > Int($1.size)! }
+        }
+        
+        let stateSorted = sizeSorted.sorted{$0.state < $1.state}
+        
+        return stateSorted
     }
+    
     
     func getInstructorForKite(kiteId: String) -> DBInstructor? {
         return activeRentals[kiteId]

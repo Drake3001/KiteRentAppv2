@@ -7,27 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
-/*enum KiteStatus: String, Codable {
-    case wolny
-    case zajety
-    case niedostepny
-}
 
-struct DBKite: Codable {
-    let kiteId: String
-    let name: String
-    let zdjecie: String
-    let status: KiteStatus
-    let dateCreated: Date?
-    
-    enum CodingKeys: String, CodingKey {
-        case kiteId = "kite_id"
-        case name = "name"
-        case zdjecie = "zdjecie"
-        case status = "status"
-        case dateCreated = "date_created"
-    }
-}*/
 
 struct DBKite: Identifiable, Codable {
 //    var id: String
@@ -59,14 +39,13 @@ struct DBKite: Identifiable, Codable {
     
 }
 
-enum KiteState: String, Codable {
+enum KiteState: String, Codable, Comparable {
     case free
     case used
     case serviced
-}
 
-/*enum KiteState: String, Codable, Decodable {
-    case free
-    case used
-    case serviced
-}*/
+    static func < (lhs: KiteState, rhs: KiteState) -> Bool {
+        let order: [KiteState] = [.free, .used, .serviced]
+        return order.firstIndex(of: lhs)! < order.firstIndex(of: rhs)!
+    }
+}

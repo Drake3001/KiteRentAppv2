@@ -24,7 +24,11 @@ struct KitesurfingListView: View {
 
                 Spacer()
 
-                FilterRowView(numberOfKites: viewModel.filteredKites.count)
+                FilterRowView(
+                    numberOfKites: viewModel.filteredAndOrderedKites.count,
+                    onSortTapped: {viewModel.isSortAscending.toggle()},
+                    isAscending: viewModel.isSortAscending
+                )
 
                 Spacer()
 
@@ -59,36 +63,27 @@ struct KitesurfingListView: View {
             Button("OK") { showErrorAlert = false }
         }, message: { Text(errorMessage) })
         .sheet(isPresented: $showScanner) {
-            QRScannerView(onFound: { kiteId in
-                showScanner = false
-                handleScannedKite(kiteId: kiteId)
-            }, onCancel: {
-                showScanner = false
-            })
+            scannerSheet()
         }
     }
 
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading {
-            VStack { ProgressView("Ładowanie…").padding() }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VStack {
+                ProgressView("Ładowanie…").padding()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
-                    ForEach(viewModel.filteredKites) { kite in
-                        Button {
-                            selectedKite = kite
-                            showPopup = kite.state == .free
-                        } label: {
-                            KiteCard(
-                                kite: kite,
-                                instructor: viewModel.getInstructorForKite(kiteId: kite.id)
-                            )
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .allowsHitTesting(kite.state == .free)
+                    ForEach(viewModel.filteredAndOrderedKites) { kite in
+                        let instructor = viewModel.getInstructorForKite(kiteId: kite.id ?? "")
+                        KiteGridItem(
+                            kite: kite,
+                            instructor: instructor,
+                            onTap: { handleKiteTap(kite) }
+                        )
                     }
                 }
                 .padding()
@@ -98,25 +93,56 @@ struct KitesurfingListView: View {
         }
     }
     
-    // tu na pewno trzeba zmienić co będziemy wyświetlać bo id to takie meh
+    private func handleKiteTap(_ kite: DBKite) {
+        selectedKite = kite
+        showPopup = kite.state == .free
+    }
+    
     private func handleScannedKite(kiteId: String) {
-        if let kite = viewModel.filteredKites.first(where: { $0.id == kiteId }) {
-            if kite.state == .free {
+        if let kite = viewModel.filteredAndOrderedKites.first(where: { $0.id == kiteId }) {
+            switch kite.state {
+            case .free:
                 selectedKite = kite
                 showPopup = true
-            } else if kite.state == .used {
+            case .used:
                 errorMessage = "Kite \(kiteId) jest zajęty."
                 showErrorAlert = true
-            } else if kite.state == .serviced {
+            case .serviced:
                 errorMessage = "Kite \(kiteId) jest niedostępny."
+                showErrorAlert = true
             }
         } else {
             errorMessage = "Nie znaleziono kite o ID \(kiteId)."
             showErrorAlert = true
         }
     }
+
+    @ViewBuilder
+    private func scannerSheet() -> some View {
+        QRScannerView(onFound: { kiteId in
+            showScanner = false
+            handleScannedKite(kiteId: kiteId)
+        }, onCancel: {
+            showScanner = false
+        })
+    }
 }
 
+/// A tiny wrapper view to simplify the LazyVGrid cell and help the type-checker.
+private struct KiteGridItem: View {
+    let kite: DBKite
+    let instructor: DBInstructor?
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            KiteCard(kite: kite, instructor: instructor)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .allowsHitTesting(kite.state == .free)
+    }
+}
 
 // MARK: - HEX COLOR EXTENSION
 extension Color {

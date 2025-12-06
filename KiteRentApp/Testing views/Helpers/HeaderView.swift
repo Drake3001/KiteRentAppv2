@@ -10,7 +10,8 @@ import SwiftUI
 
 struct HeaderView: View {
     var onWindTapped: (() -> Void)?
-
+    var onLoginTapped: (() -> Void)?
+    
     var body: some View {
         HStack {
             Button {
@@ -26,10 +27,19 @@ struct HeaderView: View {
             }
 
             Spacer()
-
-            ImageOrPlaceholder(name: "profile")
-                .frame(width: 36, height: 36)
-                .clipShape(Circle())
+            
+            Button{
+                onLoginTapped?()
+            } label: {
+                let uiImage = UIImage(named: "loginIcon")!
+                Image(uiImage: uiImage)
+                    .renderingMode(.template)
+                    .frame(width: 36, height: 36)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
+                    .shadow(radius: 2)
+                    .foregroundStyle(.blue)
+            }
         }
         .padding(.horizontal)
         .padding(.top, 4)

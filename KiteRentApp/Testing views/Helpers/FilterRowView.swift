@@ -9,11 +9,24 @@ import SwiftUI
 
 struct FilterRowView: View {
     let numberOfKites: Int
+    
+    var onSortTapped: (() -> Void)? = nil
+    var isAscending: Bool = false
 
     var body: some View {
         HStack {
-            FilterButton(title: "Filter")
-            FilterButton(title: "Sort")
+            Button(action: { onSortTapped?() }) {
+                HStack(spacing: 6) {
+                    Text("Sort")
+                        .font(.subheadline)
+                    Image(systemName: isAscending ? "arrow.up" : "arrow.down")
+                        .font(.caption)
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 12)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+            }
             Spacer()
             Text("\(numberOfKites) results")
                 .foregroundColor(.gray)

@@ -55,13 +55,13 @@ final class KiteManager {
             let allKites = try await getAllKites()
             
             for kite in allKites {
-                let hasActiveRental = activeKiteIds.contains(kite.id)
+                let hasActiveRental = activeKiteIds.contains(kite.id!)
                 
                 if hasActiveRental && kite.state != .used {
-                    try await updateKiteState(kiteId: kite.id, state: .used)
+                    try await updateKiteState(kiteId: kite.id!, state: .used)
                 }
                 else if !hasActiveRental && kite.state == .used {
-                    try await updateKiteState(kiteId: kite.id, state: .free)
+                    try await updateKiteState(kiteId: kite.id!, state: .free)
                 }
             }
         }
