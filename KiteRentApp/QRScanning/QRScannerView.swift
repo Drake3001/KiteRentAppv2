@@ -54,7 +54,7 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
     @objc private func closeTapped() {
         stopSession()
         onCancel?()
-        dismiss(animated: true)
+//        dismiss(animated: true)
     }
 
     private func checkCameraAuthorizationAndSetup() {
@@ -154,7 +154,7 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
 
         DispatchQueue.main.async { [weak self] in
             self?.completion?(string)
-            self?.dismiss(animated: true)
+//            self?.dismiss(animated: true)
         }
     }
 

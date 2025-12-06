@@ -70,4 +70,3 @@ enum KiteState: String, Codable {
     case used
     case serviced
 }*/
-

@@ -4,6 +4,11 @@ struct KitesurfingListView: View {
     @StateObject private var viewModel = KitesurfingListViewModel()
     @State private var selectedKite: DBKite? = nil
     @State private var showPopup: Bool = false
+    
+    @State private var showScanner: Bool = false
+    @State private var scannedKiteId: String = ""
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 16)
@@ -12,7 +17,7 @@ struct KitesurfingListView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                HeaderView()
+                HeaderView(onWindTapped: { showScanner = true })
                     .offset(y: -20)
 
                 SearchBarView(text: $viewModel.searchText)
@@ -37,9 +42,7 @@ struct KitesurfingListView: View {
                     showPopup: $showPopup,
                     kite: kite,
                     onReservationCreated: {
-                        Task {
-                            await viewModel.loadKites()
-                        }
+                        Task { await viewModel.loadKites() }
                     }
                 )
                 .transition(.scale)
@@ -49,22 +52,27 @@ struct KitesurfingListView: View {
         .animation(.spring(), value: showPopup)
         .task {
             await viewModel.loadKites()
+            viewModel.startRefreshOnRentalEnd()
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), actions: {
-            Button("OK") { viewModel.errorMessage = nil }
-        }, message: {
-            Text(viewModel.errorMessage ?? "")
-        })
+        .onDisappear { viewModel.stopRefreshOnRentalEnd() }
+        .alert("Błąd", isPresented: $showErrorAlert, actions: {
+            Button("OK") { showErrorAlert = false }
+        }, message: { Text(errorMessage) })
+        .sheet(isPresented: $showScanner) {
+            QRScannerView(onFound: { kiteId in
+                showScanner = false
+                handleScannedKite(kiteId: kiteId)
+            }, onCancel: {
+                showScanner = false
+            })
+        }
     }
 
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading {
-            VStack {
-                ProgressView("Ładowanie…")
-                    .padding()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VStack { ProgressView("Ładowanie…").padding() }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
@@ -73,8 +81,11 @@ struct KitesurfingListView: View {
                             selectedKite = kite
                             showPopup = kite.state == .free
                         } label: {
-                            KiteCard(kite: kite)
-                                .contentShape(Rectangle())
+                            KiteCard(
+                                kite: kite,
+                                instructor: viewModel.getInstructorForKite(kiteId: kite.id)
+                            )
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .allowsHitTesting(kite.state == .free)
@@ -83,9 +94,29 @@ struct KitesurfingListView: View {
                 .padding()
                 .frame(maxWidth: .infinity)
             }
+            .refreshable { await viewModel.loadKites() }
+        }
+    }
+    
+    // tu na pewno trzeba zmienić co będziemy wyświetlać bo id to takie meh
+    private func handleScannedKite(kiteId: String) {
+        if let kite = viewModel.filteredKites.first(where: { $0.id == kiteId }) {
+            if kite.state == .free {
+                selectedKite = kite
+                showPopup = true
+            } else if kite.state == .used {
+                errorMessage = "Kite \(kiteId) jest zajęty."
+                showErrorAlert = true
+            } else if kite.state == .serviced {
+                errorMessage = "Kite \(kiteId) jest niedostępny."
+            }
+        } else {
+            errorMessage = "Nie znaleziono kite o ID \(kiteId)."
+            showErrorAlert = true
         }
     }
 }
+
 
 // MARK: - HEX COLOR EXTENSION
 extension Color {

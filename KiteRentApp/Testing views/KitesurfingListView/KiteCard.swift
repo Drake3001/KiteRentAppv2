@@ -9,6 +9,7 @@ import SwiftUI
 
 struct KiteCard: View {
     var kite: DBKite
+    var instructor: DBInstructor? = nil
 
     var tintColor: Color {
         switch kite.state {
@@ -37,7 +38,19 @@ struct KiteCard: View {
                     .font(.body)
                     .fontWeight(.medium)
                     .lineLimit(1)
-
+                if kite.state == .used, let instructor = instructor {
+                    Text(instructor.shortName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else if kite.state == .serviced {
+                    Text("Serviced")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                }
+                
                 Spacer(minLength: 0)
             }
             .padding()
