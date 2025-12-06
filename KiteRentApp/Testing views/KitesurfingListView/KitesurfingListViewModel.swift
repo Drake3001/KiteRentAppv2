@@ -10,8 +10,8 @@ final class KitesurfingListViewModel: ObservableObject {
     
     @Published var activeRentals: [String: DBInstructor] = [:]
     
-    private var refreshTimer: Timer?
-    private let refreshInterval: TimeInterval = 5 * 60
+//    private var refreshTimer: Timer?
+//    private let refreshInterval: TimeInterval = 1 * 60
     
     var filteredKites: [DBKite] {
         guard !searchText.isEmpty else { return kites }
@@ -62,24 +62,105 @@ final class KitesurfingListViewModel: ObservableObject {
         }
     }
     
-    func startAutoRefresh() {
-        stopAutoRefresh()
-        
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                await self?.loadKites()
+//    func startAutoRefresh() {
+//        stopAutoRefresh()
+//        
+//        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
+//            Task { @MainActor [weak self] in
+//                await self?.loadKites()
+//            }
+//        }
+//    }
+    
+//    func stopAutoRefresh() {
+//        refreshTimer?.invalidate()
+//        refreshTimer = nil
+//    }
+//    
+//    deinit {
+//        refreshTimer?.invalidate()
+//        refreshTimer = nil
+//    }
+    
+    private var nextRentalTimer: Timer?
+
+    func startRefreshOnRentalEnd() {
+        nextRentalTimer?.invalidate()
+        Task { @MainActor in
+            await scheduleNextRentalRefresh()
+        }
+    }
+
+    func stopRefreshOnRentalEnd() {
+        nextRentalTimer?.invalidate()
+        nextRentalTimer = nil
+    }
+
+    private func scheduleNextRentalRefresh() async {
+        do {
+            let activeRentals = try await RentalManager.shared.getActiveRentals()
+            let now = Date()
+            
+            guard let nextRental = activeRentals.min(by: { $0.endTime < $1.endTime }) else { return }
+            let interval = nextRental.endTime.timeIntervalSince(now)
+            
+            guard interval > 0 else {
+                await loadKites()
+                await scheduleNextRentalRefresh()
+                return
             }
+            
+            nextRentalTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+                Task { @MainActor in
+                    await self?.loadKites()
+                    await self?.scheduleNextRentalRefresh() 
+                }
+            }
+            RunLoop.main.add(nextRentalTimer!, forMode: .common)
+            
+        } catch {
+            print("Błąd przy pobieraniu aktywnych rentali: \(error)")
         }
     }
     
-    func stopAutoRefresh() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
-    }
+//    private func scheduleNextRentalRefresh() async {
+//        do {
+//            let activeRentals = try await RentalManager.shared.getActiveRentals()
+//            let now = Date()
+//            
+//            let upcomingRentals = activeRentals.filter { $0.endTime > now }
+//            guard !upcomingRentals.isEmpty else { return }
+//
+//            let nextEndTime = upcomingRentals.min(by: { $0.endTime < $1.endTime })!.endTime
+//            let interval = nextEndTime.timeIntervalSince(now)
+//            
+//            #if DEBUG
+//            print("Next rental ends at: \(nextEndTime), interval: \(interval)s")
+//            #endif
+//            
+//            guard interval > 0 else {
+//                await loadKites()
+//                await scheduleNextRentalRefresh()
+//                return
+//            }
+//            
+//            nextRentalTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+//                Task { @MainActor in
+//                    await self?.loadKites()
+//                    await self?.scheduleNextRentalRefresh()
+//                }
+//            }
+//            RunLoop.main.add(nextRentalTimer!, forMode: .common)
+//            
+//        } catch {
+//            print("Błąd przy pobieraniu aktywnych rentali: \(error)")
+//        }
+//    }
+
     
     deinit {
-        Task { @MainActor in
-            stopAutoRefresh()
+            nextRentalTimer?.invalidate()
+            nextRentalTimer = nil
         }
-    }
+    
 }

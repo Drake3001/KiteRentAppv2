@@ -12,7 +12,7 @@ import Foundation
 enum AppConstants {
     
     static let defaultWorkStartHour = 6
-    static let defaultWorkEndHour = 22
+    static let defaultWorkEndHour = 23
     static let defaultLessonDurationHours = 2
     static let defaultLessonDurationMinutes = 0
 }
