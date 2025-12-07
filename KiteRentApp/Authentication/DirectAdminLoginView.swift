@@ -10,11 +10,11 @@ import SwiftUI
 
 struct DirectAdminLoginView: View {
     @StateObject private var viewModel = DirectAdminLoginViewModel()
-    @Binding var showSignInView: Bool
+    let onLoginSuccess: () -> Void
+
     
     var body: some View {
         ZStack {
-            // Background Gradient
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color.blue.opacity(0.6),
@@ -47,6 +47,8 @@ struct DirectAdminLoginView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
+                        .textInputAutocapitalization(.never)
+                    
                     
                     // Password field
                     SecureField("***********", text: $viewModel.password)
@@ -54,41 +56,29 @@ struct DirectAdminLoginView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
                         .padding(.horizontal)
+                        .textInputAutocapitalization(.never)
                     
                     HStack(spacing: 20) {
-                        Button(action: {}) {
-                            Text("Cancel")
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.black)
-                                .cornerRadius(10)
-                        }
-                        
                         Button {
                             Task {
                                 do {
                                     try await viewModel.signUp()
-                                    showSignInView = false
-                                    return
+                                    onLoginSuccess()
                                 } catch {
-                                    print("error")
+                                    print("Sign up failed")
                                 }
                                 
                                 do {
                                     try await viewModel.signIn()
-                                    showSignInView = false
-                                    return
+                                    onLoginSuccess()
                                 } catch {
-                                    print("error")
+                                    print("Sign in failed")
                                 }
                             }
                         } label: {
                             Text("Sign In")
-                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.black)
                                 .cornerRadius(10)
                         }
                     }
@@ -109,6 +99,6 @@ struct DirectAdminLoginView: View {
 
 struct DirectAdminLoginView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectAdminLoginView(showSignInView: .constant(false))
+        DirectAdminLoginView(onLoginSuccess: {})
     }
 }

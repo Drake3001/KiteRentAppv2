@@ -9,64 +9,102 @@ struct KitesurfingListView: View {
     @State private var scannedKiteId: String = ""
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    @State private var path = NavigationPath()
+    
+    enum Destination: Hashable {
+        case adminLogin
+        case profile
+        case settings
+    }
 
+    
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 16)
     ]
-
+    
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                HeaderView(onWindTapped: { showScanner = true })
+        NavigationStack(path: $path) {
+            ZStack {
+                VStack(spacing: 0) {
+                    HeaderView(onWindTapped: { showScanner = true },
+                               onLoginTapped: {path.append(Destination.adminLogin)})
                     .offset(y: -20)
-
-                SearchBarView(text: $viewModel.searchText)
-
-                Spacer()
-
-                FilterRowView(
-                    numberOfKites: viewModel.filteredAndOrderedKites.count,
-                    onSortTapped: {viewModel.isSortAscending.toggle()},
-                    isAscending: viewModel.isSortAscending
-                )
-
-                Spacer()
-
-                content
-                    .background(Color(hex: "F7F8FA"))
+                    
+                    
+                    
+                    SearchBarView(text: $viewModel.searchText)
+                    
+                    Spacer()
+                    
+                    FilterRowView(
+                        numberOfKites: viewModel.filteredAndOrderedKites.count,
+                        onSortTapped: {viewModel.isSortAscending.toggle()},
+                        isAscending: viewModel.isSortAscending
+                    )
+                    
+                    Spacer()
+                    
+                    content
+                        .background(Color(hex: "F7F8FA"))
+                }
+                .background(Color.white)
+                
+                if showPopup, let kite = selectedKite {
+                    Color.black.opacity(0.35)
+                        .ignoresSafeArea()
+                        .onTapGesture { withAnimation { showPopup = false } }
+                    
+                    KiteReservationView(
+                        showPopup: $showPopup,
+                        kite: kite,
+                        onReservationCreated: {
+                            Task { await viewModel.loadKites() }
+                        }
+                    )
+                    .transition(.scale)
+                    .zIndex(10)
+                }
             }
-            .background(Color.white)
-
-            if showPopup, let kite = selectedKite {
-                Color.black.opacity(0.35)
-                    .ignoresSafeArea()
-                    .onTapGesture { withAnimation { showPopup = false } }
-
-                KiteReservationView(
-                    showPopup: $showPopup,
-                    kite: kite,
-                    onReservationCreated: {
-                        Task { await viewModel.loadKites() }
-                    }
-                )
-                .transition(.scale)
-                .zIndex(10)
+            .animation(.spring(), value: showPopup)
+            .task {
+                await viewModel.loadKites()
+                viewModel.startRefreshOnRentalEnd()
             }
+            .onDisappear { viewModel.stopRefreshOnRentalEnd() }
+            .alert("Błąd", isPresented: $showErrorAlert, actions: {
+                Button("OK") { showErrorAlert = false }
+            }, message: { Text(errorMessage) })
+            .sheet(isPresented: $showScanner) {
+                scannerSheet()
+            }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .adminLogin:
+                    DirectAdminLoginView(onLoginSuccess: {
+                        path.append(Destination.profile)
+                    })
+
+                case .profile:
+                    ProfileView(
+                        onOpenSettings: {
+                            path.append(Destination.settings)
+                        }
+                    )
+
+                case .settings:
+                    SettingsView(
+                        onLogout: {
+                            path = NavigationPath()  
+                        }
+                    )
+                }
+            }
+
         }
-        .animation(.spring(), value: showPopup)
-        .task {
-            await viewModel.loadKites()
-            viewModel.startRefreshOnRentalEnd()
-        }
-        .onDisappear { viewModel.stopRefreshOnRentalEnd() }
-        .alert("Błąd", isPresented: $showErrorAlert, actions: {
-            Button("OK") { showErrorAlert = false }
-        }, message: { Text(errorMessage) })
-        .sheet(isPresented: $showScanner) {
-            scannerSheet()
-        }
+        
     }
-
+    
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading {
@@ -116,7 +154,7 @@ struct KitesurfingListView: View {
             showErrorAlert = true
         }
     }
-
+    
     @ViewBuilder
     private func scannerSheet() -> some View {
         QRScannerView(onFound: { kiteId in
@@ -149,14 +187,14 @@ extension Color {
     init(hex: String) {
         let scanner = Scanner(string: hex)
         _ = scanner.scanString("#")
-
+        
         var rgb: UInt64 = 0
         scanner.scanHexInt64(&rgb)
-
+        
         let r = Double((rgb >> 16) & 0xFF) / 255
         let g = Double((rgb >> 8) & 0xFF) / 255
         let b = Double(rgb & 0xFF) / 255
-
+        
         self.init(red: r, green: g, blue: b)
     }
 }

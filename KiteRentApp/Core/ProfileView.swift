@@ -25,42 +25,29 @@ final class ProfileViewModel: ObservableObject {
 }
 
 struct ProfileView: View {
-    
     @StateObject private var viewModel = ProfileViewModel()
-    @Binding var showSignInView: Bool
+   
+    let onOpenSettings: () -> Void
     
     var body: some View {
         List {
             if let user = viewModel.user {
                 Text("UserID: \(user.userId)")
             }
-            
         }
-        .task {
-            try? await viewModel.loadCurrentUser()
-        }
-        .navigationTitle("Profile")
+        .task { try? await viewModel.loadCurrentUser() }
+        .navigationTitle("AdminView")
+        .navigationBarBackButtonHidden(true) 
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink {
-                    SettingsView(showSignInView: $showSignInView)
+                Button {
+                    onOpenSettings()
                 } label: {
-                    Image(systemName: "gear")
-                        .font(.headline)
+                    Image(systemName: "gear").font(.headline)
                 }
             }
-            
         }
     }
 }
 
-//#Preview {  
-//    ProfileView()
-//}
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            ProfileView(showSignInView: .constant(false))
-        }
-    }
-}
+
