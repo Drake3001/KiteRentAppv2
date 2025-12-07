@@ -9,6 +9,7 @@ struct QRScannerView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> ScannerViewController {
         let vc = ScannerViewController()
+        vc.modalPresentationStyle = .fullScreen
         vc.completion = { code in
             onFound(code)
         }
@@ -34,22 +35,30 @@ final class ScannerViewController: UIViewController, AVCaptureMetadataOutputObje
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+
+        self.edgesForExtendedLayout = .all
+        self.extendedLayoutIncludesOpaqueBars = true
+
         configureNavigation()
         checkCameraAuthorizationAndSetup()
     }
 
     private func configureNavigation() {
         let close = UIButton(type: .system)
-        close.setTitle("Anuluj", for: .normal)
-        close.setTitleColor(.white, for: .normal)
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold)
+        close.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
+        close.tintColor = .white
+
         close.addTarget(self, action: #selector(closeTapped), for: .touchUpInside)
         close.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(close)
+
         NSLayoutConstraint.activate([
-            close.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            close.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12)
+            close.topAnchor.constraint(equalTo: view.topAnchor, constant: 52),
+            close.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18)
         ])
     }
+
 
     @objc private func closeTapped() {
         stopSession()

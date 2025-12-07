@@ -83,6 +83,7 @@ struct KiteCard: View {
             }
         }
         .frame(maxWidth: .infinity)
+
     }
 }
 

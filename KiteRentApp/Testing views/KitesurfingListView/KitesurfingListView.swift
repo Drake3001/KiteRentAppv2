@@ -75,8 +75,9 @@ struct KitesurfingListView: View {
             .alert("Błąd", isPresented: $showErrorAlert, actions: {
                 Button("OK") { showErrorAlert = false }
             }, message: { Text(errorMessage) })
-            .sheet(isPresented: $showScanner) {
+            .fullScreenCover(isPresented: $showScanner) {
                 scannerSheet()
+                    .ignoresSafeArea()
             }
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {

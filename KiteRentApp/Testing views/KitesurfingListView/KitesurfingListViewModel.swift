@@ -51,7 +51,11 @@ final class KitesurfingListViewModel: ObservableObject {
             
             let fetched = try await
             KiteManager.shared.getAllKites()
-            self.kites = fetched
+            self.kites = fetched.map { kite in
+                var copy = kite
+                copy.id = kite.id
+                return copy
+            }
             
             await loadActiveRentalsWithInstructors()
         } catch {
