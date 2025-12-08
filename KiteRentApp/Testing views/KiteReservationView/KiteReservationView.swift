@@ -7,14 +7,31 @@ struct KiteReservationView: View {
     @State private var selectedInstructor: DBInstructor?
     
     private static let times = KiteReservationViewModel.initTime()
-        
-    @State private var startHour: Int = KiteReservationView.times.startHour
+    private static let startHourValue = KiteReservationView.times.startHour
+    private static let startMinuteValue = KiteReservationView.times.startMinute
+    private let maxHour = startHourValue
+    private let maxMinute = startMinuteValue
+    
+    @State private var startHour: Int = startHourValue
     @State private var startMinute: Int = KiteReservationView.times.startMinute
     @State private var endHour: Int = KiteReservationView.times.endHour
     @State private var endMinute: Int = KiteReservationView.times.endMinute
-
-    let minutes = Array(stride(from: 0, through: 55, by: 5))
-    let hours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
+    
+    let startHours = Array(AppConstants.defaultWorkStartHour ..< startHourValue + 1)
+    //let startMinutes = Array(stride(from: 0, through: 55, by: 15))
+    var startMinutes: [Int] {
+        if startHour < maxHour {
+            return Array(stride(from: 0, through: 55, by:15))
+        } else if startHour == maxHour {
+            return Array(stride(from: 0, through: maxMinute, by: 15))
+        } else {
+            return []
+        }
+    }
+    
+    let endHours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
+    let endMinutes = Array(stride(from: 0, through: 55, by: 15))
+    
     
     var kite: DBKite
     var onReservationCreated: (() -> Void)? = nil
@@ -31,16 +48,16 @@ struct KiteReservationView: View {
             
             TimePickerSection(
                 title: "Godzina rozpoczęcia",
-                hours: hours,
-                minutes: minutes,
+                hours: startHours,
+                minutes: startMinutes,
                 hour: $startHour,
                 minute: $startMinute
             )
             
             TimePickerSection(
                 title: "Godzina zakończenia",
-                hours: hours,
-                minutes: minutes,
+                hours: endHours,
+                minutes: endMinutes,
                 hour: $endHour,
                 minute: $endMinute
             )

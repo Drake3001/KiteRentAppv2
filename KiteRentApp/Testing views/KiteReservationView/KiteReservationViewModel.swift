@@ -100,30 +100,15 @@ extension KiteReservationViewModel {
         let minute = calendar.component(.minute, from: now)
         
         let prevQuarter = (minute / 15) * 15
-        let nextQuarter = prevQuarter + 15
-        let diffToPrev = minute - prevQuarter
-        let diffToNext = nextQuarter - minute
         
-        let startMinute: Int
-        if diffToNext <= 5 {
-            // If ≤5 min to next quarter, round up
-            startMinute = nextQuarter
-        } else if diffToPrev < 10 {
-            // If <10 min to previous quarter, round down
-            startMinute = prevQuarter
-        } else {
-            // Otherwise, round to nearest 15
-            startMinute = minute % 15 < 8 ? prevQuarter : nextQuarter
-        }
         
-        // Handle minute overflow
-        let startHour = startMinute == 60 ? hour + 1 : hour
-        let normalizedStartMinute = startMinute == 60 ? 0 : startMinute
-        
+        let startMinute = prevQuarter
+        let startHour = hour
+                
         // --- 2. Build start date and clamp to work hours ---
         var startComps = calendar.dateComponents([.year, .month, .day], from: now)
         startComps.hour = startHour
-        startComps.minute = normalizedStartMinute
+        startComps.minute = startMinute
         var startDate = calendar.date(from: startComps)!
         startDate = clampToWorkHours(startDate)
         
