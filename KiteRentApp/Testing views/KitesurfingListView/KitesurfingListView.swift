@@ -45,7 +45,7 @@ struct KitesurfingListView: View {
                     Spacer()
                     
                     content
-                        .background(Color(hex: "F7F8FA"))
+                        .background(Color("LightGrayBackgroundColor"))
                 }
                 .background(Color.white)
                 
@@ -178,25 +178,9 @@ private struct KiteGridItem: View {
     }
 }
 
-// MARK: - HEX COLOR EXTENSION
-extension Color {
-    init(hex: String) {
-        let scanner = Scanner(string: hex)
-                _ = scanner.scanString("#")
-                
-                var rgb: UInt64 = 0
-                scanner.scanHexInt64(&rgb)
-                
-                let r = Double((rgb >> 16) & 0xFF) / 255
-                let g = Double((rgb >> 8) & 0xFF) / 255
-                let b = Double(rgb & 0xFF) / 255
-                
-                self.init(red: r, green: g, blue: b)
-            }
-        }
 
-        struct KitesurfingListView_Previews: PreviewProvider {
-            static var previews: some View {
-                KitesurfingListView()
-            }
-        }
+struct KitesurfingListView_Previews: PreviewProvider {
+    static var previews: some View {
+        KitesurfingListView()
+    }
+}

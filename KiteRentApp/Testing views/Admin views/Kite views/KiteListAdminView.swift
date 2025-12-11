@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct KiteListAdminView: View {
-    @StateObject private var viewModel = KiteListAdminViewModel()
+    @StateObject private var viewModel = KitesurfingListViewModel()
     
     var body: some View {
         SearchBarView(text: $viewModel.searchText)
@@ -26,15 +26,21 @@ struct KiteListAdminView: View {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(viewModel.filteredAndOrderedKites) { kite in
-                    KiteAdmin(kite: kite)
+                    KiteAdminView(kite: kite)
                 }
             }
             .padding()
             .frame(maxWidth: .infinity)
         }
-        .task{
+        .background(Color("LightGrayBackgroundColor"))
+        .task {
             await viewModel.loadKites()
-            viewModel.startRefreshOnRentalEnd()
+            await viewModel.startRefreshOnRentalEnd()
+        }
+        .onDisappear {
+            Task {
+                await viewModel.stopRefreshOnRentalEnd()
+            }
         }
         .refreshable { await viewModel.loadKites() }
     }

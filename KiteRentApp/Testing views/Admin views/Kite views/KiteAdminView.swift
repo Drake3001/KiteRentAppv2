@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct KiteAdmin: View {
+struct KiteAdminView: View {
     var kite: DBKite
     
     var body: some View {
@@ -67,7 +67,7 @@ struct KiteAdmin: View {
 
 struct KiteAdmin_Previews: PreviewProvider {
     static var previews: some View {
-        KiteAdmin(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+        KiteAdminView(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
             .previewLayout(.sizeThatFits)
             .padding()
     }
