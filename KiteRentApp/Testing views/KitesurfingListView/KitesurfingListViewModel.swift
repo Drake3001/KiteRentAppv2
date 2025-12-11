@@ -35,9 +35,13 @@ final class KitesurfingListViewModel: ObservableObject {
         }
         let sizeSorted: [DBKite]
         if isSortAscending {
-            sizeSorted = base.sorted { Int($0.size)! < Int($1.size)! }
+            sizeSorted = base.sorted { (Int($0.size) ?? 0) < (Int($1.size) ?? 0) }
+//            sizeSorted = base.sorted { Int($0.size)! < Int($1.size)! }
+
         } else {
-            sizeSorted = base.sorted { Int($0.size)! > Int($1.size)! }
+            sizeSorted = base.sorted { (Int($0.size) ?? 0) > (Int($1.size) ?? 0) }
+//            sizeSorted = base.sorted { Int($0.size)!  > Int($1.size)! }
+
         }
 
         return sizeSorted.sorted { $0.state < $1.state }
@@ -114,7 +118,9 @@ final class KitesurfingListViewModel: ObservableObject {
     }
 
     deinit {
-        Task { await stopRefreshOnRentalEnd() }
+//        Task { await stopRefreshOnRentalEnd() }
+        rentalRefreshTask?.cancel()
+
     }
 }
 

@@ -6,7 +6,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         return DBKite(id: id, name: name, imageName: "", state: state, brand: "", kiteModel: "", size: size, dateCreated: nil)
     }
 
-    func testFilteredBySearchText() {
+    @MainActor func testFilteredBySearchText() {
         let vm = KitesurfingListViewModel()
         vm.kites = [
             makeKite(name: "Alpha One", size: "10", state: .free),
@@ -20,7 +20,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         XCTAssertEqual(results.first?.name, "Alpha One")
     }
 
-    func testSortBySizeWhenSameState() {
+    @MainActor func testSortBySizeWhenSameState() {
         let vm = KitesurfingListViewModel()
         vm.kites = [
             makeKite(name: "K1", size: "9", state: .free),
@@ -39,7 +39,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         XCTAssertEqual(sizesAsc, [9, 10, 12])
     }
 
-    func testGetInstructorForKite() {
+    @MainActor func testGetInstructorForKite() {
         let vm = KitesurfingListViewModel()
         let instructor = DBInstructor(instructorId: "inst1", name: "John", surname: "D", phoneNumber: nil, dateCreated: nil, state: .active)
         vm.activeRentals = ["kite123": instructor]
