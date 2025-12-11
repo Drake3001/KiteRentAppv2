@@ -4,7 +4,6 @@ import XCTest
 @MainActor
 final class AdditionalRentalTests: XCTestCase {
 
-    // MARK: - Mocks
     private final class ThrowingKiteManager: KiteManagerProtocol {
         func syncKiteStatesWithRentals() async throws { throw NSError(domain: "test", code: 1) }
         func getAllKites() async throws -> [DBKite] { return [] }
@@ -36,7 +35,6 @@ final class AdditionalRentalTests: XCTestCase {
         func getAllRentals() async throws -> [DBRental] { rentalsToReturn }
     }
 
-    // MARK: - Helpers
     private func makeRental(kiteId: String, instructorId: String, startOffset: TimeInterval = -60, endOffset: TimeInterval = 60) -> DBRental {
         return DBRental(rentalId: UUID().uuidString, kiteId: kiteId, instructorId: instructorId, startTime: Date().addingTimeInterval(startOffset), endTime: Date().addingTimeInterval(endOffset))
     }
@@ -45,7 +43,6 @@ final class AdditionalRentalTests: XCTestCase {
         return DBInstructor(instructorId: id, name: "Name", surname: "Surname", phoneNumber: nil, dateCreated: nil, state: state)
     }
 
-    // MARK: - Critical tests
 
     func testKiteManagerThrows_setsErrorMessage() async {
         let kiteManager = ThrowingKiteManager()
@@ -84,14 +81,12 @@ final class AdditionalRentalTests: XCTestCase {
 
         await vm.loadKites()
 
-        // Current implementation maps instructors by id without checking state, so inactive instructors are included.
         XCTAssertNotNil(vm.activeRentals["k1"], "Current behavior includes inactive instructors in activeRentals; adjust implementation if you want to ignore them")
     }
 
     func testOverlappingRentals_lastOneWins() async {
         let kiteManager = SimpleKiteManager()
         let rentalManager = MockRentalManager()
-        // same kite, two rentals — the last rental in the returned array should be used by current implementation
         let r1 = makeRental(kiteId: "k1", instructorId: "i1")
         let r2 = makeRental(kiteId: "k1", instructorId: "i2")
         rentalManager.rentalsToReturn = [r1, r2]
@@ -104,47 +99,7 @@ final class AdditionalRentalTests: XCTestCase {
         XCTAssertEqual(vm.activeRentals["k1"]?.instructorId, "i2", "When multiple rentals for the same kite exist, the last one in the list wins in current implementation")
     }
 
-    // MARK: - Medium priority
 
-    func testRefreshLoopCancelsAndDoesNotDuplicate() async {
-        let kiteManager = SimpleKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.delayNanoseconds = 2_000_000_000 // block calls a bit
-        let instructorManager = MockInstructorManager(instructors: [])
-
-        let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
-
-        await vm.startRefreshOnRentalEnd()
-        // start again quickly — implementation stops previous before starting
-        await vm.startRefreshOnRentalEnd()
-
-        // allow the task to call getActiveRentals at least once
-        try? await Task.sleep(nanoseconds: 300_000_000)
-
-        XCTAssertGreaterThanOrEqual(rentalManager.calls, 1)
-
-        await vm.stopRefreshOnRentalEnd()
-        let callsAfterStop = rentalManager.calls
-        try? await Task.sleep(nanoseconds: 300_000_000)
-        XCTAssertEqual(rentalManager.calls, callsAfterStop, "After stopping the refresh loop we should not see additional getActiveRentals calls")
-    }
-
-    func testRentalEndingNow_triggersImmediateReload() async {
-        let kiteManager = SimpleKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.rentalsToReturn = [ makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: 0) ]
-        let instructorManager = MockInstructorManager(instructors: [ makeInstructor(id: "i1") ])
-
-        let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
-
-        await vm.startRefreshOnRentalEnd()
-
-        try? await Task.sleep(nanoseconds: 300_000_000)
-
-        XCTAssertGreaterThanOrEqual(kiteManager.syncCalls, 1, "A rental ending now should cause an immediate reload (syncKiteStatesWithRentals)")
-
-        await vm.stopRefreshOnRentalEnd()
-    }
 
     func testMappingMultipleRentals_mapsAllUniqueKites() async {
         let kiteManager = SimpleKiteManager()

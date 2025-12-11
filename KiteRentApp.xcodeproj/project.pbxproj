@@ -1,648 +1,649 @@
+
 // !$*UTF8*$!
 {
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 77;
-	objects = {
+    archiveVersion = 1;
+    classes = {
+    };
+    objectVersion = 77;
+    objects = {
 
 /* Begin PBXBuildFile section */
-		441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */; };
-		441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD202ED0F3E900123048 /* FirebaseAuth */; };
-		441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD382ED2606400123048 /* FirebaseFirestore */; };
+        441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */; };
+        441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD202ED0F3E900123048 /* FirebaseAuth */; };
+        441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 441ADD382ED2606400123048 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		DCAC79152EEB57EA00F69045 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 441ADCFC2ED0E39800123048 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 441ADD032ED0E39800123048;
-			remoteInfo = KiteRentApp;
-		};
-		DCAC792E2EEB57FF00F69045 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 441ADCFC2ED0E39800123048 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 441ADD032ED0E39800123048;
-			remoteInfo = KiteRentApp;
-		};
+        44F816852EEB4FA900522A1A /* PBXContainerItemProxy */ = {
+            isa = PBXContainerItemProxy;
+            containerPortal = 441ADCFC2ED0E39800123048 /* Project object */;
+            proxyType = 1;
+            remoteGlobalIDString = 441ADD032ED0E39800123048;
+            remoteInfo = KiteRentApp;
+        };
+        44F816942EEB4FC400522A1A /* PBXContainerItemProxy */ = {
+            isa = PBXContainerItemProxy;
+            containerPortal = 441ADCFC2ED0E39800123048 /* Project object */;
+            proxyType = 1;
+            remoteGlobalIDString = 441ADD032ED0E39800123048;
+            remoteInfo = KiteRentApp;
+        };
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		441ADD042ED0E39800123048 /* KiteRentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiteRentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DCAC79112EEB57EA00F69045 /* KiteRentAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiteRentAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DCAC79282EEB57FF00F69045 /* KiteRentAppTestsV2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiteRentAppTestsV2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+        441ADD042ED0E39800123048 /* KiteRentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiteRentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+        44F816812EEB4FA900522A1A /* KiteRentAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiteRentAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+        44F8168E2EEB4FC400522A1A /* KiteRentAppTestsv2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiteRentAppTestsv2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 441ADD032ED0E39800123048 /* KiteRentApp */;
-		};
+        44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */ = {
+            isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+            membershipExceptions = (
+                Info.plist,
+            );
+            target = 441ADD032ED0E39800123048 /* KiteRentApp */;
+        };
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		441ADD062ED0E39800123048 /* KiteRentApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */,
-			);
-			path = KiteRentApp;
-			sourceTree = "<group>";
-		};
-		DCAC79122EEB57EA00F69045 /* KiteRentAppTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KiteRentAppTests;
-			sourceTree = "<group>";
-		};
-		DCAC79292EEB57FF00F69045 /* KiteRentAppTestsV2 */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = KiteRentAppTestsV2;
-			sourceTree = "<group>";
-		};
+        441ADD062ED0E39800123048 /* KiteRentApp */ = {
+            isa = PBXFileSystemSynchronizedRootGroup;
+            exceptions = (
+                44CC78362ED3B92E000CA84E /* Exceptions for "KiteRentApp" folder in "KiteRentApp" target */,
+            );
+            path = KiteRentApp;
+            sourceTree = "<group>";
+        };
+        44F816822EEB4FA900522A1A /* KiteRentAppTests */ = {
+            isa = PBXFileSystemSynchronizedRootGroup;
+            path = KiteRentAppTests;
+            sourceTree = "<group>";
+        };
+        44F8168F2EEB4FC400522A1A /* KiteRentAppTestsv2 */ = {
+            isa = PBXFileSystemSynchronizedRootGroup;
+            path = KiteRentAppTestsv2;
+            sourceTree = "<group>";
+        };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		441ADD012ED0E39800123048 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */,
-				441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */,
-				441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC790E2EEB57EA00F69045 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC79252EEB57FF00F69045 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+        441ADD012ED0E39800123048 /* Frameworks */ = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                441ADD1E2ED0EA5B00123048 /* FirebaseAnalytics in Frameworks */,
+                441ADD212ED0F3E900123048 /* FirebaseAuth in Frameworks */,
+                441ADD392ED2606400123048 /* FirebaseFirestore in Frameworks */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8167E2EEB4FA900522A1A /* Frameworks */ = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8168B2EEB4FC400522A1A /* Frameworks */ = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		441ADCFB2ED0E39800123048 = {
-			isa = PBXGroup;
-			children = (
-				441ADD062ED0E39800123048 /* KiteRentApp */,
-				DCAC79122EEB57EA00F69045 /* KiteRentAppTests */,
-				DCAC79292EEB57FF00F69045 /* KiteRentAppTestsV2 */,
-				441ADD1F2ED0F3E900123048 /* Frameworks */,
-				441ADD052ED0E39800123048 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		441ADD052ED0E39800123048 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				441ADD042ED0E39800123048 /* KiteRentApp.app */,
-				DCAC79112EEB57EA00F69045 /* KiteRentAppTests.xctest */,
-				DCAC79282EEB57FF00F69045 /* KiteRentAppTestsV2.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		441ADD1F2ED0F3E900123048 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
+        441ADCFB2ED0E39800123048 = {
+            isa = PBXGroup;
+            children = (
+                441ADD062ED0E39800123048 /* KiteRentApp */,
+                44F816822EEB4FA900522A1A /* KiteRentAppTests */,
+                44F8168F2EEB4FC400522A1A /* KiteRentAppTestsv2 */,
+                441ADD1F2ED0F3E900123048 /* Frameworks */,
+                441ADD052ED0E39800123048 /* Products */,
+            );
+            sourceTree = "<group>";
+        };
+        441ADD052ED0E39800123048 /* Products */ = {
+            isa = PBXGroup;
+            children = (
+                441ADD042ED0E39800123048 /* KiteRentApp.app */,
+                44F816812EEB4FA900522A1A /* KiteRentAppTests.xctest */,
+                44F8168E2EEB4FC400522A1A /* KiteRentAppTestsv2.xctest */,
+            );
+            name = Products;
+            sourceTree = "<group>";
+        };
+        441ADD1F2ED0F3E900123048 /* Frameworks */ = {
+            isa = PBXGroup;
+            children = (
+            );
+            name = Frameworks;
+            sourceTree = "<group>";
+        };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		441ADD032ED0E39800123048 /* KiteRentApp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 441ADD0F2ED0E39B00123048 /* Build configuration list for PBXNativeTarget "KiteRentApp" */;
-			buildPhases = (
-				441ADD002ED0E39800123048 /* Sources */,
-				441ADD012ED0E39800123048 /* Frameworks */,
-				441ADD022ED0E39800123048 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				441ADD062ED0E39800123048 /* KiteRentApp */,
-			);
-			name = KiteRentApp;
-			packageProductDependencies = (
-				441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */,
-				441ADD202ED0F3E900123048 /* FirebaseAuth */,
-				441ADD382ED2606400123048 /* FirebaseFirestore */,
-			);
-			productName = KiteRentApp;
-			productReference = 441ADD042ED0E39800123048 /* KiteRentApp.app */;
-			productType = "com.apple.product-type.application";
-		};
-		DCAC79102EEB57EA00F69045 /* KiteRentAppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DCAC79172EEB57EA00F69045 /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */;
-			buildPhases = (
-				DCAC790D2EEB57EA00F69045 /* Sources */,
-				DCAC790E2EEB57EA00F69045 /* Frameworks */,
-				DCAC790F2EEB57EA00F69045 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DCAC79162EEB57EA00F69045 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				DCAC79122EEB57EA00F69045 /* KiteRentAppTests */,
-			);
-			name = KiteRentAppTests;
-			packageProductDependencies = (
-			);
-			productName = KiteRentAppTests;
-			productReference = DCAC79112EEB57EA00F69045 /* KiteRentAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		DCAC79272EEB57FF00F69045 /* KiteRentAppTestsV2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DCAC79302EEB57FF00F69045 /* Build configuration list for PBXNativeTarget "KiteRentAppTestsV2" */;
-			buildPhases = (
-				DCAC79242EEB57FF00F69045 /* Sources */,
-				DCAC79252EEB57FF00F69045 /* Frameworks */,
-				DCAC79262EEB57FF00F69045 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DCAC792F2EEB57FF00F69045 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				DCAC79292EEB57FF00F69045 /* KiteRentAppTestsV2 */,
-			);
-			name = KiteRentAppTestsV2;
-			packageProductDependencies = (
-			);
-			productName = KiteRentAppTestsV2;
-			productReference = DCAC79282EEB57FF00F69045 /* KiteRentAppTestsV2.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
+        441ADD032ED0E39800123048 /* KiteRentApp */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 441ADD0F2ED0E39B00123048 /* Build configuration list for PBXNativeTarget "KiteRentApp" */;
+            buildPhases = (
+                441ADD002ED0E39800123048 /* Sources */,
+                441ADD012ED0E39800123048 /* Frameworks */,
+                441ADD022ED0E39800123048 /* Resources */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+            );
+            fileSystemSynchronizedGroups = (
+                441ADD062ED0E39800123048 /* KiteRentApp */,
+            );
+            name = KiteRentApp;
+            packageProductDependencies = (
+                441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */,
+                441ADD202ED0F3E900123048 /* FirebaseAuth */,
+                441ADD382ED2606400123048 /* FirebaseFirestore */,
+            );
+            productName = KiteRentApp;
+            productReference = 441ADD042ED0E39800123048 /* KiteRentApp.app */;
+            productType = "com.apple.product-type.application";
+        };
+        44F816802EEB4FA900522A1A /* KiteRentAppTests */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 44F816872EEB4FA900522A1A /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */;
+            buildPhases = (
+                44F8167D2EEB4FA900522A1A /* Sources */,
+                44F8167E2EEB4FA900522A1A /* Frameworks */,
+                44F8167F2EEB4FA900522A1A /* Resources */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+                44F816862EEB4FA900522A1A /* PBXTargetDependency */,
+            );
+            fileSystemSynchronizedGroups = (
+                44F816822EEB4FA900522A1A /* KiteRentAppTests */,
+            );
+            name = KiteRentAppTests;
+            packageProductDependencies = (
+            );
+            productName = KiteRentAppTests;
+            productReference = 44F816812EEB4FA900522A1A /* KiteRentAppTests.xctest */;
+            productType = "com.apple.product-type.bundle.unit-test";
+        };
+        44F8168D2EEB4FC400522A1A /* KiteRentAppTestsv2 */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 44F816962EEB4FC400522A1A /* Build configuration list for PBXNativeTarget "KiteRentAppTestsv2" */;
+            buildPhases = (
+                44F8168A2EEB4FC400522A1A /* Sources */,
+                44F8168B2EEB4FC400522A1A /* Frameworks */,
+                44F8168C2EEB4FC400522A1A /* Resources */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+                44F816952EEB4FC400522A1A /* PBXTargetDependency */,
+            );
+            fileSystemSynchronizedGroups = (
+                44F8168F2EEB4FC400522A1A /* KiteRentAppTestsv2 */,
+            );
+            name = KiteRentAppTestsv2;
+            packageProductDependencies = (
+            );
+            productName = KiteRentAppTestsv2;
+            productReference = 44F8168E2EEB4FC400522A1A /* KiteRentAppTestsv2.xctest */;
+            productType = "com.apple.product-type.bundle.ui-testing";
+        };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		441ADCFC2ED0E39800123048 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2610;
-				LastUpgradeCheck = 2610;
-				TargetAttributes = {
-					441ADD032ED0E39800123048 = {
-						CreatedOnToolsVersion = 26.0.1;
-					};
-					DCAC79102EEB57EA00F69045 = {
-						CreatedOnToolsVersion = 26.1;
-						TestTargetID = 441ADD032ED0E39800123048;
-					};
-					DCAC79272EEB57FF00F69045 = {
-						CreatedOnToolsVersion = 26.1;
-						TestTargetID = 441ADD032ED0E39800123048;
-					};
-				};
-			};
-			buildConfigurationList = 441ADCFF2ED0E39800123048 /* Build configuration list for PBXProject "KiteRentApp" */;
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
-			);
-			mainGroup = 441ADCFB2ED0E39800123048;
-			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = 441ADD052ED0E39800123048 /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				441ADD032ED0E39800123048 /* KiteRentApp */,
-				DCAC79102EEB57EA00F69045 /* KiteRentAppTests */,
-				DCAC79272EEB57FF00F69045 /* KiteRentAppTestsV2 */,
-			);
-		};
+        441ADCFC2ED0E39800123048 /* Project object */ = {
+            isa = PBXProject;
+            attributes = {
+                BuildIndependentTargetsInParallel = 1;
+                LastSwiftUpdateCheck = 2610;
+                LastUpgradeCheck = 2610;
+                TargetAttributes = {
+                    441ADD032ED0E39800123048 = {
+                        CreatedOnToolsVersion = 26.0.1;
+                    };
+                    44F816802EEB4FA900522A1A = {
+                        CreatedOnToolsVersion = 26.0.1;
+                        TestTargetID = 441ADD032ED0E39800123048;
+                    };
+                    44F8168D2EEB4FC400522A1A = {
+                        CreatedOnToolsVersion = 26.0.1;
+                        TestTargetID = 441ADD032ED0E39800123048;
+                    };
+                };
+            };
+            buildConfigurationList = 441ADCFF2ED0E39800123048 /* Build configuration list for PBXProject "KiteRentApp" */;
+            developmentRegion = en;
+            hasScannedForEncodings = 0;
+            knownRegions = (
+                en,
+                Base,
+            );
+            mainGroup = 441ADCFB2ED0E39800123048;
+            minimizedProjectReferenceProxies = 1;
+            packageReferences = (
+                441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+            );
+            preferredProjectObjectVersion = 77;
+            productRefGroup = 441ADD052ED0E39800123048 /* Products */;
+            projectDirPath = "";
+            projectRoot = "";
+            targets = (
+                441ADD032ED0E39800123048 /* KiteRentApp */,
+                44F816802EEB4FA900522A1A /* KiteRentAppTests */,
+                44F8168D2EEB4FC400522A1A /* KiteRentAppTestsv2 */,
+            );
+        };
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		441ADD022ED0E39800123048 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC790F2EEB57EA00F69045 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC79262EEB57FF00F69045 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+        441ADD022ED0E39800123048 /* Resources */ = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8167F2EEB4FA900522A1A /* Resources */ = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8168C2EEB4FC400522A1A /* Resources */ = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		441ADD002ED0E39800123048 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC790D2EEB57EA00F69045 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DCAC79242EEB57FF00F69045 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+        441ADD002ED0E39800123048 /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8167D2EEB4FA900522A1A /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+        44F8168A2EEB4FC400522A1A /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		DCAC79162EEB57EA00F69045 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 441ADD032ED0E39800123048 /* KiteRentApp */;
-			targetProxy = DCAC79152EEB57EA00F69045 /* PBXContainerItemProxy */;
-		};
-		DCAC792F2EEB57FF00F69045 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 441ADD032ED0E39800123048 /* KiteRentApp */;
-			targetProxy = DCAC792E2EEB57FF00F69045 /* PBXContainerItemProxy */;
-		};
+        44F816862EEB4FA900522A1A /* PBXTargetDependency */ = {
+            isa = PBXTargetDependency;
+            target = 441ADD032ED0E39800123048 /* KiteRentApp */;
+            targetProxy = 44F816852EEB4FA900522A1A /* PBXContainerItemProxy */;
+        };
+        44F816952EEB4FC400522A1A /* PBXTargetDependency */ = {
+            isa = PBXTargetDependency;
+            target = 441ADD032ED0E39800123048 /* KiteRentApp */;
+            targetProxy = 44F816942EEB4FC400522A1A /* PBXContainerItemProxy */;
+        };
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		441ADD0D2ED0E39B00123048 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 7Q9QC54784;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
-		};
-		441ADD0E2ED0E39B00123048 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 7Q9QC54784;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		441ADD102ED0E39B00123048 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = KiteRentApp/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		441ADD112ED0E39B00123048 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = KiteRentApp/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		DCAC79182EEB57EA00F69045 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vilstig.com.KiteRentAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
-			};
-			name = Debug;
-		};
-		DCAC79192EEB57EA00F69045 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vilstig.com.KiteRentAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
-			};
-			name = Release;
-		};
-		DCAC79312EEB57FF00F69045 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vilstig.com.KiteRentAppTestsV2;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = KiteRentApp;
-			};
-			name = Debug;
-		};
-		DCAC79322EEB57FF00F69045 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vilstig.com.KiteRentAppTestsV2;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = KiteRentApp;
-			};
-			name = Release;
-		};
+        441ADD0D2ED0E39B00123048 /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+                CLANG_ANALYZER_NONNULL = YES;
+                CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+                CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+                CLANG_ENABLE_MODULES = YES;
+                CLANG_ENABLE_OBJC_ARC = YES;
+                CLANG_ENABLE_OBJC_WEAK = YES;
+                CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+                CLANG_WARN_BOOL_CONVERSION = YES;
+                CLANG_WARN_COMMA = YES;
+                CLANG_WARN_CONSTANT_CONVERSION = YES;
+                CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+                CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+                CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+                CLANG_WARN_EMPTY_BODY = YES;
+                CLANG_WARN_ENUM_CONVERSION = YES;
+                CLANG_WARN_INFINITE_RECURSION = YES;
+                CLANG_WARN_INT_CONVERSION = YES;
+                CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+                CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+                CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+                CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+                CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+                CLANG_WARN_STRICT_PROTOTYPES = YES;
+                CLANG_WARN_SUSPICIOUS_MOVE = YES;
+                CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+                CLANG_WARN_UNREACHABLE_CODE = YES;
+                CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+                COPY_PHASE_STRIP = NO;
+                DEBUG_INFORMATION_FORMAT = dwarf;
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                ENABLE_STRICT_OBJC_MSGSEND = YES;
+                ENABLE_TESTABILITY = YES;
+                ENABLE_USER_SCRIPT_SANDBOXING = YES;
+                GCC_C_LANGUAGE_STANDARD = gnu17;
+                GCC_DYNAMIC_NO_PIC = NO;
+                GCC_NO_COMMON_BLOCKS = YES;
+                GCC_OPTIMIZATION_LEVEL = 0;
+                GCC_PREPROCESSOR_DEFINITIONS = (
+                    "DEBUG=1",
+                    "$(inherited)",
+                );
+                GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+                GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+                GCC_WARN_UNDECLARED_SELECTOR = YES;
+                GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+                GCC_WARN_UNUSED_FUNCTION = YES;
+                GCC_WARN_UNUSED_VARIABLE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+                LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+                MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+                MTL_FAST_MATH = YES;
+                ONLY_ACTIVE_ARCH = YES;
+                SDKROOT = iphoneos;
+                STRING_CATALOG_GENERATE_SYMBOLS = YES;
+                SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+                SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+            };
+            name = Debug;
+        };
+        441ADD0E2ED0E39B00123048 /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+                CLANG_ANALYZER_NONNULL = YES;
+                CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+                CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+                CLANG_ENABLE_MODULES = YES;
+                CLANG_ENABLE_OBJC_ARC = YES;
+                CLANG_ENABLE_OBJC_WEAK = YES;
+                CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+                CLANG_WARN_BOOL_CONVERSION = YES;
+                CLANG_WARN_COMMA = YES;
+                CLANG_WARN_CONSTANT_CONVERSION = YES;
+                CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+                CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+                CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+                CLANG_WARN_EMPTY_BODY = YES;
+                CLANG_WARN_ENUM_CONVERSION = YES;
+                CLANG_WARN_INFINITE_RECURSION = YES;
+                CLANG_WARN_INT_CONVERSION = YES;
+                CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+                CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+                CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+                CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+                CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+                CLANG_WARN_STRICT_PROTOTYPES = YES;
+                CLANG_WARN_SUSPICIOUS_MOVE = YES;
+                CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+                CLANG_WARN_UNREACHABLE_CODE = YES;
+                CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+                COPY_PHASE_STRIP = NO;
+                DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                ENABLE_NS_ASSERTIONS = NO;
+                ENABLE_STRICT_OBJC_MSGSEND = YES;
+                ENABLE_USER_SCRIPT_SANDBOXING = YES;
+                GCC_C_LANGUAGE_STANDARD = gnu17;
+                GCC_NO_COMMON_BLOCKS = YES;
+                GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+                GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+                GCC_WARN_UNDECLARED_SELECTOR = YES;
+                GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+                GCC_WARN_UNUSED_FUNCTION = YES;
+                GCC_WARN_UNUSED_VARIABLE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+                LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+                MTL_ENABLE_DEBUG_INFO = NO;
+                MTL_FAST_MATH = YES;
+                SDKROOT = iphoneos;
+                STRING_CATALOG_GENERATE_SYMBOLS = YES;
+                SWIFT_COMPILATION_MODE = wholemodule;
+                VALIDATE_PRODUCT = YES;
+            };
+            name = Release;
+        };
+        441ADD102ED0E39B00123048 /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                ENABLE_PREVIEWS = YES;
+                GENERATE_INFOPLIST_FILE = YES;
+                INFOPLIST_FILE = KiteRentApp/Info.plist;
+                INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+                INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+                INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                LD_RUNPATH_SEARCH_PATHS = (
+                    "$(inherited)",
+                    "@executable_path/Frameworks",
+                );
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentApp;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = YES;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+            };
+            name = Debug;
+        };
+        441ADD112ED0E39B00123048 /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                ENABLE_PREVIEWS = YES;
+                GENERATE_INFOPLIST_FILE = YES;
+                INFOPLIST_FILE = KiteRentApp/Info.plist;
+                INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+                INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+                INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+                LD_RUNPATH_SEARCH_PATHS = (
+                    "$(inherited)",
+                    "@executable_path/Frameworks",
+                );
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentApp;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = YES;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+            };
+            name = Release;
+        };
+        44F816882EEB4FA900522A1A /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                BUNDLE_LOADER = "$(TEST_HOST)";
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                GENERATE_INFOPLIST_FILE = YES;
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = NO;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_EMIT_LOC_STRINGS = NO;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
+            };
+            name = Debug;
+        };
+        44F816892EEB4FA900522A1A /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                BUNDLE_LOADER = "$(TEST_HOST)";
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                GENERATE_INFOPLIST_FILE = YES;
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = NO;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_EMIT_LOC_STRINGS = NO;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
+            };
+            name = Release;
+        };
+        44F816972EEB4FC400522A1A /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                GENERATE_INFOPLIST_FILE = YES;
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTestsv2;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = NO;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_EMIT_LOC_STRINGS = NO;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_TARGET_NAME = KiteRentApp;
+            };
+            name = Debug;
+        };
+        44F816982EEB4FC400522A1A /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = 7Q9QC54784;
+                GENERATE_INFOPLIST_FILE = YES;
+                MARKETING_VERSION = 1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTestsv2;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                STRING_CATALOG_GENERATE_SYMBOLS = NO;
+                SWIFT_APPROACHABLE_CONCURRENCY = YES;
+                SWIFT_EMIT_LOC_STRINGS = NO;
+                SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_TARGET_NAME = KiteRentApp;
+            };
+            name = Release;
+        };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		441ADCFF2ED0E39800123048 /* Build configuration list for PBXProject "KiteRentApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				441ADD0D2ED0E39B00123048 /* Debug */,
-				441ADD0E2ED0E39B00123048 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		441ADD0F2ED0E39B00123048 /* Build configuration list for PBXNativeTarget "KiteRentApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				441ADD102ED0E39B00123048 /* Debug */,
-				441ADD112ED0E39B00123048 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DCAC79172EEB57EA00F69045 /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DCAC79182EEB57EA00F69045 /* Debug */,
-				DCAC79192EEB57EA00F69045 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DCAC79302EEB57FF00F69045 /* Build configuration list for PBXNativeTarget "KiteRentAppTestsV2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DCAC79312EEB57FF00F69045 /* Debug */,
-				DCAC79322EEB57FF00F69045 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
+        441ADCFF2ED0E39800123048 /* Build configuration list for PBXProject "KiteRentApp" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                441ADD0D2ED0E39B00123048 /* Debug */,
+                441ADD0E2ED0E39B00123048 /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        441ADD0F2ED0E39B00123048 /* Build configuration list for PBXNativeTarget "KiteRentApp" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                441ADD102ED0E39B00123048 /* Debug */,
+                441ADD112ED0E39B00123048 /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        44F816872EEB4FA900522A1A /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                44F816882EEB4FA900522A1A /* Debug */,
+                44F816892EEB4FA900522A1A /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        44F816962EEB4FC400522A1A /* Build configuration list for PBXNativeTarget "KiteRentAppTestsv2" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                44F816972EEB4FC400522A1A /* Debug */,
+                44F816982EEB4FC400522A1A /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.6.0;
-			};
-		};
+        441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+            isa = XCRemoteSwiftPackageReference;
+            repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+            requirement = {
+                kind = upToNextMajorVersion;
+                minimumVersion = 12.6.0;
+            };
+        };
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		441ADD202ED0F3E900123048 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		441ADD382ED2606400123048 /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
-		};
+        441ADD1D2ED0EA5B00123048 /* FirebaseAnalytics */ = {
+            isa = XCSwiftPackageProductDependency;
+            package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+            productName = FirebaseAnalytics;
+        };
+        441ADD202ED0F3E900123048 /* FirebaseAuth */ = {
+            isa = XCSwiftPackageProductDependency;
+            package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+            productName = FirebaseAuth;
+        };
+        441ADD382ED2606400123048 /* FirebaseFirestore */ = {
+            isa = XCSwiftPackageProductDependency;
+            package = 441ADD1C2ED0EA5B00123048 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+            productName = FirebaseFirestore;
+        };
 /* End XCSwiftPackageProductDependency section */
-	};
-	rootObject = 441ADCFC2ED0E39800123048 /* Project object */;
+    };
+    rootObject = 441ADCFC2ED0E39800123048 /* Project object */;
 }
