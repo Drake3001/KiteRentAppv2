@@ -59,7 +59,6 @@ final class KitesurfingListViewModelRentalTests: XCTestCase {
         rentalManager.rentalsToReturn = [ makeRental(kiteId: "k1", instructorId: "i1") ]
         let instructorManager = MockInstructorManager()
         instructorManager.instructorsToReturn = [] 
-
         let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
 
         await vm.loadKites()
@@ -94,7 +93,6 @@ final class KitesurfingListViewModelRentalTests: XCTestCase {
         await vm.startRefreshOnRentalEnd()
 
         try? await Task.sleep(nanoseconds: 200_000_000) 
-
         XCTAssertGreaterThanOrEqual(rentalManager.calls, 1, "Refresh should have invoked getActiveRentals at least once")
 
         await vm.stopRefreshOnRentalEnd()
