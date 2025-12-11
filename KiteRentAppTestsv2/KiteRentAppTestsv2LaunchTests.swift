@@ -6,7 +6,7 @@
 //
 
 import XCTest
-
+ 
 final class KiteRentAppTestsv2LaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
@@ -28,3 +28,4 @@ final class KiteRentAppTestsv2LaunchTests: XCTestCase {
         add(attachment)
     }
 }
+ 
