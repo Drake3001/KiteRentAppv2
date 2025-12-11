@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct FilterRowView: View {
+struct FilterRowAdminView: View {
+    @Binding var selectedDate: Date?
     let numberOfElements: Int
     
     var onSortTapped: (() -> Void)? = nil
@@ -27,7 +28,13 @@ struct FilterRowView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
             }
-            Spacer()
+            
+            Spacer(minLength: 15)
+            
+            DateWheelPicker(selectedDate: $selectedDate)
+            
+            Spacer(minLength: 15)
+            
             Text("\(numberOfElements) results")
                 .foregroundColor(.gray)
                 .font(.subheadline)
@@ -38,5 +45,5 @@ struct FilterRowView: View {
 }
 
 #Preview {
-    FilterRowView(numberOfElements: 0)
+    FilterRowAdminView(selectedDate: .constant(Date()), numberOfElements: 0)
 }

@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct RentalAdminView: View {
-    var rental: DBRental
+    var rental: AdminRental
     
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 8) {
-                Text(rental.kiteId)
-                    .font(.title)
+                Text(rental.kiteName)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .lineLimit(1)
                 
-                Text(rental.instructorId)
+                Text(rental.instructorName)
                     .font(.headline)
                     .lineLimit(1)
                 
@@ -62,5 +62,5 @@ struct RentalAdminView: View {
 }
 
 #Preview {
-    RentalAdminView(rental: DBRental(rentalId: "1234", kiteId: "kite1", instructorId: "instructor1", startTime: Date(), endTime: Date()))
+    RentalAdminView(rental: AdminRental(rentalID: "1234", kiteName: "North Reach", instructorName: "John Smith", startTime: Date(), endTime: Date()))
 }

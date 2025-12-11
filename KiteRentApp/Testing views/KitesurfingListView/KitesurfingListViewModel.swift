@@ -115,7 +115,8 @@ final class KitesurfingListViewModel: ObservableObject {
     }
 
     deinit {
-        Task { await stopRefreshOnRentalEnd() }
+        rentalRefreshTask?.cancel()
+        rentalRefreshTask = nil
     }
 }
 

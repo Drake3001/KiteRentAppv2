@@ -37,7 +37,7 @@ struct KitesurfingListView: View {
                     Spacer()
                     
                     FilterRowView(
-                        numberOfKites: viewModel.filteredAndOrderedKites.count,
+                        numberOfElements: viewModel.filteredAndOrderedKites.count,
                         onSortTapped: { viewModel.isSortAscending.toggle() },
                         isAscending: viewModel.isSortAscending
                     )

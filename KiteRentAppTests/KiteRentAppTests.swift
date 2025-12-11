@@ -2,7 +2,7 @@
 //  KiteRentAppTests.swift
 //  KiteRentAppTests
 //
-//  Created by Ranger5301 on 11/12/2025.
+//  Created by Filip on 11/12/2025.
 //
 
 import Testing

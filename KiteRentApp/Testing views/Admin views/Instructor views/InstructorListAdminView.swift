@@ -16,7 +16,7 @@ struct InstructorListAdminView: View {
         Spacer()
         
         FilterRowView(
-            numberOfKites: viewModel.filteredAndOrderedInstructors.count,
+            numberOfElements: viewModel.filteredAndOrderedInstructors.count,
             onSortTapped: {viewModel.isSortAscending.toggle()},
             isAscending: viewModel.isSortAscending
         )

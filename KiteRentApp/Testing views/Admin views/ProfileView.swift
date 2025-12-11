@@ -10,18 +10,32 @@ import SwiftUI
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     
+    @State private var selectedAdminView: AdminViewType = .kites
    
-    let onOpenSettings: () -> Void    
+    enum AdminViewType: String, CaseIterable, Identifiable {
+        case kites = "Kites"
+        case instructors = "Instructors"
+        case rentals = "Rentals"
+        
+        var id: String { self.rawValue }
+    }
+    
+    let onOpenSettings: () -> Void
     var body: some View {
         VStack(spacing: 0) {
-            Spacer()
+            Picker("Admin View Selection", selection: $selectedAdminView) {
+                ForEach(AdminViewType.allCases) { viewType in
+                    Text(viewType.rawValue).tag(viewType)
+                    
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding([.horizontal, .bottom])
             
-            
-            KiteListAdminView()
+            currentAdminContentView()
         }
         .background(Color.white)
         .task { try? await viewModel.loadCurrentUser() }
-        .navigationTitle("AdminView")
         .navigationBarBackButtonHidden(true) 
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -40,10 +54,25 @@ struct ProfileView: View {
             }
         }
     }
+    
+    @ViewBuilder
+        private func currentAdminContentView() -> some View {
+            switch selectedAdminView {
+            case .kites:
+                KiteListAdminView()
+            case .instructors:
+                InstructorListAdminView()
+            case .rentals:
+                RentalListAdminView()
+            }
+        }
 }
 
 #Preview {
-    ProfileView(onOpenSettings: {})
+    NavigationStack {
+        ProfileView(onOpenSettings: {})
+    }
+    
 }
 
 

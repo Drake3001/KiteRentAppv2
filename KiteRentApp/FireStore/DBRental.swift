@@ -7,12 +7,14 @@
 
 import Foundation
 
-struct DBRental: Codable {
+struct DBRental: Codable, Identifiable {
     let rentalId: String
     let kiteId: String
     let instructorId: String
     let startTime: Date
     let endTime: Date
+    
+    var id: String {rentalId}
     
     enum CodingKeys: String, CodingKey {
         case rentalId = "rental_id"
