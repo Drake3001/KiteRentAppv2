@@ -18,7 +18,6 @@ struct KitesurfingListView: View {
         case settings
     }
 
-    
     private let columns = [
         GridItem(.adaptive(minimum: 150), spacing: 16)
     ]
@@ -27,11 +26,11 @@ struct KitesurfingListView: View {
         NavigationStack(path: $path) {
             ZStack {
                 VStack(spacing: 0) {
-                    HeaderView(onWindTapped: { showScanner = true },
-                               onLoginTapped: {path.append(Destination.adminLogin)})
+                    HeaderView(
+                        onWindTapped: { showScanner = true },
+                        onLoginTapped: { path.append(Destination.adminLogin) }
+                    )
                     .offset(y: -20)
-                    
-                    
                     
                     SearchBarView(text: $viewModel.searchText)
                     
@@ -39,7 +38,7 @@ struct KitesurfingListView: View {
                     
                     FilterRowView(
                         numberOfKites: viewModel.filteredAndOrderedKites.count,
-                        onSortTapped: {viewModel.isSortAscending.toggle()},
+                        onSortTapped: { viewModel.isSortAscending.toggle() },
                         isAscending: viewModel.isSortAscending
                     )
                     
@@ -69,9 +68,13 @@ struct KitesurfingListView: View {
             .animation(.spring(), value: showPopup)
             .task {
                 await viewModel.loadKites()
-                viewModel.startRefreshOnRentalEnd()
+                await viewModel.startRefreshOnRentalEnd()
             }
-            .onDisappear { viewModel.stopRefreshOnRentalEnd() }
+            .onDisappear {
+                Task {
+                    await viewModel.stopRefreshOnRentalEnd()
+                }
+            }
             .alert("Błąd", isPresented: $showErrorAlert, actions: {
                 Button("OK") { showErrorAlert = false }
             }, message: { Text(errorMessage) })
@@ -85,25 +88,17 @@ struct KitesurfingListView: View {
                     DirectAdminLoginView(onLoginSuccess: {
                         path.append(Destination.profile)
                     })
-
                 case .profile:
                     ProfileView(
-                        onOpenSettings: {
-                            path.append(Destination.settings)
-                        }
+                        onOpenSettings: { path.append(Destination.settings) }
                     )
-
                 case .settings:
                     SettingsView(
-                        onLogout: {
-                            path = NavigationPath()  
-                        }
+                        onLogout: { path = NavigationPath() }
                     )
                 }
             }
-
         }
-        
     }
     
     @ViewBuilder
@@ -158,16 +153,16 @@ struct KitesurfingListView: View {
     
     @ViewBuilder
     private func scannerSheet() -> some View {
-        QRScannerView(onFound: { kiteId in
-            showScanner = false
-            handleScannedKite(kiteId: kiteId)
-        }, onCancel: {
-            showScanner = false
-        })
+        QRScannerView(
+            onFound: { kiteId in
+                showScanner = false
+                handleScannedKite(kiteId: kiteId)
+            },
+            onCancel: { showScanner = false }
+        )
     }
 }
 
-/// A tiny wrapper view to simplify the LazyVGrid cell and help the type-checker.
 private struct KiteGridItem: View {
     let kite: DBKite
     let instructor: DBInstructor?
@@ -187,21 +182,21 @@ private struct KiteGridItem: View {
 extension Color {
     init(hex: String) {
         let scanner = Scanner(string: hex)
-        _ = scanner.scanString("#")
-        
-        var rgb: UInt64 = 0
-        scanner.scanHexInt64(&rgb)
-        
-        let r = Double((rgb >> 16) & 0xFF) / 255
-        let g = Double((rgb >> 8) & 0xFF) / 255
-        let b = Double(rgb & 0xFF) / 255
-        
-        self.init(red: r, green: g, blue: b)
-    }
-}
+                _ = scanner.scanString("#")
+                
+                var rgb: UInt64 = 0
+                scanner.scanHexInt64(&rgb)
+                
+                let r = Double((rgb >> 16) & 0xFF) / 255
+                let g = Double((rgb >> 8) & 0xFF) / 255
+                let b = Double(rgb & 0xFF) / 255
+                
+                self.init(red: r, green: g, blue: b)
+            }
+        }
 
-struct KitesurfingListView_Previews: PreviewProvider {
-    static var previews: some View {
-        KitesurfingListView()
-    }
-}
+        struct KitesurfingListView_Previews: PreviewProvider {
+            static var previews: some View {
+                KitesurfingListView()
+            }
+        }

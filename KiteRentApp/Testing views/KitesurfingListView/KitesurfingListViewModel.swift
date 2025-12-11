@@ -12,8 +12,7 @@ final class KitesurfingListViewModel: ObservableObject {
     
     @Published var isSortAscending: Bool = false
     
-//    private var refreshTimer: Timer?
-//    private let refreshInterval: TimeInterval = 1 * 60
+    private var rentalRefreshTask: Task<Void, Never>? = nil
     
     var filteredAndOrderedKites: [DBKite] {
         let base: [DBKite]
@@ -24,22 +23,17 @@ final class KitesurfingListViewModel: ObservableObject {
         }
         let sizeSorted: [DBKite]
         if isSortAscending {
-            sizeSorted =  base.sorted { Int($0.size)! < Int($1.size)! }
-        }
-        else {
+            sizeSorted = base.sorted { Int($0.size)! < Int($1.size)! }
+        } else {
             sizeSorted = base.sorted { Int($0.size)! > Int($1.size)! }
         }
         
-        let stateSorted = sizeSorted.sorted{$0.state < $1.state}
-        
-        return stateSorted
+        return sizeSorted.sorted { $0.state < $1.state }
     }
-    
     
     func getInstructorForKite(kiteId: String) -> DBInstructor? {
         return activeRentals[kiteId]
     }
-    
     
     func loadKites() async {
         guard !isLoading else { return }
@@ -47,14 +41,8 @@ final class KitesurfingListViewModel: ObservableObject {
         errorMessage = nil
         do {
             try await KiteManager.shared.syncKiteStatesWithRentals()
-
             let fetched = try await KiteManager.shared.getAllKites()
-            self.kites = fetched.map { kite in
-                var copy = kite
-                copy.id = kite.id
-                return copy
-            }
-
+            self.kites = fetched
             await loadActiveRentalsWithInstructors()
         } catch {
             self.errorMessage = error.localizedDescription
@@ -65,7 +53,6 @@ final class KitesurfingListViewModel: ObservableObject {
     private func loadActiveRentalsWithInstructors() async {
         do {
             let activeRentalsList = try await RentalManager.shared.getActiveRentals()
-            
             let allInstructors = try await InstructorManager.shared.getAllInstructors()
             let instructorMap = Dictionary(uniqueKeysWithValues: allInstructors.map { ($0.instructorId, $0) })
             
@@ -75,134 +62,47 @@ final class KitesurfingListViewModel: ObservableObject {
                     rentalsMap[rental.kiteId] = instructor
                 }
             }
-            
             self.activeRentals = rentalsMap
         } catch {
             self.activeRentals = [:]
         }
     }
     
-//    func startAutoRefresh() {
-//        stopAutoRefresh()
-//        
-//        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
-//            Task { @MainActor [weak self] in
-//                await self?.loadKites()
-//            }
-//        }
-//    }
-    
-//    func stopAutoRefresh() {
-//        refreshTimer?.invalidate()
-//        refreshTimer = nil
-//    }
-//    
-//    deinit {
-//        refreshTimer?.invalidate()
-//        refreshTimer = nil
-//    }
-    
-    private var nextRentalTimer: Timer?
-
-    func startRefreshOnRentalEnd() {
-        nextRentalTimer?.invalidate()
-        Task { @MainActor in
-            await scheduleNextRentalRefresh()
+    func startRefreshOnRentalEnd() async {
+        await stopRefreshOnRentalEnd()
+        rentalRefreshTask = Task { [weak self] in
+            await self?.observeRentalEndsLoop()
         }
     }
-
-    func stopRefreshOnRentalEnd() {
-        nextRentalTimer?.invalidate()
-        nextRentalTimer = nil
+    
+    func stopRefreshOnRentalEnd() async {
+        rentalRefreshTask?.cancel()
+        rentalRefreshTask = nil
     }
-
-    private func scheduleNextRentalRefresh() async {
-        do {
-            let activeRentals = try await RentalManager.shared.getActiveRentals()
-            let now = Date()
-            let upcoming = activeRentals.filter { $0.endTime.timeIntervalSince(now) > 0 }
-            guard let nextRental = upcoming.min(by: { $0.endTime < $1.endTime }) else {
-                #if DEBUG
-                print("[KiteVM] No upcoming rentals to schedule refresh for")
-                #endif
-                nextRentalTimer?.invalidate()
-                nextRentalTimer = nil
-                return
-            }
-
-            let interval = nextRental.endTime.timeIntervalSince(now)
-
-            guard interval > 0 else {
-                #if DEBUG
-                print("[KiteVM] Next rental end is in the past or immediate; refreshing now")
-                #endif
-                await loadKites()
-                await scheduleNextRentalRefresh()
-                return
-            }
-
-            #if DEBUG
-            print("[KiteVM] Scheduling next refresh in \(interval) seconds for rental ending at \(nextRental.endTime)")
-            #endif
-
-            nextRentalTimer?.invalidate()
-
-            nextRentalTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-                #if DEBUG
-                print("[KiteVM] Rental ended timer fired — refreshing kites")
-                #endif
-                Task { @MainActor in
-                    await self?.loadKites()
-                    await self?.scheduleNextRentalRefresh()
+    
+    private func observeRentalEndsLoop() async {
+        while !Task.isCancelled {
+            do {
+                let activeRentals = try await RentalManager.shared.getActiveRentals()
+                guard let nextEnd = activeRentals.min(by: { $0.endTime < $1.endTime })?.endTime else {
+                    try await Task.sleep(nanoseconds: 5_000_000_000)
+                    continue
                 }
+                
+                let interval = nextEnd.timeIntervalSinceNow
+                if interval > 0 {
+                    try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+                }
+                
+                await loadKites()
+            } catch {
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
             }
-            if let t = nextRentalTimer {
-                RunLoop.main.add(t, forMode: .common)
-            }
-            
-        } catch {
-            print("Błąd przy pobieraniu aktywnych rentali: \(error)")
         }
     }
-    
-//    private func scheduleNextRentalRefresh() async {
-//        do {
-//            let activeRentals = try await RentalManager.shared.getActiveRentals()
-//            let now = Date()
-//            
-//            let upcomingRentals = activeRentals.filter { $0.endTime > now }
-//            guard !upcomingRentals.isEmpty else { return }
-//
-//            let nextEndTime = upcomingRentals.min(by: { $0.endTime < $1.endTime })!.endTime
-//            let interval = nextEndTime.timeIntervalSince(now)
-//            
-//            #if DEBUG
-//            print("Next rental ends at: \(nextEndTime), interval: \(interval)s")
-//            #endif
-//            
-//            guard interval > 0 else {
-//                await loadKites()
-//                await scheduleNextRentalRefresh()
-//                return
-//            }
-//            
-//            nextRentalTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-//                Task { @MainActor in
-//                    await self?.loadKites()
-//                    await self?.scheduleNextRentalRefresh()
-//                }
-//            }
-//            RunLoop.main.add(nextRentalTimer!, forMode: .common)
-//            
-//        } catch {
-//            print("Błąd przy pobieraniu aktywnych rentali: \(error)")
-//        }
-//    }
-
     
     deinit {
-            nextRentalTimer?.invalidate()
-            nextRentalTimer = nil
-        }
-    
+        Task { await stopRefreshOnRentalEnd() }
+    }
 }
+
