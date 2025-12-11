@@ -14,6 +14,7 @@ struct DBInstructor: Codable, Identifiable {
     let surname: String
     let phoneNumber: String?
     let dateCreated: Date?
+    var state: InstructorState
     
     var shortName: String {
         "\(name) \(surname.prefix(1))"
@@ -25,5 +26,16 @@ struct DBInstructor: Codable, Identifiable {
         case surname = "surname"
         case phoneNumber = "phone_number"
         case dateCreated = "date_created"
+        case state = "state"
+    }
+}
+
+enum InstructorState: String, Codable, Comparable {
+    case active
+    case inactive
+
+    static func < (lhs: InstructorState, rhs: InstructorState) -> Bool {
+        let order: [InstructorState] = [.active, .inactive]
+        return order.firstIndex(of: lhs)! < order.firstIndex(of: rhs)!
     }
 }

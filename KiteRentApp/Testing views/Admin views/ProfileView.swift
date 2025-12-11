@@ -9,13 +9,13 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
-    @State private var searchText: String = ""
+    
    
     let onOpenSettings: () -> Void    
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            SearchBarView(text: $searchText)
+            
             
             KiteListAdminView()
         }

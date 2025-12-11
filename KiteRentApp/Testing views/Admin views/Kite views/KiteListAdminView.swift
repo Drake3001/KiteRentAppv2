@@ -11,6 +11,18 @@ struct KiteListAdminView: View {
     @StateObject private var viewModel = KiteListAdminViewModel()
     
     var body: some View {
+        SearchBarView(text: $viewModel.searchText)
+        
+        Spacer()
+        
+        FilterRowView(
+            numberOfKites: viewModel.filteredAndOrderedKites.count,
+            onSortTapped: {viewModel.isSortAscending.toggle()},
+            isAscending: viewModel.isSortAscending
+        )
+        
+        Spacer()
+        
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(viewModel.filteredAndOrderedKites) { kite in

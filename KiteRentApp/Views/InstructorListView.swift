@@ -24,6 +24,7 @@ class InstructorListViewModel: ObservableObject {
                 Imię: \(instructor.name)
                 Nazwisko: \(instructor.surname)
                 Phone number: \(instructor.phoneNumber ?? "-")
+                State: \(instructor.state)
                 
                 """
             }.joined(separator: "----------------\n")

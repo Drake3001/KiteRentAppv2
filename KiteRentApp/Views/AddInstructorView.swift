@@ -55,7 +55,8 @@ struct AddInstructorView: View {
                 name: name,
                 surname: surname,
                 phoneNumber: phoneNumber.isEmpty ? nil : phoneNumber,
-                dateCreated: Date()
+                dateCreated: Date(),
+                state: .active
             )
             
             do {
