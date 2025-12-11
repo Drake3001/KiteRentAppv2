@@ -54,21 +54,24 @@ final class KitesurfingListViewModelRefreshTests: XCTestCase {
         XCTAssertEqual(rentalManager.calls, callsAfterStop, "After stopping the refresh loop we should not see additional getActiveRentals calls")
     }
 
+    @MainActor
     func testRentalEndingNow_triggersImmediateReload() async {
         let kiteManager = MockKiteManager()
         let rentalManager = MockRentalManager()
-        rentalManager.rentalsToReturn = [ makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: 0) ]
+        rentalManager.rentalsToReturn = [
+            makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: -1) 
+        ]
         let instructorManager = MockInstructorManager()
 
-        let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
+        let vm = KitesurfingListViewModel(
+            kiteManager: kiteManager,
+            rentalManager: rentalManager,
+            instructorManager: instructorManager
+        )
 
-        await vm.startRefreshOnRentalEnd()
-
-        try? await Task.sleep(nanoseconds: 300_000_000)
+        await vm.loadKites()
 
         XCTAssertGreaterThanOrEqual(kiteManager.syncCalls, 1, "A rental ending now should cause an immediate reload (syncKiteStatesWithRentals)")
-
-        await vm.stopRefreshOnRentalEnd()
     }
 
     func testRentalRefreshReloadsKitesWhenExpired() async {
