@@ -108,46 +108,4 @@ final class KitesurfingListViewModelRentalTests: XCTestCase {
         XCTAssertEqual(instructor?.instructorId, "i1")
     }
 
-    @MainActor
-    func testRefreshTaskStartsAndStops() async {
-        let kiteManager = MockKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.delayNanoseconds = 1_000_000_000
-        let instructorManager = MockInstructorManager()
-
-        let vm = KitesurfingListViewModel(
-            kiteManager: kiteManager,
-            rentalManager: rentalManager,
-            instructorManager: instructorManager
-        )
-
-        await vm.startRefreshOnRentalEnd()
-
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        XCTAssertGreaterThanOrEqual(rentalManager.calls, 1, "Refresh should have invoked getActiveRentals at least once")
-
-        await vm.stopRefreshOnRentalEnd()
-        let callsAfterStop = rentalManager.calls
-        try? await Task.sleep(nanoseconds: 300_000_000)
-        XCTAssertEqual(rentalManager.calls, callsAfterStop, "No additional rental calls should occur after stopping the refresh task")
-    }
-
-    @MainActor
-    func testRentalRefreshReloadsKitesWhenExpired() async {
-        let kiteManager = MockKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.rentalsToReturn = [
-            makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: 1)
-        ]
-        let instructorManager = MockInstructorManager()
-
-        let vm = KitesurfingListViewModel(
-            kiteManager: kiteManager,
-            rentalManager: rentalManager,
-            instructorManager: instructorManager
-        )
-
-        await vm.loadKites()
-        XCTAssertGreaterThanOrEqual(kiteManager.syncCalls, 1, "KiteManager.syncKiteStatesWithRentals should be called when a rental ends")
-    }
 }

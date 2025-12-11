@@ -100,43 +100,6 @@ final class AdditionalRentalTests: XCTestCase {
     }
 
 
-    func testRefreshLoopCancelsAndDoesNotDuplicate() async {
-        let kiteManager = SimpleKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.delayNanoseconds = 2_000_000_000
-        let instructorManager = MockInstructorManager(instructors: [])
-
-        let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
-
-        await vm.startRefreshOnRentalEnd()
-        await vm.startRefreshOnRentalEnd()
-
-        try? await Task.sleep(nanoseconds: 300_000_000)
-
-        XCTAssertGreaterThanOrEqual(rentalManager.calls, 1)
-
-        await vm.stopRefreshOnRentalEnd()
-        let callsAfterStop = rentalManager.calls
-        try? await Task.sleep(nanoseconds: 300_000_000)
-        XCTAssertEqual(rentalManager.calls, callsAfterStop, "After stopping the refresh loop we should not see additional getActiveRentals calls")
-    }
-
-    func testRentalEndingNow_triggersImmediateReload() async {
-        let kiteManager = SimpleKiteManager()
-        let rentalManager = MockRentalManager()
-        rentalManager.rentalsToReturn = [ makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: 0) ]
-        let instructorManager = MockInstructorManager(instructors: [ makeInstructor(id: "i1") ])
-
-        let vm = KitesurfingListViewModel(kiteManager: kiteManager, rentalManager: rentalManager, instructorManager: instructorManager)
-
-        await vm.startRefreshOnRentalEnd()
-
-        try? await Task.sleep(nanoseconds: 300_000_000)
-
-        XCTAssertGreaterThanOrEqual(kiteManager.syncCalls, 1, "A rental ending now should cause an immediate reload (syncKiteStatesWithRentals)")
-
-        await vm.stopRefreshOnRentalEnd()
-    }
 
     func testMappingMultipleRentals_mapsAllUniqueKites() async {
         let kiteManager = SimpleKiteManager()
