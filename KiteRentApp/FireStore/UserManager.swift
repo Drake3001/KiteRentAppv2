@@ -47,6 +47,18 @@ final class UserManager {
     func getUser(userId: String) async throws -> DBUser {
         try await userDocument(userId: userId).getDocument(as: DBUser.self)
     }
+
+    func updateUserFields(userId: String, fields: [String: Any]) async throws {
+        try await userDocument(userId: userId).updateData(fields)
+    }
+
+    func updateUser(user: DBUser) throws {
+        try userDocument(userId: user.userId).setData(from: user, merge: true)
+    }
+
+    func deleteUser(userId: String) async throws {
+        try await userDocument(userId: userId).delete()
+    }
     
 //    func getUser(userId: String) async throws -> DBUser {
 ////        let snapshot = try await Firestore.firestore().collection("users").document(userId).getDocument()

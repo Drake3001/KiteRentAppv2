@@ -65,4 +65,29 @@ final class KiteManager {
                 }
             }
         }
+
+    func updateKiteFields(kiteId: String, fields: [String: Any]) async throws {
+        try await kiteDocument(kiteId: kiteId).updateData(fields)
+    }
+
+    func updateKite(kite: DBKite) throws {
+        guard let id = kite.id else { return }
+        try kiteDocument(kiteId: id).setData(from: kite, merge: true)
+    }
+
+    func deleteKite(kiteId: String) async throws {
+        let allRentals = try await RentalManager.shared.getAllRentals()
+        let rentalsToDelete = allRentals.filter { $0.kiteId == kiteId }
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for rental in rentalsToDelete {
+                group.addTask {
+                    try await RentalManager.shared.deleteRental(rentalId: rental.rentalId)
+                }
+            }
+            try await group.waitForAll()
+        }
+
+        try await kiteDocument(kiteId: kiteId).delete()
+    }
 }

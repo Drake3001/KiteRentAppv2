@@ -34,4 +34,28 @@ final class InstructorManager {
             try document.data(as: DBInstructor.self)
         }
     }
+
+    func updateInstructorFields(instructorId: String, fields: [String: Any]) async throws {
+        try await instructorDocument(instructorId: instructorId).updateData(fields)
+    }
+
+    func updateInstructor(instructor: DBInstructor) throws {
+        try instructorDocument(instructorId: instructor.instructorId).setData(from: instructor, merge: true)
+    }
+
+    func deleteInstructor(instructorId: String) async throws {
+        let allRentals = try await RentalManager.shared.getAllRentals()
+        let rentalsToDelete = allRentals.filter { $0.instructorId == instructorId }
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for rental in rentalsToDelete {
+                group.addTask {
+                    try await RentalManager.shared.deleteRental(rentalId: rental.rentalId)
+                }
+            }
+            try await group.waitForAll()
+        }
+
+        try await instructorDocument(instructorId: instructorId).delete()
+    }
 }

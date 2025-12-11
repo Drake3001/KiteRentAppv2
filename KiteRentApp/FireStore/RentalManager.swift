@@ -52,4 +52,16 @@ final class RentalManager {
                rental.kiteId == kiteId && rental.endTime > now
            }
        }
+
+    func updateRentalFields(rentalId: String, fields: [String: Any]) async throws {
+        try await rentalDocument(rentalId: rentalId).updateData(fields)
+    }
+
+    func updateRental(rental: DBRental) throws {
+        try rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: true)
+    }
+
+    func deleteRental(rentalId: String) async throws {
+        try await rentalDocument(rentalId: rentalId).delete()
+    }
 }

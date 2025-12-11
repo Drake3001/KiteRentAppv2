@@ -46,17 +46,15 @@ final class KitesurfingListViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            try await
-            KiteManager.shared.syncKiteStatesWithRentals()
-            
-            let fetched = try await
-            KiteManager.shared.getAllKites()
+            try await KiteManager.shared.syncKiteStatesWithRentals()
+
+            let fetched = try await KiteManager.shared.getAllKites()
             self.kites = fetched.map { kite in
                 var copy = kite
                 copy.id = kite.id
                 return copy
             }
-            
+
             await loadActiveRentalsWithInstructors()
         } catch {
             self.errorMessage = error.localizedDescription
@@ -122,23 +120,45 @@ final class KitesurfingListViewModel: ObservableObject {
         do {
             let activeRentals = try await RentalManager.shared.getActiveRentals()
             let now = Date()
-            
-            guard let nextRental = activeRentals.min(by: { $0.endTime < $1.endTime }) else { return }
+            let upcoming = activeRentals.filter { $0.endTime.timeIntervalSince(now) > 0 }
+            guard let nextRental = upcoming.min(by: { $0.endTime < $1.endTime }) else {
+                #if DEBUG
+                print("[KiteVM] No upcoming rentals to schedule refresh for")
+                #endif
+                nextRentalTimer?.invalidate()
+                nextRentalTimer = nil
+                return
+            }
+
             let interval = nextRental.endTime.timeIntervalSince(now)
-            
+
             guard interval > 0 else {
+                #if DEBUG
+                print("[KiteVM] Next rental end is in the past or immediate; refreshing now")
+                #endif
                 await loadKites()
                 await scheduleNextRentalRefresh()
                 return
             }
-            
+
+            #if DEBUG
+            print("[KiteVM] Scheduling next refresh in \(interval) seconds for rental ending at \(nextRental.endTime)")
+            #endif
+
+            nextRentalTimer?.invalidate()
+
             nextRentalTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+                #if DEBUG
+                print("[KiteVM] Rental ended timer fired — refreshing kites")
+                #endif
                 Task { @MainActor in
                     await self?.loadKites()
-                    await self?.scheduleNextRentalRefresh() 
+                    await self?.scheduleNextRentalRefresh()
                 }
             }
-            RunLoop.main.add(nextRentalTimer!, forMode: .common)
+            if let t = nextRentalTimer {
+                RunLoop.main.add(t, forMode: .common)
+            }
             
         } catch {
             print("Błąd przy pobieraniu aktywnych rentali: \(error)")
