@@ -14,7 +14,6 @@ final class KitesurfingListViewModel: ObservableObject {
 
     private var rentalRefreshTask: Task<Void, Never>? = nil
 
-    // Injectable managers for easier testing
     private let kiteManager: KiteManagerProtocol
     private let rentalManager: RentalManagerProtocol
     private let instructorManager: InstructorManagerProtocol
