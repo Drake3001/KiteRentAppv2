@@ -10,6 +10,8 @@ struct KitesurfingListView: View {
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     
+    @FocusState private var isSearchFocused: Bool
+    
     @State private var path = NavigationPath()
     
     enum Destination: Hashable {
@@ -33,6 +35,7 @@ struct KitesurfingListView: View {
                     .offset(y: -20)
                     
                     SearchBarView(text: $viewModel.searchText)
+                        .focused($isSearchFocused)
                     
                     Spacer()
                     
@@ -48,6 +51,10 @@ struct KitesurfingListView: View {
                         .background(Color("LightGrayBackgroundColor"))
                 }
                 .background(Color.white)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    isSearchFocused = false
+                }
                 
                 if showPopup, let kite = selectedKite {
                     Color.black.opacity(0.35)

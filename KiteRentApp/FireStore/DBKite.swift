@@ -39,11 +39,15 @@ struct DBKite: Identifiable, Codable {
     
 }
 
-enum KiteState: String, Codable, Comparable {
+enum KiteState: String, Codable, Comparable, CaseIterable, Identifiable {
     case free
     case used
     case serviced
 
+    var id: String {
+        self.rawValue
+    }
+    
     static func < (lhs: KiteState, rhs: KiteState) -> Bool {
         let order: [KiteState] = [.free, .used, .serviced]
         return order.firstIndex(of: lhs)! < order.firstIndex(of: rhs)!

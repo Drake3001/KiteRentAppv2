@@ -17,13 +17,10 @@ final class KiteReservationViewModel: ObservableObject {
     @Published var didCreateReservation: Bool = false
     @Published var createdRentalId: String?
 
-    var selectedInstructorName: String {
-        if let id = selectedInstructorId, let instr = instructors.first(where: { $0.instructorId == id }) {
-            return "\(instr.name) \(instr.surname)"
-        }
-        return "Wybierz instruktora"
+    var filteredInstructors: [DBInstructor] {
+        return instructors.filter {$0.state == .active}
     }
-
+    
     func loadInstructors() async {
         guard !isLoading else { return }
         isLoading = true
@@ -31,10 +28,6 @@ final class KiteReservationViewModel: ObservableObject {
         do {
             let fetched = try await InstructorManager.shared.getAllInstructors()
             self.instructors = fetched
-            
-            if selectedInstructorId == nil {
-                selectedInstructorId = instructors.first?.instructorId
-            }
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -81,8 +74,6 @@ final class KiteReservationViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
-    
-    
 }
 
 extension KiteReservationViewModel {
@@ -110,7 +101,7 @@ extension KiteReservationViewModel {
         startComps.hour = startHour
         startComps.minute = startMinute
         var startDate = calendar.date(from: startComps)!
-        startDate = clampToWorkHours(startDate)
+        startDate = clampToWorkHours(startDate, isStartDate: true)
         
         // --- 3. Compute end date by adding lesson duration ---
         var endDate = calendar.date(byAdding: .hour,
@@ -119,7 +110,7 @@ extension KiteReservationViewModel {
         endDate = calendar.date(byAdding: .minute,
                                 value: AppConstants.defaultLessonDurationMinutes,
                                 to: endDate)!
-        endDate = clampToWorkHours(endDate)
+        endDate = clampToWorkHours(endDate, isStartDate: false)
         
         let endHour = calendar.component(.hour, from: endDate)
         let endMinute = calendar.component(.minute, from: endDate)
@@ -131,7 +122,7 @@ extension KiteReservationViewModel {
     }
     
     /// Ensures a date stays within working hours defined by AppConstants.
-    static func clampToWorkHours(_ date: Date) -> Date {
+    static func clampToWorkHours(_ date: Date, isStartDate: Bool) -> Date {
         let calendar = Calendar.current
         
         let workStart = AppConstants.defaultWorkStartHour
@@ -140,7 +131,7 @@ extension KiteReservationViewModel {
         var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
         
         if comps.hour! < workStart {
-            comps.hour = workStart
+            comps.hour = (isStartDate ? workStart : workEnd)
             comps.minute = 0
         }
         

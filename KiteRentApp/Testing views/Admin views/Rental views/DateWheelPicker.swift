@@ -32,7 +32,7 @@ struct DateWheelPicker: View {
                     proxy.scrollTo(date, anchor: .center)
                 }
             }
-            .onChange(of: selectedDate) { newDate in
+            .onChange(of: selectedDate) {_, newDate in
                 if let date = newDate {
                     withAnimation {
                         proxy.scrollTo(Calendar.current.startOfDay(for: date), anchor: .center)

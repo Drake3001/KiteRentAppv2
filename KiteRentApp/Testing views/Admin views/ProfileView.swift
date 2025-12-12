@@ -26,7 +26,6 @@ struct ProfileView: View {
             Picker("Admin View Selection", selection: $selectedAdminView) {
                 ForEach(AdminViewType.allCases) { viewType in
                     Text(viewType.rawValue).tag(viewType)
-                    
                 }
             }
             .pickerStyle(.segmented)

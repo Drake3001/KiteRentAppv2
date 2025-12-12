@@ -35,11 +35,11 @@ final class KitesurfingListViewModel: ObservableObject {
         }
         let sizeSorted: [DBKite]
         if isSortAscending {
-            sizeSorted = base.sorted { (Int($0.size) ?? 0) < (Int($1.size) ?? 0) }
+            sizeSorted = base.sorted { (Double($0.size) ?? 0) < (Double($1.size) ?? 0) }
 //            sizeSorted = base.sorted { Int($0.size)! < Int($1.size)! }
 
         } else {
-            sizeSorted = base.sorted { (Int($0.size) ?? 0) > (Int($1.size) ?? 0) }
+            sizeSorted = base.sorted { (Double($0.size) ?? 0) > (Double($1.size) ?? 0) }
 //            sizeSorted = base.sorted { Int($0.size)!  > Int($1.size)! }
 
         }

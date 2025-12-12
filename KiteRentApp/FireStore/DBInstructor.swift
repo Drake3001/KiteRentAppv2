@@ -30,10 +30,14 @@ struct DBInstructor: Codable, Identifiable {
     }
 }
 
-enum InstructorState: String, Codable, Comparable {
+enum InstructorState: String, Codable, Comparable, CaseIterable, Identifiable {
     case active
     case inactive
 
+    var id: String {
+        self.rawValue
+    }
+    
     static func < (lhs: InstructorState, rhs: InstructorState) -> Bool {
         let order: [InstructorState] = [.active, .inactive]
         return order.firstIndex(of: lhs)! < order.firstIndex(of: rhs)!

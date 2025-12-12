@@ -16,7 +16,7 @@ struct InstructorPickerSection: View {
                 .font(.subheadline)
             
             Menu {
-                ForEach(viewModel.instructors) { instructor in
+                ForEach(viewModel.filteredInstructors) { instructor in
                     Button(instructor.shortName) {
                         selectedInstructor = instructor
                     }

@@ -18,20 +18,23 @@ struct KiteReservationView: View {
     @State private var endMinute: Int = KiteReservationView.times.endMinute
     
     let startHours = Array(AppConstants.defaultWorkStartHour ..< startHourValue + 1)
-    //let startMinutes = Array(stride(from: 0, through: 55, by: 15))
-    var startMinutes: [Int] {
-        if startHour < maxHour {
-            return Array(stride(from: 0, through: 55, by:15))
-        } else if startHour == maxHour {
+    
+    private func getValidMinutes(for hour: Int) -> [Int] {
+        if hour < maxHour {
+            return Array(stride(from: 0, through: 55, by: 15))
+        } else if hour == maxHour {
             return Array(stride(from: 0, through: maxMinute, by: 15))
         } else {
             return []
         }
     }
     
+    var startMinutes: [Int] {
+        getValidMinutes(for: startHour)
+    }
+    
     let endHours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
     let endMinutes = Array(stride(from: 0, through: 55, by: 15))
-    
     
     var kite: DBKite
     var onReservationCreated: (() -> Void)? = nil
@@ -84,8 +87,11 @@ struct KiteReservationView: View {
         .shadow(radius: 10)
         .task {
             await viewModel.loadInstructors()
-            if selectedInstructor == nil, let first = viewModel.instructors.first {
-                selectedInstructor = first
+        }
+        .onChange(of: startHour) { _, newHour in
+            let validMinutes = getValidMinutes(for: newHour)
+            if !validMinutes.contains(startMinute) {
+                startMinute = validMinutes.last ?? 0
             }
         }
     }

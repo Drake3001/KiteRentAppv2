@@ -10,6 +10,8 @@ import SwiftUI
 struct InstructorAdminView: View {
     var instructor: DBInstructor
     
+    var onEditTapped: (DBInstructor) -> Void
+    
     var body: some View {
         ZStack {
             HStack {
@@ -27,11 +29,15 @@ struct InstructorAdminView: View {
                 
                 Spacer()
                 
-                Image(systemName: "pencil")
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 8)
-                    .font(.title)
-                    .fontWeight(.bold)
+                Button {
+                    onEditTapped(instructor)
+                } label: {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 8)
+                        .font(.title)
+                        .fontWeight(.bold)
+                }
             }
             .padding()
             .background(Color(.systemBackground))
@@ -46,7 +52,7 @@ struct InstructorAdminView: View {
         case .active:
             return "Aktywny"
         case .inactive:
-            return "Nieaktwyny"
+            return "Nieaktywny"
         }
     }
     
@@ -55,11 +61,11 @@ struct InstructorAdminView: View {
         case .active:
             return .green
         case .inactive:
-            return .red
+            return .red.opacity(0.8)
         }
     }
 }
 
 #Preview {
-    InstructorAdminView(instructor: DBInstructor(instructorId: "123", name: "John", surname: "Smith", phoneNumber: "123456789", dateCreated: Date.now, state: .active))
+    InstructorAdminView(instructor: DBInstructor(instructorId: "123", name: "John", surname: "Smith", phoneNumber: "123456789", dateCreated: Date.now, state: .inactive), onEditTapped: {_ in})
 }

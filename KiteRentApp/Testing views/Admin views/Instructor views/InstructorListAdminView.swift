@@ -10,6 +10,8 @@ import SwiftUI
 struct InstructorListAdminView: View {
     @StateObject private var viewModel = InstructorListAdminViewModel()
     
+    @State private var selectedInstructorForEditing: DBInstructor? = nil
+    
     var body: some View {
         SearchBarView(text: $viewModel.searchText)
         
@@ -26,7 +28,9 @@ struct InstructorListAdminView: View {
         ScrollView {
             VStack(spacing: 16) {
                 ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
-                    InstructorAdminView(instructor: instructor)
+                    InstructorAdminView(instructor: instructor) { instructor in
+                        self.selectedInstructorForEditing = instructor
+                    }
                 }
             }
             .padding()
@@ -38,6 +42,13 @@ struct InstructorListAdminView: View {
           
         }
         .refreshable { await viewModel.loadInstructors() }
+        .sheet(item: $selectedInstructorForEditing) {
+            Task { await viewModel.loadInstructors() }
+        } content: { instructorToEdit in
+            NavigationStack {
+                InstructorEditView(instructor: instructorToEdit)
+            }
+        }
     }
 }
 

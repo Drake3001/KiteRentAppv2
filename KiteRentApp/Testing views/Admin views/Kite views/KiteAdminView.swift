@@ -1,14 +1,10 @@
-//
-//  KiteAdmin.swift
-//  KiteRentApp
-//
-//  Created by Filip on 09/12/2025.
-//
-
 import SwiftUI
 
 struct KiteAdminView: View {
     var kite: DBKite
+    
+    var onEditTapped: (DBKite) -> Void
+    var onDeleteTapped: (DBKite) -> Void
     
     var body: some View {
         ZStack {
@@ -22,15 +18,25 @@ struct KiteAdminView: View {
                     TagView(text: textFromState(state: kite.state), backgroundColor: colorFromState(state: kite.state))
                 }
                 Spacer()
-                Image(systemName: "pencil")
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 8)
-                    .font(.title)
-                    .fontWeight(.bold)
                 
-                Image(systemName: "trash.fill")
-                    .foregroundColor(.red)
-                    .font(.title2)
+                Button {
+                    onEditTapped(kite)
+                } label: {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 8)
+                        .font(.title)
+                        .fontWeight(.bold)
+                }
+                
+                Button {
+                    onDeleteTapped(kite)
+                } label: {
+                    Image(systemName: "trash.fill")
+                        .foregroundColor(.red)
+                        .font(.title2)
+                }
+                
             }
             .padding()
             .background(Color(.systemBackground))
@@ -39,7 +45,6 @@ struct KiteAdminView: View {
             
         }
         .frame(maxWidth: .infinity)
-        
     }
     
     func textFromState(state: KiteState) -> String {
@@ -67,7 +72,7 @@ struct KiteAdminView: View {
 
 struct KiteAdmin_Previews: PreviewProvider {
     static var previews: some View {
-        KiteAdminView(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+        KiteAdminView(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil), onEditTapped: { _ in }, onDeleteTapped: {_ in})
             .previewLayout(.sizeThatFits)
             .padding()
     }
