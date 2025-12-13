@@ -9,35 +9,55 @@ import SwiftUI
 
 struct RentalListAdminView: View {
     @StateObject private var viewModel = RentalListAdminViewModel()
-    
+
+    @FocusState private var isSearchFocused: Bool
+
     var body: some View {
-        SearchBarView(text: $viewModel.searchText)
-        
-        Spacer()
-        
-        FilterRowAdminView(
-            selectedDate: $viewModel.selectedDate,
-            numberOfElements: viewModel.filteredAndOrderedRentals.count,
-            onSortTapped: {viewModel.isSortAscending.toggle()},
-            isAscending: viewModel.isSortAscending
-        )
-        
-        Spacer()
-        
-        ScrollView {
-            VStack(spacing: 16) {
-                ForEach(viewModel.filteredAndOrderedRentals) { rental in
-                    RentalAdminView(rental: rental)
+        ZStack {
+            VStack {
+                SearchBarView(text: $viewModel.searchText)
+                    .focused($isSearchFocused)
+
+                Spacer()
+
+                FilterRowAdminView(
+                    selectedDate: $viewModel.selectedDate,
+                    numberOfElements: viewModel.filteredAndOrderedRentals.count,
+                    onSortTapped: { viewModel.isSortAscending.toggle() },
+                    isAscending: viewModel.isSortAscending
+                )
+
+                Spacer()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.filteredAndOrderedRentals) { rental in
+                            RentalAdminView(rental: rental)
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
                 }
+                .scrollDismissesKeyboard(.immediately)
+                .background(Color("LightGrayBackgroundColor"))
             }
-            .padding()
-            .frame(maxWidth: .infinity)
+
+            if isSearchFocused {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isSearchFocused = false
+                    }
+                    .zIndex(1)
+            }
         }
-        .background(Color("LightGrayBackgroundColor"))
         .task {
             await viewModel.initRentals()
         }
-        .refreshable { await viewModel.initRentals() }
+        .refreshable {
+            await viewModel.initRentals()
+        }
     }
 }
 

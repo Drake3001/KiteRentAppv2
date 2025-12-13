@@ -9,39 +9,58 @@ import SwiftUI
 
 struct InstructorListAdminView: View {
     @StateObject private var viewModel = InstructorListAdminViewModel()
-    
+
     @State private var selectedInstructorForEditing: DBInstructor? = nil
-    
+
+    @FocusState private var isSearchFocused: Bool
+
     var body: some View {
-        SearchBarView(text: $viewModel.searchText)
-        
-        Spacer()
-        
-        FilterRowView(
-            numberOfElements: viewModel.filteredAndOrderedInstructors.count,
-            onSortTapped: {viewModel.isSortAscending.toggle()},
-            isAscending: viewModel.isSortAscending
-        )
-        
-        Spacer()
-        
-        ScrollView {
-            VStack(spacing: 16) {
-                ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
-                    InstructorAdminView(instructor: instructor) { instructor in
-                        self.selectedInstructorForEditing = instructor
+        ZStack {
+            VStack {
+                SearchBarView(text: $viewModel.searchText)
+                    .focused($isSearchFocused)
+
+                Spacer()
+
+                FilterRowView(
+                    numberOfElements: viewModel.filteredAndOrderedInstructors.count,
+                    onSortTapped: { viewModel.isSortAscending.toggle() },
+                    isAscending: viewModel.isSortAscending
+                )
+
+                Spacer()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
+                            InstructorAdminView(instructor: instructor) { instructor in
+                                selectedInstructorForEditing = instructor
+                            }
+                        }
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity)
                 }
+                .scrollDismissesKeyboard(.immediately)
+                .background(Color("LightGrayBackgroundColor"))
             }
-            .padding()
-            .frame(maxWidth: .infinity)
+
+            if isSearchFocused {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isSearchFocused = false
+                    }
+                    .zIndex(1)
+            }
         }
-        .background(Color("LightGrayBackgroundColor"))
         .task {
             await viewModel.loadInstructors()
-          
         }
-        .refreshable { await viewModel.loadInstructors() }
+        .refreshable {
+            await viewModel.loadInstructors()
+        }
         .sheet(item: $selectedInstructorForEditing) {
             Task { await viewModel.loadInstructors() }
         } content: { instructorToEdit in

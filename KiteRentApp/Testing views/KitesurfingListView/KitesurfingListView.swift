@@ -52,8 +52,17 @@ struct KitesurfingListView: View {
                 }
                 .background(Color.white)
                 .contentShape(Rectangle())
-                .onTapGesture {
-                    isSearchFocused = false
+//                .onTapGesture {
+//                    isSearchFocused = false
+//                }
+                if isSearchFocused {
+                    Color.clear
+                    .contentShape(Rectangle())
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isSearchFocused = false
+                    }
+                    .zIndex(1)
                 }
                 
                 if showPopup, let kite = selectedKite {
