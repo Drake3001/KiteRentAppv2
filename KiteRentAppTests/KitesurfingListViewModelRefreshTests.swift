@@ -59,7 +59,7 @@ final class KitesurfingListViewModelRefreshTests: XCTestCase {
         let kiteManager = MockKiteManager()
         let rentalManager = MockRentalManager()
         rentalManager.rentalsToReturn = [
-            makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: -1) 
+            makeRental(kiteId: "k1", instructorId: "i1", startOffset: -10, endOffset: -1)
         ]
         let instructorManager = MockInstructorManager()
 
