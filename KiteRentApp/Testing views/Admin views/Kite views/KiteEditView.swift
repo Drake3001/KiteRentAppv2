@@ -24,114 +24,115 @@ struct KiteEditView: View {
         _editableSize = State(initialValue: String(kite.size))
         _editableModel = State(initialValue: kite.kiteModel)
     }
-
+    
     var body: some View {
-            NavigationView {
-                VStack(spacing: 0) {
-                    Form {
-                        Section(header: Text("Kite Details")) {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Name")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                TextField("Enter name", text: $editableName)
-                                    .autocorrectionDisabled()
-                            }
-                            
-                            // --- 2. Brand Field ---
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Brand")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                TextField("Enter brand", text: $editableBrand)
-                                    .autocorrectionDisabled()
-                            }
-                            
-                            // --- 3. Model Field ---
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Model")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                TextField("Enter model", text: $editableModel)
-                                    .autocorrectionDisabled()
-                            }
-                            
-                            // --- 4. Size Field ---
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Size (Meters)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                TextField("e.g., 9, 12", text: $editableSize)
-                                    .keyboardType(.decimalPad)
-                            }
-                            
-                            // --- 5. State Picker ---
-                            Picker("Kite State", selection: $editableState) {
-                                ForEach(KiteState.allCases) { state in
-                                    Text(state.rawValue.capitalized).tag(state)
-                                }
-                            }
-                            .disabled(KiteState.allCases.isEmpty)
+        NavigationView {
+            VStack(spacing: 0) {
+                Form {
+                    Section(header: Text("Kite Details")) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Name")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Enter name", text: $editableName)
+                                .autocorrectionDisabled()
                         }
-                    }
-                   
-                    Spacer()
-                    
-                    if let uiImage = UIImage(named: originalKite.imageName) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 250)
-                            .padding(.horizontal)
-                            .padding(.bottom, 20)
+                        
+                        // --- 2. Brand Field ---
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Brand")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Enter brand", text: $editableBrand)
+                                .autocorrectionDisabled()
+                        }
+                        
+                        // --- 3. Model Field ---
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Model")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("Enter model", text: $editableModel)
+                                .autocorrectionDisabled()
+                        }
+                        
+                        // --- 4. Size Field ---
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Size (Meters)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField("e.g., 9, 12", text: $editableSize)
+                                .keyboardType(.decimalPad)
+                        }
+                        
+                        // --- 5. State Picker ---
+                        Picker("Kite State", selection: $editableState) {
+                            ForEach(KiteState.allCases) { state in
+                                Text(state.rawValue.capitalized).tag(state)
+                            }
+                        }
+                        .disabled(KiteState.allCases.isEmpty)
                     }
                 }
-                .background(Color(.systemGroupedBackground))
-                .navigationTitle("Edit \(originalKite.name)")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            dismiss()
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Save") {
-                            Task { await saveChanges() }
-                        }
-                        .disabled(isSaving || !hasChanges || !isInputValid)
-                    }
-                }
-                .overlay {
-                    if isSaving {
-                        ProgressView("Saving Changes...")
-                            .padding()
-                            .background(.ultraThickMaterial)
-                            .cornerRadius(10)
-                    }
-                }
-                .alert("Error", isPresented: $showAlert) {
-                    Button("OK", role: .cancel) {}
-                } message: {
-                    Text(alertMessage)
+                
+                Spacer()
+                
+                if let uiImage = UIImage(named: originalKite.imageName) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 250)
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                 }
             }
+            .background(Color(.systemGroupedBackground))
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .navigationTitle("Edit \(originalKite.name)")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        Task { await saveChanges() }
+                    }
+                    .disabled(isSaving || !hasChanges || !isInputValid)
+                }
+            }
+            .overlay {
+                if isSaving {
+                    ProgressView("Saving Changes...")
+                        .padding()
+                        .background(.ultraThickMaterial)
+                        .cornerRadius(10)
+                }
+            }
+            .alert("Error", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
         }
+    }
     
     // MARK: - Validation and Actions
     
     private var hasChanges: Bool {
         return editableName != originalKite.name ||
-               editableBrand != originalKite.brand ||
-               editableModel != originalKite.kiteModel ||
-               editableSize != String(originalKite.size) ||
-               editableState != originalKite.state
+        editableBrand != originalKite.brand ||
+        editableModel != originalKite.kiteModel ||
+        editableSize != String(originalKite.size) ||
+        editableState != originalKite.state
     }
     
     private var isInputValid: Bool {
         return !editableName.isEmpty &&
-               !editableBrand.isEmpty &&
-               !editableModel.isEmpty &&
-               Double(editableSize) != nil
+        !editableBrand.isEmpty &&
+        !editableModel.isEmpty &&
+        Double(editableSize) != nil
     }
     
     private func saveChanges() async {
