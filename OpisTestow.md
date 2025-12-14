@@ -1,4 +1,3 @@
-
 ### KiteRentAppTests
 
 #### AdditionalRentalTests.swift
