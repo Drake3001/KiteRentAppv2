@@ -10,7 +10,6 @@ import FirebaseFirestore
 
 
 struct DBKite: Identifiable, Codable {
-//    var id: String
     @DocumentID var id: String?
     var name: String
     var imageName: String
@@ -30,13 +29,6 @@ struct DBKite: Identifiable, Codable {
         case size = "size"
         case dateCreated = "date_created"
     }
-    
-//    init(from document: DocumentSnapshot) throws {
-//        let data = try document.data(as: DBKite.self)
-//        self = data
-//        self.id = document.documentID
-//    }
-    
 }
 
 enum KiteState: String, Codable, Comparable, CaseIterable, Identifiable {

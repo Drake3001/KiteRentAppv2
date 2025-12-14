@@ -11,7 +11,7 @@ import SwiftUI
 struct DirectAdminLoginView: View {
     @StateObject private var viewModel = DirectAdminLoginViewModel()
     let onLoginSuccess: () -> Void
-
+    
     
     var body: some View {
         ZStack {
@@ -58,16 +58,16 @@ struct DirectAdminLoginView: View {
                         .padding(.horizontal)
                         .textInputAutocapitalization(.never)
                     
+                    if let error = viewModel.errorMessage, !error.isEmpty {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    
                     HStack(spacing: 20) {
                         Button {
                             Task {
-                                do {
-                                    try await viewModel.signUp()
-                                    onLoginSuccess()
-                                } catch {
-                                    print("Sign up failed")
-                                }
-                                
                                 do {
                                     try await viewModel.signIn()
                                     onLoginSuccess()

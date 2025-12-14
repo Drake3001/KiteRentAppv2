@@ -7,7 +7,6 @@ struct StartScreenView: View {
 
     var body: some View {
         ZStack {
-            // Gradient tła
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(#colorLiteral(red: 0.2039, green: 0.7882, blue: 1.0, alpha: 1)),
@@ -21,12 +20,10 @@ struct StartScreenView: View {
             VStack {
                 Spacer()
                 
-                // Logo
                 Image(systemName: "wind")
                     .font(.system(size: 100))
                     .foregroundColor(.white)
                 
-                // Nazwa szkoły
                 VStack(spacing: 0) {
                     Text("Kitesurfing")
                         .font(.system(size: 36, weight: .bold))
@@ -39,12 +36,11 @@ struct StartScreenView: View {
                 
                 Spacer()
                 
-                // Strzałki animowane bezpośrednio nad napisem
                 VStack(spacing: 0) {
                     Image(systemName: "chevron.up")
                     Image(systemName: "chevron.up")
                 }
-                .font(.system(size: 20, weight: .bold)) // powrót do wcześniejszego rozmiaru
+                .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.white)
                 .offset(y: arrowOffset)
                 .onAppear {
@@ -52,9 +48,8 @@ struct StartScreenView: View {
                         arrowOffset = -10
                     }
                 }
-                .padding(.bottom, 12) // mały odstęp nad napisem
+                .padding(.bottom, 12)
                 
-                // Napis na samym dole
                 Text("Przesuń w górę, aby rozpocząć")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white.opacity(0.9))
