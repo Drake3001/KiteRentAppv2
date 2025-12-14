@@ -28,5 +28,5 @@ struct SearchBarView: View {
 }
 
 #Preview {
-    //SearchBarView()
+    SearchBarView(text: .constant(""))
 }

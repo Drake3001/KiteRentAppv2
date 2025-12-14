@@ -14,7 +14,7 @@ final class DirectAdminLoginViewModel: ObservableObject {
         
         guard !email.isEmpty, !password.isEmpty else {
             errorMessage = "Please enter both email and password."
-            return
+            throw ValidationError.emptyFields
         }
         
         do {
@@ -32,7 +32,7 @@ final class DirectAdminLoginViewModel: ObservableObject {
         
         guard !email.isEmpty, !password.isEmpty else {
             errorMessage = "Please enter both email and password."
-            return
+            throw ValidationError.emptyFields
         }
         
         do {
@@ -58,4 +58,8 @@ final class DirectAdminLoginViewModel: ObservableObject {
             errorMessage = "Authentication failed. \(error.localizedDescription)"
         }
     }
+}
+
+enum ValidationError: Error {
+    case emptyFields
 }
