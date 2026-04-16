@@ -4,39 +4,8 @@ struct KiteReservationView: View {
     @Binding var showPopup: Bool
     
     @StateObject private var viewModel = KiteReservationViewModel()
-    @State private var selectedInstructor: DBInstructor?
     
-    private static let times = KiteReservationViewModel.initTime()
-    private static let startHourValue = KiteReservationView.times.startHour
-    private static let startMinuteValue = KiteReservationView.times.startMinute
-    private let maxHour = startHourValue
-    private let maxMinute = startMinuteValue
-    
-    @State private var startHour: Int = startHourValue
-    @State private var startMinute: Int = KiteReservationView.times.startMinute
-    @State private var endHour: Int = KiteReservationView.times.endHour
-    @State private var endMinute: Int = KiteReservationView.times.endMinute
-    
-    let startHours = Array(AppConstants.defaultWorkStartHour ..< startHourValue + 1)
-    
-    private func getValidMinutes(for hour: Int) -> [Int] {
-        if hour < maxHour {
-            return Array(stride(from: 0, through: 55, by: 15))
-        } else if hour == maxHour {
-            return Array(stride(from: 0, through: maxMinute, by: 15))
-        } else {
-            return []
-        }
-    }
-    
-    var startMinutes: [Int] {
-        getValidMinutes(for: startHour)
-    }
-    
-    let endHours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
-    let endMinutes = Array(stride(from: 0, through: 55, by: 15))
-    
-    var kite: DBKite
+    let kite: DBKite
     var onReservationCreated: (() -> Void)? = nil
     
     var body: some View {
@@ -45,34 +14,40 @@ struct KiteReservationView: View {
             ReservationHeader(kite: kite)
             
             InstructorPickerSection(
-                viewModel: viewModel,
-                selectedInstructor: $selectedInstructor
+                instructors: viewModel.filteredInstructors,
+                selectedInstructor: $viewModel.selectedInstructor
             )
             
             TimePickerSection(
                 title: "Godzina rozpoczęcia",
-                hours: startHours,
-                minutes: startMinutes,
-                hour: $startHour,
-                minute: $startMinute
+                hours: viewModel.startHours,
+                minutes: viewModel.startMinutes,
+                hour: $viewModel.startHour,
+                minute: $viewModel.startMinute
             )
             
             TimePickerSection(
                 title: "Godzina zakończenia",
-                hours: endHours,
-                minutes: endMinutes,
-                hour: $endHour,
-                minute: $endMinute
+                hours: viewModel.endHours,
+                minutes: viewModel.endMinutes,
+                hour: $viewModel.endHour,
+                minute: $viewModel.endMinute
             )
             
             ReservationButtons(
-                showPopup: $showPopup,
-                viewModel: viewModel,
-                kiteId: kite.id!,
-                startTime: makeDate(hour: startHour, minute: startMinute),
-                endTime: makeDate(hour: endHour, minute: endMinute),
-                selectedInstructorId: selectedInstructor?.instructorId ?? viewModel.selectedInstructorId,
-                onReservationCreated: onReservationCreated
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.isConfirmDisabled,
+                onConfirm: {
+                    guard let kiteId = kite.id else { return }
+                    Task {
+                        await viewModel.confirmReservation(kiteId: kiteId)
+                        if viewModel.didCreateReservation {
+                            showPopup = false
+                            onReservationCreated?()
+                        }
+                    }
+                },
+                onClose: { showPopup = false }
             )
             
             if let error = viewModel.errorMessage {
@@ -88,19 +63,9 @@ struct KiteReservationView: View {
         .task {
             await viewModel.loadInstructors()
         }
-        .onChange(of: startHour) { _, newHour in
-            let validMinutes = getValidMinutes(for: newHour)
-            if !validMinutes.contains(startMinute) {
-                startMinute = validMinutes.last ?? 0
-            }
+        .onChange(of: viewModel.startHour) { _, _ in
+            viewModel.clampStartMinuteIfNeeded()
         }
-    }
-    
-    private func makeDate(hour: Int, minute: Int) -> Date {
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-        comps.hour = hour
-        comps.minute = minute
-        return Calendar.current.date(from: comps) ?? Date()
     }
 }
 

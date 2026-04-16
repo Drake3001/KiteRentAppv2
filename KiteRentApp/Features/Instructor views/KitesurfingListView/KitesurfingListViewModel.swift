@@ -12,18 +12,23 @@ final class KitesurfingListViewModel: ObservableObject {
 
     @Published var isSortAscending: Bool = false
 
+    @Published var selectedKite: DBKite? = nil
+    @Published var showPopup: Bool = false
+    @Published var showScanner: Bool = false
+    @Published var showErrorAlert: Bool = false
+
     private var rentalRefreshTask: Task<Void, Never>? = nil
 
     private let kiteManager: KiteManagerProtocol
     private let rentalManager: RentalManagerProtocol
     private let instructorManager: InstructorManagerProtocol
 
-    init(kiteManager: KiteManagerProtocol = KiteManager.shared,
-         rentalManager: RentalManagerProtocol = RentalManager.shared,
-         instructorManager: InstructorManagerProtocol = InstructorManager.shared) {
-        self.kiteManager = kiteManager
-        self.rentalManager = rentalManager
-        self.instructorManager = instructorManager
+    init(kiteManager: KiteManagerProtocol? = nil,
+         rentalManager: RentalManagerProtocol? = nil,
+         instructorManager: InstructorManagerProtocol? = nil) {
+        self.kiteManager = kiteManager ?? KiteManager.shared
+        self.rentalManager = rentalManager ?? RentalManager.shared
+        self.instructorManager = instructorManager ?? InstructorManager.shared
     }
 
     var filteredAndOrderedKites: [DBKite] {
@@ -36,12 +41,8 @@ final class KitesurfingListViewModel: ObservableObject {
         let sizeSorted: [DBKite]
         if isSortAscending {
             sizeSorted = base.sorted { (Double($0.size) ?? 0) < (Double($1.size) ?? 0) }
-//            sizeSorted = base.sorted { Int($0.size)! < Int($1.size)! }
-
         } else {
             sizeSorted = base.sorted { (Double($0.size) ?? 0) > (Double($1.size) ?? 0) }
-//            sizeSorted = base.sorted { Int($0.size)!  > Int($1.size)! }
-
         }
 
         return sizeSorted.sorted { $0.state < $1.state }
@@ -49,6 +50,30 @@ final class KitesurfingListViewModel: ObservableObject {
 
     func getInstructorForKite(kiteId: String) -> DBInstructor? {
         return activeRentals[kiteId]
+    }
+
+    func selectKite(_ kite: DBKite) {
+        selectedKite = kite
+        showPopup = kite.state == .free
+    }
+
+    func handleScannedKite(kiteId: String) {
+        guard let kite = filteredAndOrderedKites.first(where: { $0.id == kiteId }) else {
+            errorMessage = "Nie znaleziono kite o ID \(kiteId)."
+            showErrorAlert = true
+            return
+        }
+        switch kite.state {
+        case .free:
+            selectedKite = kite
+            showPopup = true
+        case .used:
+            errorMessage = "Kite \(kiteId) jest zajęty."
+            showErrorAlert = true
+        case .serviced:
+            errorMessage = "Kite \(kiteId) jest niedostępny."
+            showErrorAlert = true
+        }
     }
 
     func loadKites() async {

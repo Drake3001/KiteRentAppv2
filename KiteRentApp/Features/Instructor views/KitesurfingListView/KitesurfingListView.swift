@@ -2,13 +2,6 @@ import SwiftUI
 
 struct KitesurfingListView: View {
     @StateObject private var viewModel = KitesurfingListViewModel()
-    @State private var selectedKite: DBKite? = nil
-    @State private var showPopup: Bool = false
-    
-    @State private var showScanner: Bool = false
-    @State private var scannedKiteId: String = ""
-    @State private var showErrorAlert: Bool = false
-    @State private var errorMessage: String = ""
     
     @FocusState private var isSearchFocused: Bool
     
@@ -29,7 +22,7 @@ struct KitesurfingListView: View {
             ZStack {
                 VStack(spacing: 0) {
                     HeaderView(
-                        onWindTapped: { showScanner = true },
+                        onWindTapped: { viewModel.showScanner = true },
                         onLoginTapped: { path.append(Destination.adminLogin) }
                     )
                     .offset(y: -20)
@@ -65,13 +58,13 @@ struct KitesurfingListView: View {
                     .zIndex(1)
                 }
                 
-                if showPopup, let kite = selectedKite {
+                if viewModel.showPopup, let kite = viewModel.selectedKite {
                     Color.black.opacity(0.35)
                         .ignoresSafeArea()
-                        .onTapGesture { withAnimation { showPopup = false } }
+                        .onTapGesture { withAnimation { viewModel.showPopup = false } }
                     
                     KiteReservationView(
-                        showPopup: $showPopup,
+                        showPopup: $viewModel.showPopup,
                         kite: kite,
                         onReservationCreated: {
                             Task { await viewModel.loadKites() }
@@ -81,7 +74,7 @@ struct KitesurfingListView: View {
                     .zIndex(10)
                 }
             }
-            .animation(.spring(), value: showPopup)
+            .animation(.spring(), value: viewModel.showPopup)
             .task {
                 await viewModel.loadKites()
                 await viewModel.startRefreshOnRentalEnd()
@@ -91,10 +84,10 @@ struct KitesurfingListView: View {
                     await viewModel.stopRefreshOnRentalEnd()
                 }
             }
-            .alert("Błąd", isPresented: $showErrorAlert, actions: {
-                Button("OK") { showErrorAlert = false }
-            }, message: { Text(errorMessage) })
-            .fullScreenCover(isPresented: $showScanner) {
+            .alert("Błąd", isPresented: $viewModel.showErrorAlert, actions: {
+                Button("OK") { viewModel.showErrorAlert = false }
+            }, message: { Text(viewModel.errorMessage ?? "") })
+            .fullScreenCover(isPresented: $viewModel.showScanner) {
                 scannerSheet()
                     .ignoresSafeArea()
             }
@@ -132,7 +125,7 @@ struct KitesurfingListView: View {
                         KiteGridItem(
                             kite: kite,
                             instructor: instructor,
-                            onTap: { handleKiteTap(kite) }
+                            onTap: { viewModel.selectKite(kite) }
                         )
                     }
                 }
@@ -143,38 +136,14 @@ struct KitesurfingListView: View {
         }
     }
     
-    private func handleKiteTap(_ kite: DBKite) {
-        selectedKite = kite
-        showPopup = kite.state == .free
-    }
-    
-    private func handleScannedKite(kiteId: String) {
-        if let kite = viewModel.filteredAndOrderedKites.first(where: { $0.id == kiteId }) {
-            switch kite.state {
-            case .free:
-                selectedKite = kite
-                showPopup = true
-            case .used:
-                errorMessage = "Kite \(kiteId) jest zajęty."
-                showErrorAlert = true
-            case .serviced:
-                errorMessage = "Kite \(kiteId) jest niedostępny."
-                showErrorAlert = true
-            }
-        } else {
-            errorMessage = "Nie znaleziono kite o ID \(kiteId)."
-            showErrorAlert = true
-        }
-    }
-    
     @ViewBuilder
     private func scannerSheet() -> some View {
         QRScannerView(
             onFound: { kiteId in
-                showScanner = false
-                handleScannedKite(kiteId: kiteId)
+                viewModel.showScanner = false
+                viewModel.handleScannedKite(kiteId: kiteId)
             },
-            onCancel: { showScanner = false }
+            onCancel: { viewModel.showScanner = false }
         )
     }
 }

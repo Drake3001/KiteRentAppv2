@@ -1,15 +1,12 @@
 import SwiftUI
 
 struct ReservationButtons: View {
-    @Binding var showPopup: Bool
     @Environment(\.horizontalSizeClass) var hSizeClass
     
-    let viewModel: KiteReservationViewModel
-    let kiteId: String
-    let startTime: Date
-    let endTime: Date
-    let selectedInstructorId: String?
-    var onReservationCreated: (() -> Void)? = nil
+    let isLoading: Bool
+    let isDisabled: Bool
+    let onConfirm: () -> Void
+    let onClose: () -> Void
     
     var isLargeScreen: Bool {
         hSizeClass == .regular
@@ -32,23 +29,8 @@ struct ReservationButtons: View {
     }
     
     private var confirmButton: some View {
-        let isDisabled = viewModel.isLoading || startTime > endTime
-
-        return Button {
-            Task {
-                await viewModel.confirmReservation(
-                    kiteId: kiteId,
-                    instructorId: selectedInstructorId,
-                    startTime: startTime,
-                    endTime: endTime
-                )
-                if viewModel.didCreateReservation {
-                    showPopup = false
-                    onReservationCreated?()
-                }
-            }
-        } label: {
-            if viewModel.isLoading {
+        Button(action: onConfirm) {
+            if isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity)
             } else {
@@ -57,21 +39,18 @@ struct ReservationButtons: View {
             }
         }
         .padding(.vertical, 10)
-        .background(isDisabled ? Color.gray.opacity(0.5) : Color.blue.opacity(0.9))   
+        .background(isDisabled ? Color.gray.opacity(0.5) : Color.blue.opacity(0.9))
         .foregroundColor(.white.opacity(isDisabled ? 0.6 : 1.0))
         .cornerRadius(10)
         .disabled(isDisabled)
     }
 
-    
     private var closeButton: some View {
-        Button("Zamknij") {
-            showPopup = false
-        }
-        .padding(.vertical, 10)
-        .frame(maxWidth: .infinity)
-        .background(Color.blue.opacity(0.9))
-        .foregroundColor(.white)
-        .cornerRadius(10)
+        Button("Zamknij", action: onClose)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .background(Color.blue.opacity(0.9))
+            .foregroundColor(.white)
+            .cornerRadius(10)
     }
 }

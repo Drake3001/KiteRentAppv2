@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct InstructorPickerSection: View {
-    @ObservedObject var viewModel: KiteReservationViewModel
+    let instructors: [DBInstructor]
     @Binding var selectedInstructor: DBInstructor?
     
     var body: some View {
@@ -16,7 +16,7 @@ struct InstructorPickerSection: View {
                 .font(.subheadline)
             
             Menu {
-                ForEach(viewModel.filteredInstructors) { instructor in
+                ForEach(instructors) { instructor in
                     Button(instructor.shortName) {
                         selectedInstructor = instructor
                     }

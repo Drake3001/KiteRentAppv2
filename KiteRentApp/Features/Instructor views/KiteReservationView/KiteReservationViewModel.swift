@@ -11,36 +11,108 @@ import Combine
 @MainActor
 final class KiteReservationViewModel: ObservableObject {
     @Published var instructors: [DBInstructor] = []
-    @Published var selectedInstructorId: String?
+    @Published var selectedInstructor: DBInstructor?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var didCreateReservation: Bool = false
     @Published var createdRentalId: String?
 
+    @Published var startHour: Int
+    @Published var startMinute: Int
+    @Published var endHour: Int
+    @Published var endMinute: Int
+
+    let maxHour: Int
+    let maxMinute: Int
+
+    let startHours: [Int]
+    let endHours: [Int]
+    let endMinutes: [Int]
+
+    private let kiteManager: KiteManagerProtocol
+    private let rentalManager: RentalManagerProtocol
+    private let instructorManager: InstructorManagerProtocol
+
     var filteredInstructors: [DBInstructor] {
-        return instructors.filter {$0.state == .active}
+        return instructors.filter { $0.state == .active }
     }
-    
+
+    var selectedInstructorId: String? {
+        selectedInstructor?.instructorId
+    }
+
+    var startMinutes: [Int] {
+        getValidMinutes(for: startHour)
+    }
+
+    var isConfirmDisabled: Bool {
+        isLoading || startTime > endTime
+    }
+
+    var startTime: Date {
+        makeDate(hour: startHour, minute: startMinute)
+    }
+
+    var endTime: Date {
+        makeDate(hour: endHour, minute: endMinute)
+    }
+
+    init(kiteManager: KiteManagerProtocol? = nil,
+         rentalManager: RentalManagerProtocol? = nil,
+         instructorManager: InstructorManagerProtocol? = nil) {
+        self.kiteManager = kiteManager ?? KiteManager.shared
+        self.rentalManager = rentalManager ?? RentalManager.shared
+        self.instructorManager = instructorManager ?? InstructorManager.shared
+
+        let times = Self.initTime()
+        self.startHour = times.startHour
+        self.startMinute = times.startMinute
+        self.endHour = times.endHour
+        self.endMinute = times.endMinute
+        self.maxHour = times.startHour
+        self.maxMinute = times.startMinute
+        self.startHours = Array(AppConstants.defaultWorkStartHour ..< times.startHour + 1)
+        self.endHours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
+        self.endMinutes = Array(stride(from: 0, through: 55, by: 15))
+    }
+
+    func getValidMinutes(for hour: Int) -> [Int] {
+        if hour < maxHour {
+            return Array(stride(from: 0, through: 55, by: 15))
+        } else if hour == maxHour {
+            return Array(stride(from: 0, through: maxMinute, by: 15))
+        } else {
+            return []
+        }
+    }
+
+    func clampStartMinuteIfNeeded() {
+        let validMinutes = getValidMinutes(for: startHour)
+        if !validMinutes.contains(startMinute) {
+            startMinute = validMinutes.last ?? 0
+        }
+    }
+
     func loadInstructors() async {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         do {
-            let fetched = try await InstructorManager.shared.getAllInstructors()
+            let fetched = try await instructorManager.getAllInstructors()
             self.instructors = fetched
         } catch {
             self.errorMessage = error.localizedDescription
         }
         isLoading = false
     }
-    
-    func confirmReservation(kiteId: String, instructorId: String?, startTime: Date, endTime: Date) async {
+
+    func confirmReservation(kiteId: String) async {
         guard !isLoading else { return }
         errorMessage = nil
         didCreateReservation = false
         createdRentalId = nil
 
-        guard let instructorId = instructorId else {
+        guard let instructorId = selectedInstructorId else {
             errorMessage = "Wybierz instruktora."
             return
         }
@@ -62,17 +134,21 @@ final class KiteReservationViewModel: ObservableObject {
         )
 
         do {
-            // Tworzenie rezerwacji
-            try await RentalManager.shared.createNewRental(rental: rental)
-            
-            // Zmiana statusu kite z free na used
-            try await KiteManager.shared.updateKiteState(kiteId: kiteId, state: .used)
-            
+            try await rentalManager.createNewRental(rental: rental)
+            try await kiteManager.updateKiteState(kiteId: kiteId, state: .used)
+
             self.createdRentalId = rentalId
             self.didCreateReservation = true
         } catch {
             self.errorMessage = error.localizedDescription
         }
+    }
+
+    private func makeDate(hour: Int, minute: Int) -> Date {
+        var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        comps.hour = hour
+        comps.minute = minute
+        return Calendar.current.date(from: comps) ?? Date()
     }
 }
 
@@ -86,24 +162,20 @@ extension KiteReservationViewModel {
         let calendar = Calendar.current
         let now = Date()
         
-        // --- 1. Round start minutes according to custom rules ---
         let hour = calendar.component(.hour, from: now)
         let minute = calendar.component(.minute, from: now)
         
         let prevQuarter = (minute / 15) * 15
         
-        
         let startMinute = prevQuarter
         let startHour = hour
                 
-        // --- 2. Build start date and clamp to work hours ---
         var startComps = calendar.dateComponents([.year, .month, .day], from: now)
         startComps.hour = startHour
         startComps.minute = startMinute
         var startDate = calendar.date(from: startComps)!
         startDate = clampToWorkHours(startDate, isStartDate: true)
         
-        // --- 3. Compute end date by adding lesson duration ---
         var endDate = calendar.date(byAdding: .hour,
                                     value: AppConstants.defaultLessonDurationHours,
                                     to: startDate)!
@@ -121,7 +193,6 @@ extension KiteReservationViewModel {
                 endMinute: endMinute)
     }
     
-    /// Ensures a date stays within working hours defined by AppConstants.
     static func clampToWorkHours(_ date: Date, isStartDate: Bool) -> Date {
         let calendar = Calendar.current
         
