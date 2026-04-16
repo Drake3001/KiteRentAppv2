@@ -4,25 +4,10 @@ import Foundation
 struct KiteEditView: View {
     @Environment(\.dismiss) var dismiss
     
-    let originalKite: DBKite
-    
-    @State private var editableName: String
-    @State private var editableSize: String
-    @State private var editableModel: String
-    @State private var editableBrand: String
-    @State private var editableState: KiteState
-    
-    @State private var isSaving: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    @StateObject private var viewModel: AdminKiteEditViewModel
     
     init(kite: DBKite) {
-        self.originalKite = kite
-        _editableName = State(initialValue: kite.name)
-        _editableBrand = State(initialValue: kite.brand)
-        _editableState = State(initialValue: kite.state)
-        _editableSize = State(initialValue: String(kite.size))
-        _editableModel = State(initialValue: kite.kiteModel)
+        _viewModel = StateObject(wrappedValue: AdminKiteEditViewModel(kite: kite))
     }
     
     var body: some View {
@@ -34,7 +19,7 @@ struct KiteEditView: View {
                             Text("Name")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("Enter name", text: $editableName)
+                            TextField("Enter name", text: $viewModel.editableName)
                                 .autocorrectionDisabled()
                         }
                         
@@ -43,7 +28,7 @@ struct KiteEditView: View {
                             Text("Brand")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("Enter brand", text: $editableBrand)
+                            TextField("Enter brand", text: $viewModel.editableBrand)
                                 .autocorrectionDisabled()
                         }
                         
@@ -52,7 +37,7 @@ struct KiteEditView: View {
                             Text("Model")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("Enter model", text: $editableModel)
+                            TextField("Enter model", text: $viewModel.editableModel)
                                 .autocorrectionDisabled()
                         }
                         
@@ -61,12 +46,12 @@ struct KiteEditView: View {
                             Text("Size (Meters)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            TextField("e.g., 9, 12", text: $editableSize)
+                            TextField("e.g., 9, 12", text: $viewModel.editableSize)
                                 .keyboardType(.decimalPad)
                         }
                         
                         // --- 5. State Picker ---
-                        Picker("Kite State", selection: $editableState) {
+                        Picker("Kite State", selection: $viewModel.editableState) {
                             ForEach(KiteState.allCases) { state in
                                 Text(state.rawValue.capitalized).tag(state)
                             }
@@ -77,7 +62,7 @@ struct KiteEditView: View {
                 
                 Spacer()
                 
-                if let uiImage = UIImage(named: originalKite.imageName) {
+                if let uiImage = UIImage(named: viewModel.originalKite.imageName) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFit()
@@ -88,7 +73,7 @@ struct KiteEditView: View {
             }
             .background(Color(.systemGroupedBackground))
             .ignoresSafeArea(.keyboard, edges: .bottom)
-            .navigationTitle("Edit \(originalKite.name)")
+            .navigationTitle("Edit \(viewModel.originalKite.name)")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
@@ -97,87 +82,25 @@ struct KiteEditView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        Task { await saveChanges() }
+                        Task { await viewModel.save(onSuccess: { dismiss() }) }
                     }
-                    .disabled(isSaving || !hasChanges || !isInputValid)
+                    .disabled(viewModel.isSaving || !viewModel.hasChanges || !viewModel.isInputValid)
                 }
             }
             .overlay {
-                if isSaving {
+                if viewModel.isSaving {
                     ProgressView("Saving Changes...")
                         .padding()
                         .background(.ultraThickMaterial)
                         .cornerRadius(10)
                 }
             }
-            .alert("Error", isPresented: $showAlert) {
+            .alert("Error", isPresented: $viewModel.showErrorAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(alertMessage)
+                Text(viewModel.errorMessage)
             }
         }
-    }
-    
-    // MARK: - Validation and Actions
-    
-    private var hasChanges: Bool {
-        return editableName != originalKite.name ||
-        editableBrand != originalKite.brand ||
-        editableModel != originalKite.kiteModel ||
-        editableSize != String(originalKite.size) ||
-        editableState != originalKite.state
-    }
-    
-    private var isInputValid: Bool {
-        return !editableName.isEmpty &&
-        !editableBrand.isEmpty &&
-        !editableModel.isEmpty &&
-        Double(editableSize) != nil
-    }
-    
-    private func saveChanges() async {
-        guard isInputValid, let kiteId = originalKite.id else {
-            alertMessage = "Please ensure all fields are valid."
-            showAlert = true
-            return
-        }
-        
-        isSaving = true
-        
-        var fieldsToUpdate: [String: Any] = [:]
-        
-        if editableName != originalKite.name {
-            fieldsToUpdate["name"] = editableName
-        }
-        if editableBrand != originalKite.brand {
-            fieldsToUpdate["brand"] = editableBrand
-        }
-        if editableModel != originalKite.kiteModel {
-            fieldsToUpdate["kiteModel"] = editableModel
-        }
-        if editableSize != String(originalKite.size), let sizeDouble = Double(editableSize) {
-            fieldsToUpdate["size"] = sizeDouble
-        }
-        if editableState != originalKite.state {
-            fieldsToUpdate["state"] = editableState.rawValue
-        }
-        
-        guard !fieldsToUpdate.isEmpty else {
-            isSaving = false
-            dismiss()
-            return
-        }
-        
-        do {
-            try await KiteManager.shared.updateKiteFields(kiteId: kiteId, fields: fieldsToUpdate)
-            dismiss()
-        } catch {
-            print("Error updating kite: \(error)")
-            alertMessage = "Failed to save changes: \(error.localizedDescription)"
-            showAlert = true
-        }
-        
-        isSaving = false
     }
 }
 

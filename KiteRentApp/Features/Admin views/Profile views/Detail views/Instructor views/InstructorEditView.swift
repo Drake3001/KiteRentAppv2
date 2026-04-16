@@ -11,23 +11,10 @@ import Foundation
 struct InstructorEditView: View {
     @Environment(\.dismiss) var dismiss
     
-    let originalInstructor: DBInstructor
-    
-    @State private var editableName: String
-    @State private var editableSurname: String
-    @State private var editablePhoneNumber: String
-    @State private var editableState: InstructorState
-    
-    @State private var isSaving: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    @StateObject private var viewModel: AdminInstructorEditViewModel
     
     init(instructor: DBInstructor) {
-        self.originalInstructor = instructor
-        _editableName = State(initialValue: instructor.name)
-        _editableSurname = State(initialValue: instructor.surname)
-        _editablePhoneNumber = State(initialValue: instructor.phoneNumber ?? "")
-        _editableState = State(initialValue: instructor.state)
+        _viewModel = StateObject(wrappedValue: AdminInstructorEditViewModel(instructor: instructor))
     }
 
     var body: some View {
@@ -39,7 +26,7 @@ struct InstructorEditView: View {
                                 Text("Name")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                TextField("Enter name", text: $editableName)
+                                TextField("Enter name", text: $viewModel.editableName)
                                     .autocorrectionDisabled()
                             }
                             
@@ -47,7 +34,7 @@ struct InstructorEditView: View {
                                 Text("Surname")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                TextField("Enter surname", text: $editableSurname)
+                                TextField("Enter surname", text: $viewModel.editableSurname)
                                     .autocorrectionDisabled()
                             }
                             
@@ -55,11 +42,11 @@ struct InstructorEditView: View {
                                 Text("Phone Number")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                TextField("Enter phone number", text: $editablePhoneNumber)
+                                TextField("Enter phone number", text: $viewModel.editablePhoneNumber)
                                     .keyboardType(.numberPad)
                             }
                             
-                            Picker("Instructor State", selection: $editableState) {
+                            Picker("Instructor State", selection: $viewModel.editableState) {
                                 ForEach(InstructorState.allCases) { state in
                                     Text(state.rawValue.capitalized).tag(state)
                                 }
@@ -69,7 +56,7 @@ struct InstructorEditView: View {
                     }
                 }
                 .background(Color(.systemGroupedBackground))
-                .navigationTitle("Edit \(originalInstructor.name) \(originalInstructor.surname)")
+                .navigationTitle("Edit \(viewModel.originalInstructor.name) \(viewModel.originalInstructor.surname)")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Cancel") {
@@ -78,85 +65,26 @@ struct InstructorEditView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Save") {
-                            Task { await saveChanges() }
+                            Task { await viewModel.save(onSuccess: { dismiss() }) }
                         }
-                        .disabled(isSaving || !hasChanges || !isInputValid)
+                        .disabled(viewModel.isSaving || !viewModel.hasChanges || !viewModel.isInputValid)
                     }
                 }
                 .overlay {
-                    if isSaving {
+                    if viewModel.isSaving {
                         ProgressView("Saving Changes...")
                             .padding()
                             .background(.ultraThickMaterial)
                             .cornerRadius(10)
                     }
                 }
-                .alert("Error", isPresented: $showAlert) {
+                .alert("Error", isPresented: $viewModel.showErrorAlert) {
                     Button("OK", role: .cancel) {}
                 } message: {
-                    Text(alertMessage)
+                    Text(viewModel.errorMessage)
                 }
             }
         }
-    
-    // MARK: - Validation and Actions
-    
-    private var hasChanges: Bool {
-        return editableName != originalInstructor.name ||
-               editableSurname != originalInstructor.surname ||
-               editablePhoneNumber != originalInstructor.phoneNumber ||
-               editableState != originalInstructor.state
-    }
-    
-    private var isInputValid: Bool {
-        return !editableName.isEmpty &&
-               !editableSurname.isEmpty &&
-               !editablePhoneNumber.isEmpty
-    }
-    
-    private func saveChanges() async {
-        let instructorId = originalInstructor.instructorId
-        
-        guard isInputValid else {
-            alertMessage = "Please ensure all fields are valid."
-            showAlert = true
-            return
-        }
-        
-        isSaving = true
-        
-        var fieldsToUpdate: [String: Any] = [:]
-        
-        if editableName != originalInstructor.name {
-            fieldsToUpdate["name"] = editableName
-        }
-        if editableSurname != originalInstructor.surname {
-            fieldsToUpdate["surname"] = editableSurname
-        }
-        if editablePhoneNumber != originalInstructor.phoneNumber {
-            fieldsToUpdate["kiteNumber"] = editablePhoneNumber
-        }
-        if editableState != originalInstructor.state {
-            fieldsToUpdate["state"] = editableState.rawValue
-        }
-        
-        guard !fieldsToUpdate.isEmpty else {
-            isSaving = false
-            dismiss()
-            return
-        }
-        
-        do {
-            try await InstructorManager.shared.updateInstructorFields(instructorId: instructorId, fields: fieldsToUpdate)
-            dismiss()
-        } catch {
-            print("Error updating kite: \(error)")
-            alertMessage = "Failed to save changes: \(error.localizedDescription)"
-            showAlert = true
-        }
-        
-        isSaving = false
-    }
 }
 
 #Preview {

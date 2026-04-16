@@ -16,10 +16,24 @@ final class RentalListAdminViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedDate: Date? = Calendar.current.startOfDay(for: Date())
     @Published var isSortAscending: Bool = false
+
+    private let rentalManager: RentalManagerProtocol
+    private let instructorManager: InstructorManagerProtocol
+    private let kiteManager: KiteManagerProtocol
     
     private var fetchedRentals: [DBRental] = []
     private var kites: [DBKite] = []
     private var instructors: [DBInstructor] = []
+
+    init(
+        rentalManager: RentalManagerProtocol? = nil,
+        instructorManager: InstructorManagerProtocol? = nil,
+        kiteManager: KiteManagerProtocol? = nil
+    ) {
+        self.rentalManager = rentalManager ?? RentalManager.shared
+        self.instructorManager = instructorManager ?? InstructorManager.shared
+        self.kiteManager = kiteManager ?? KiteManager.shared
+    }
     
     var filteredAndOrderedRentals: [AdminRental] {
         let base: [AdminRental] = rentals
@@ -66,7 +80,7 @@ final class RentalListAdminViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched = try await RentalManager.shared.getAllRentals()
+            let fetched = try await rentalManager.getAllRentals()
             self.fetchedRentals = fetched
         } catch {
             self.errorMessage = error.localizedDescription
@@ -80,7 +94,7 @@ final class RentalListAdminViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched = try await InstructorManager.shared.getAllInstructors()
+            let fetched = try await instructorManager.getAllInstructors()
             self.instructors = fetched
         } catch {
             self.errorMessage = error.localizedDescription
@@ -93,7 +107,7 @@ final class RentalListAdminViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let fetched = try await KiteManager.shared.getAllKites()
+            let fetched = try await kiteManager.getAllKites()
             self.kites = fetched
         } catch {
             self.errorMessage = error.localizedDescription

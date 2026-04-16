@@ -8,6 +8,17 @@ final class DirectAdminLoginViewModel: ObservableObject {
     @Published var password = ""
     
     @Published var errorMessage: String? = nil
+
+    private let authManager: AuthenticationManagerProtocol
+    private let userManager: UserManagerProtocol
+
+    init(
+        authManager: AuthenticationManagerProtocol? = nil,
+        userManager: UserManagerProtocol? = nil
+    ) {
+        self.authManager = authManager ?? AuthenticationManager.shared
+        self.userManager = userManager ?? UserManager.shared
+    }
     
     func signUp() async throws {
         errorMessage = nil
@@ -18,9 +29,9 @@ final class DirectAdminLoginViewModel: ObservableObject {
         }
         
         do {
-            let authDataResult = try await AuthenticationManager.shared.createUser(email: email, password: password)
+            let authDataResult = try await authManager.createUser(email: email, password: password)
             let user = DBUser(userId: authDataResult.uid, email: authDataResult.email, dateCreated: Date())
-            try await UserManager.shared.createNewUser(user: user)
+            try await userManager.createNewUser(user: user)
         } catch {
              handleAuthError(error)
              throw error
@@ -36,7 +47,7 @@ final class DirectAdminLoginViewModel: ObservableObject {
         }
         
         do {
-            try await AuthenticationManager.shared.signInUser(email: email, password: password)
+            try await authManager.signInUser(email: email, password: password)
         } catch {
             handleAuthError(error)
             

@@ -10,8 +10,13 @@ import Combine
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
+    private let authManager: AuthenticationManagerProtocol
+
+    init(authManager: AuthenticationManagerProtocol? = nil) {
+        self.authManager = authManager ?? AuthenticationManager.shared
+    }
     
     func signOut() throws{
-        try AuthenticationManager.shared.signOut()
+        try authManager.signOut()
     }
 }

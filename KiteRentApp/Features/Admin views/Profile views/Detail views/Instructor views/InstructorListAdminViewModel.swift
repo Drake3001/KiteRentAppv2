@@ -17,12 +17,18 @@ final class InstructorListAdminViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isSortAscending: Bool = true
 
+    private let instructorManager: InstructorManagerProtocol
+
+    init(instructorManager: InstructorManagerProtocol? = nil) {
+        self.instructorManager = instructorManager ?? InstructorManager.shared
+    }
+
     func loadInstructors() async {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         do {
-            let fetched = try await InstructorManager.shared.getAllInstructors()
+            let fetched = try await instructorManager.getAllInstructors()
             self.instructors = fetched
         } catch {
             self.errorMessage = error.localizedDescription

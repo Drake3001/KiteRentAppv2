@@ -9,6 +9,7 @@ import SwiftUI
 
 struct KiteListAdminView: View {
     @StateObject private var viewModel = KitesurfingListViewModel()
+    @StateObject private var deleteViewModel = AdminKiteDeleteViewModel()
 
     @State private var selectedKiteForEditing: DBKite? = nil
 
@@ -86,15 +87,18 @@ struct KiteListAdminView: View {
         } message: { _ in
             Text("This action cannot be undone. All associated rental history for this kite will be lost.")
         }
+        .alert("Error", isPresented: $deleteViewModel.showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(deleteViewModel.errorMessage)
+        }
     }
 
     private func performDeletion(kite: DBKite) async {
         guard let kiteId = kite.id else { return }
-        do {
-            try await KiteManager.shared.deleteKite(kiteId: kiteId)
+        let didDelete = await deleteViewModel.deleteKite(kiteId: kiteId)
+        if didDelete {
             await viewModel.loadKites()
-        } catch {
-            print("Failed to delete kite: \(error)")
         }
     }
 }
