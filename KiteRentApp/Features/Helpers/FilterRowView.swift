@@ -29,7 +29,7 @@ struct FilterRowView: View {
             }
             Spacer()
             Text("\(numberOfElements) results")
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
                 .font(.subheadline)
         }
         .padding(.horizontal)

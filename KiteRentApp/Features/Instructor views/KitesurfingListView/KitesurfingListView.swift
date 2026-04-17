@@ -167,6 +167,11 @@ private struct KiteGridItem: View {
 struct KitesurfingListView_Previews: PreviewProvider {
     static var previews: some View {
         KitesurfingListView()
-            //.preferredColorScheme(.dark)
+            .previewDisplayName("light")
+        
+        KitesurfingListView()
+            .previewDisplayName("dark")
+            .preferredColorScheme(.dark)
+            
     }
 }

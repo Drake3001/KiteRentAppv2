@@ -42,9 +42,9 @@ struct KiteCard: View {
                 Spacer(minLength: 0)
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 18))
-            .shadow(color: Color.black.opacity(0.05), radius: 2, y: 4)
+            .shadow(color: Color.primary.opacity(0.08), radius: 2, y: 4)
             
             if kite.state != .free {
                 RoundedRectangle(cornerRadius: 18)
@@ -65,9 +65,9 @@ struct KiteCard: View {
                 .padding(.vertical, 10)
                 .background(
                     Capsule()
-                        .fill(Color.white)
+                        .fill(Color(.systemBackground))
                         .opacity(0.7)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: Color.primary.opacity(0.1), radius: 4, x: 0, y: 2)
                 )
             }
             else if kite.state == .serviced {
@@ -76,9 +76,9 @@ struct KiteCard: View {
                     .padding(.vertical, 10)
                     .background(
                         Capsule()
-                            .fill(Color.white)
+                            .fill(Color(.systemBackground))
                             .opacity(0.7)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            .shadow(color: Color.primary.opacity(0.1), radius: 4, x: 0, y: 2)
                     )
             }
         }

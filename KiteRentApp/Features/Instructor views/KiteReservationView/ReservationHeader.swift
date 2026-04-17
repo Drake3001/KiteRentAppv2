@@ -18,7 +18,12 @@ struct ReservationHeader: View {
             
             Text(kite.name)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
         }
     }
+}
+
+#Preview {
+    ReservationHeader(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+    
 }

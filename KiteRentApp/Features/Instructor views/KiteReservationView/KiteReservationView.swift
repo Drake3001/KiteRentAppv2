@@ -57,7 +57,7 @@ struct KiteReservationView: View {
         }
         .padding(20)
         .frame(maxWidth: 280)
-        .background(Color.white)
+        .background(Color(.tertiarySystemBackground))
         .cornerRadius(18)
         .shadow(radius: 10)
         .task {
@@ -69,7 +69,16 @@ struct KiteReservationView: View {
     }
 }
 
-#Preview {
-    KiteReservationView(showPopup: .constant(true),
-                        kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+struct KitesurfingReservationView_Previews: PreviewProvider {
+    static var previews: some View {
+        KiteReservationView(showPopup: .constant(true),
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+            .previewDisplayName("light")
+        
+        KiteReservationView(showPopup: .constant(true),
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+            .previewDisplayName("dark")
+            .preferredColorScheme(.dark)
+            
+    }
 }

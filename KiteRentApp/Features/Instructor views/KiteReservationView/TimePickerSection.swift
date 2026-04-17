@@ -39,10 +39,10 @@ struct TimePickerSection: View {
             .clipped()
         }
         .padding()
-        .background(Color.white)
+        .background(Color(.tertiarySystemBackground))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .stroke(Color(.secondaryLabel).opacity(0.3), lineWidth: 1)
         )
     }
 }

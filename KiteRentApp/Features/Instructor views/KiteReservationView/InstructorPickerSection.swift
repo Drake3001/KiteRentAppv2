@@ -24,10 +24,10 @@ struct InstructorPickerSection: View {
             } label: {
                 HStack {
                     Text(selectedInstructor?.shortName ?? "Wybierz instruktora")
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
                 .padding()
                 .background(Color.gray.opacity(0.1))
@@ -39,10 +39,10 @@ struct InstructorPickerSection: View {
             }
         }
         .padding()
-        .background(Color.white)
+        .background(Color(.tertiarySystemBackground))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .stroke(Color(.secondaryLabel).opacity(0.3), lineWidth: 1)
         )
     }
 }

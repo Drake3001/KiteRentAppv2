@@ -13,15 +13,15 @@ struct SearchBarView: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass").foregroundColor(.gray)
+            Image(systemName: "magnifyingglass").foregroundColor(Color(.secondaryLabel))
             
             TextField("Search", text: $text)
                 .submitLabel(.search)
             
-            Image(systemName: "mic.fill").foregroundColor(.gray)
+            Image(systemName: "mic.fill").foregroundColor(Color(.secondaryLabel))
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color(.tertiarySystemFill))
         .cornerRadius(25)
         .padding(.horizontal)
     }
