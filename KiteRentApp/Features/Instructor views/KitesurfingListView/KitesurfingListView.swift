@@ -41,9 +41,9 @@ struct KitesurfingListView: View {
                     Spacer()
                     
                     content
-                        .background(Color("LightGrayBackgroundColor"))
+                        .background(Color(.systemGroupedBackground))
                 }
-                .background(Color.white)
+                .background(Color(.systemBackground))
                 .contentShape(Rectangle())
 //                .onTapGesture {
 //                    isSearchFocused = false
@@ -167,5 +167,6 @@ private struct KiteGridItem: View {
 struct KitesurfingListView_Previews: PreviewProvider {
     static var previews: some View {
         KitesurfingListView()
+            //.preferredColorScheme(.dark)
     }
 }

@@ -48,7 +48,7 @@ struct KiteCard: View {
             
             if kite.state != .free {
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(Color.white.opacity(0.80))
+                    .fill(Color(.systemBackground).opacity(0.80))
                 
                 RoundedRectangle(cornerRadius: 18)
                     .fill(tintColor)
