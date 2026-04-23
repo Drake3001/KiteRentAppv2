@@ -4,16 +4,17 @@ struct StartScreenView: View {
 
     @State private var isShowingHistoryView = false
     @State private var arrowOffset: CGFloat = 0
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(#colorLiteral(red: 0.2039, green: 0.7882, blue: 1.0, alpha: 1)),
-                    Color(#colorLiteral(red: 0.0, green: 0.3647, blue: 1.0, alpha: 1))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                gradient: Gradient(colors: colorScheme == .dark
+                    ? [Color.blue.opacity(0.3), Color.blue.opacity(0.6)]
+                    : [Color.blue.opacity(0.6), Color.blue]
+                ),
+                startPoint: .top,
+                endPoint: .bottom
             )
             .ignoresSafeArea()
             
@@ -71,8 +72,12 @@ struct StartScreenView: View {
     }
 }
 
-#Preview {
+#Preview("dark") {
     StartScreenView()
         .preferredColorScheme(.dark)
+}
+
+#Preview("light") {
+    StartScreenView()
 }
 

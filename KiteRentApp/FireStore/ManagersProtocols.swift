@@ -28,6 +28,8 @@ protocol AuthenticationManagerProtocol {
     func createUser(email: String, password: String) async throws -> AuthDataResultModel
     func signInUser(email: String, password: String) async throws -> AuthDataResultModel
     func signOut() throws
+    func reauthenticateUser(email: String, password: String) async throws
+    func updatePassword(to newPassword: String) async throws
 }
 
 protocol UserManagerProtocol {

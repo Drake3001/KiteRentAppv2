@@ -53,4 +53,19 @@ final class AuthenticationManager {
     func signOut() throws{
         try Auth.auth().signOut()
     }
+    
+    func reauthenticateUser(email: String, password: String) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw URLError(.badServerResponse)
+        }
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        try await user.reauthenticate(with: credential)
+    }
+    
+    func updatePassword(to newPassword: String) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw URLError(.badServerResponse)
+        }
+        try await user.updatePassword(to: newPassword)
+    }
 }

@@ -9,22 +9,34 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
+    @State private var showChangePassword = false
     
     let onLogout: () -> Void
     var body: some View {
         List {
-            Button("Log out") {
-                Task {
-                    do {
-                        try viewModel.signOut()
-                        onLogout()
-                    } catch {
-                        print("error")
+            Section {
+                Button("Change Password") {
+                    showChangePassword = true
+                }
+            }
+            
+            Section {
+                Button("Log out") {
+                    Task {
+                        do {
+                            try viewModel.signOut()
+                            onLogout()
+                        } catch {
+                            print("error")
+                        }
                     }
                 }
             }
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $showChangePassword) {
+            ChangePasswordView()
+        }
     }
 }
 
