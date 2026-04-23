@@ -73,5 +73,6 @@ struct StartScreenView: View {
 
 #Preview {
     StartScreenView()
+        .preferredColorScheme(.dark)
 }
 

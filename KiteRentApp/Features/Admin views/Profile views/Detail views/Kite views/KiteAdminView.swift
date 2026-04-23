@@ -6,6 +6,8 @@ struct KiteAdminView: View {
     var onEditTapped: (DBKite) -> Void
     var onDeleteTapped: (DBKite) -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         ZStack {
             HStack {
@@ -39,9 +41,9 @@ struct KiteAdminView: View {
                 
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 18))
-            .shadow(color: Color.black.opacity(0.05), radius: 2, y: 4)
+            .shadow(color: Color.primary.opacity(colorScheme == .dark ? 0.15 : 0.05), radius: 2, y: 4)
             
         }
         .frame(maxWidth: .infinity)
@@ -75,5 +77,6 @@ struct KiteAdmin_Previews: PreviewProvider {
         KiteAdminView(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil), onEditTapped: { _ in }, onDeleteTapped: {_ in})
             .previewLayout(.sizeThatFits)
             .padding()
+            .preferredColorScheme(.dark)
     }
 }

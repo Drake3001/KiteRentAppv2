@@ -33,7 +33,7 @@ struct ProfileView: View {
             
             currentAdminContentView()
         }
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .task { try? await viewModel.loadCurrentUser() }
         .navigationBarBackButtonHidden(true) 
         .toolbar {
@@ -67,11 +67,17 @@ struct ProfileView: View {
         }
 }
 
-#Preview {
+#Preview("light") {
     NavigationStack {
         ProfileView(onOpenSettings: {})
     }
-    
+}
+
+#Preview("dark") {
+    NavigationStack {
+        ProfileView(onOpenSettings: {})
+            .preferredColorScheme(.dark)
+    }
 }
 
 

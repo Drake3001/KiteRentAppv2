@@ -39,7 +39,7 @@ struct RentalListAdminView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color("LightGrayBackgroundColor"))
+                .background(Color(.systemGroupedBackground))
             }
 
             if isSearchFocused {

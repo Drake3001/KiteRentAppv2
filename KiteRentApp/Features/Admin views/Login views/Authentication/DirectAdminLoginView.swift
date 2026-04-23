@@ -10,16 +10,17 @@ import SwiftUI
 
 struct DirectAdminLoginView: View {
     @StateObject private var viewModel = DirectAdminLoginViewModel()
+    @Environment(\.colorScheme) private var colorScheme
     let onLoginSuccess: () -> Void
     
     
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue.opacity(0.6),
-                    Color.blue
-                ]),
+                gradient: Gradient(colors: colorScheme == .dark
+                    ? [Color.blue.opacity(0.3), Color.blue.opacity(0.6)]
+                    : [Color.blue.opacity(0.6), Color.blue]
+                ),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -28,10 +29,8 @@ struct DirectAdminLoginView: View {
             VStack {
                 Spacer()
                 
-                // White Card
                 VStack(spacing: 20) {
                     
-                    // Shield icon
                     Image(systemName: "shield.fill")
                         .font(.system(size: 30))
                         .foregroundColor(.blue)
@@ -39,21 +38,18 @@ struct DirectAdminLoginView: View {
                     
                     Text("DirectAdminLogin")
                         .font(.headline)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
-                    // Email field
                     TextField("email@domain.com", text: $viewModel.email)
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                         .padding(.horizontal)
                         .textInputAutocapitalization(.never)
                     
-                    
-                    // Password field
                     SecureField("***********", text: $viewModel.password)
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                         .padding(.horizontal)
                         .textInputAutocapitalization(.never)
@@ -77,8 +73,10 @@ struct DirectAdminLoginView: View {
                             }
                         } label: {
                             Text("Sign In")
+                                .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
+                                .background(Color.blue)
                                 .cornerRadius(10)
                         }
                     }
@@ -86,9 +84,9 @@ struct DirectAdminLoginView: View {
                     .padding(.bottom, 20)
                     
                 }
-                .background(Color.white)
+                .background(Color(.systemBackground))
                 .cornerRadius(30)
-                .shadow(radius: 12)
+                .shadow(color: colorScheme == .dark ? .white.opacity(0.08) : .black.opacity(0.2), radius: 12)
                 .padding(.horizontal, 30)
                 
                 Spacer()
@@ -97,8 +95,12 @@ struct DirectAdminLoginView: View {
     }
 }
 
-struct DirectAdminLoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        DirectAdminLoginView(onLoginSuccess: {})
-    }
+#Preview("Light Mode") {
+    DirectAdminLoginView(onLoginSuccess: {})
+        .preferredColorScheme(.light)
+}
+
+#Preview("Dark Mode") {
+    DirectAdminLoginView(onLoginSuccess: {})
+        .preferredColorScheme(.dark)
 }

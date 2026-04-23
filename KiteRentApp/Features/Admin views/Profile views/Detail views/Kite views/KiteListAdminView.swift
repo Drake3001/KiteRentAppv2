@@ -53,7 +53,7 @@ struct KiteListAdminView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color("LightGrayBackgroundColor"))
+                .background(Color(.systemGroupedBackground))
             }
 
             if isSearchFocused {
@@ -105,4 +105,5 @@ struct KiteListAdminView: View {
 
 #Preview {
     KiteListAdminView()
+        .preferredColorScheme(.dark)
 }

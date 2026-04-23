@@ -10,6 +10,8 @@ import SwiftUI
 struct RentalAdminView: View {
     var rental: AdminRental
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 8) {
@@ -52,9 +54,9 @@ struct RentalAdminView: View {
                 
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 18))
-            .shadow(color: Color.black.opacity(0.05), radius: 2, y: 4)
+            .shadow(color: Color.primary.opacity(colorScheme == .dark ? 0.15 : 0.05), radius: 2, y: 4)
             
         }
         .frame(maxWidth: .infinity)
