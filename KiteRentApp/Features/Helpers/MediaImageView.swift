@@ -49,10 +49,8 @@ struct MediaImageView: View {
         }
         do {
             imageData = try await mediaRepository.getImageData(ownerType: ownerType, ownerId: ownerId)
-            loadError = nil
         } catch {
             imageData = nil
-            loadError = error.localizedDescription
         }
     }
 }
