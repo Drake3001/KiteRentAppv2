@@ -9,5 +9,7 @@
 
     <key>NSCameraUsageDescription</key>
     <string>Aplikacja potrzebuje dostępu do kamery, aby skanować kody QR.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Aplikacja potrzebuje dostępu do zdjęć, aby wybrać zdjęcia latawca i zdjęcie profilowe.</string>
 </dict>
 </plist>

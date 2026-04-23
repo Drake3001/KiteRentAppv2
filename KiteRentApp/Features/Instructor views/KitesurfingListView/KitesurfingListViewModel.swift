@@ -17,6 +17,9 @@ final class KitesurfingListViewModel: ObservableObject {
     @Published var showScanner: Bool = false
     @Published var showErrorAlert: Bool = false
 
+    /// Bumped when kites are reloaded so `MediaImageView` can refresh from SwiftData.
+    @Published var mediaRefreshToken: UUID = UUID()
+
     private var rentalRefreshTask: Task<Void, Never>? = nil
 
     private let kiteManager: KiteManagerProtocol
@@ -89,6 +92,7 @@ final class KitesurfingListViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
         isLoading = false
+        mediaRefreshToken = UUID()
     }
 
     private func loadActiveRentalsWithInstructors() async {
