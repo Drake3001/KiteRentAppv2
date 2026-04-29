@@ -10,6 +10,7 @@ struct KitesurfingListView: View {
     enum Destination: Hashable {
         case adminLogin
         case profile
+        case instructorProfile
         case settings
     }
 
@@ -94,12 +95,22 @@ struct KitesurfingListView: View {
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .adminLogin:
-                    DirectAdminLoginView(onLoginSuccess: {
-                        path.append(Destination.profile)
+                    DirectAdminLoginView(onLoginSuccess: { role in
+                        switch role {
+                        case .admin:
+                            path.append(Destination.profile)
+                        case .instructor:
+                            path.append(Destination.instructorProfile)
+                        }
+                        
                     })
                 case .profile:
                     ProfileView(
-                        onOpenSettings: { path.append(Destination.settings) }
+                       onOpenSettings: { path.append(Destination.settings) }
+                    )
+                case .instructorProfile:
+                    InstructorProfileView(
+                        onOpenSettings:{ path.append(Destination.settings) }
                     )
                 case .settings:
                     SettingsView(

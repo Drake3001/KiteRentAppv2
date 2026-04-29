@@ -8,6 +8,7 @@ final class DirectAdminLoginViewModel: ObservableObject {
     @Published var password = ""
     
     @Published var errorMessage: String? = nil
+    @Published var loggedInRole: UserRole?
 
     private let authManager: AuthenticationManagerProtocol
     private let userManager: UserManagerProtocol
@@ -30,7 +31,7 @@ final class DirectAdminLoginViewModel: ObservableObject {
         
         do {
             let authDataResult = try await authManager.createUser(email: email, password: password)
-            let user = DBUser(userId: authDataResult.uid, email: authDataResult.email, dateCreated: Date())
+            let user = DBUser(userId: authDataResult.uid, email: authDataResult.email, dateCreated: Date(), role: UserRole.instructor)
             try await userManager.createNewUser(user: user)
         } catch {
              handleAuthError(error)
@@ -47,7 +48,9 @@ final class DirectAdminLoginViewModel: ObservableObject {
         }
         
         do {
-            try await authManager.signInUser(email: email, password: password)
+            let authResult = try await authManager.signInUser(email: email, password: password)
+            let dbUser = try await userManager.getUser(userId: authResult.uid)
+            loggedInRole = dbUser.role
         } catch {
             handleAuthError(error)
             

@@ -11,7 +11,7 @@ import SwiftUI
 struct DirectAdminLoginView: View {
     @StateObject private var viewModel = DirectAdminLoginViewModel()
     @Environment(\.colorScheme) private var colorScheme
-    let onLoginSuccess: () -> Void
+    let onLoginSuccess: (UserRole) -> Void
     
     
     var body: some View {
@@ -66,7 +66,9 @@ struct DirectAdminLoginView: View {
                             Task {
                                 do {
                                     try await viewModel.signIn()
-                                    onLoginSuccess()
+                                    if let role = viewModel.loggedInRole {
+                                        onLoginSuccess(role)
+                                    }
                                 } catch {
                                     print("Sign in failed")
                                 }
@@ -96,11 +98,11 @@ struct DirectAdminLoginView: View {
 }
 
 #Preview("Light Mode") {
-    DirectAdminLoginView(onLoginSuccess: {})
+    DirectAdminLoginView(onLoginSuccess: {_ in})
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    DirectAdminLoginView(onLoginSuccess: {})
+    DirectAdminLoginView(onLoginSuccess: {_ in})
         .preferredColorScheme(.dark)
 }
