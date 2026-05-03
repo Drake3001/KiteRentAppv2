@@ -10,6 +10,8 @@ import SwiftUI
 struct KiteCard: View {
     var kite: DBKite
     var instructor: DBInstructor? = nil
+    var mediaRefreshToken: UUID
+    var mediaRepository: MediaRepositoryProtocol = MediaRepository.shared
     
     var tintColor: Color {
         switch kite.state {
@@ -25,10 +27,16 @@ struct KiteCard: View {
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 8) {
-                ImageOrPlaceholder(name: kite.imageName)
-                    .scaledToFit()
-                    .frame(height: 140)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                MediaImageView(
+                    ownerType: .kite,
+                    ownerId: kite.id ?? "",
+                    mediaRepository: mediaRepository,
+                    contentMode: .fit,
+                    refreshToken: mediaRefreshToken
+                )
+                .scaledToFit()
+                .frame(height: 140)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 
                 Rectangle()
                     .fill(Color(.separator))
@@ -89,7 +97,10 @@ struct KiteCard: View {
 
 struct KiteCard_Previews: PreviewProvider {
     static var previews: some View {
-        KiteCard(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+        KiteCard(
+            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
+            mediaRefreshToken: UUID()
+        )
             .previewLayout(.sizeThatFits)
             .padding()
     }

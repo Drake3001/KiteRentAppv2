@@ -2,7 +2,9 @@ import SwiftUI
 
 struct KiteAdminView: View {
     var kite: DBKite
-    
+    var mediaRefreshToken: UUID
+    var mediaRepository: MediaRepositoryProtocol = MediaRepository.shared
+
     var onEditTapped: (DBKite) -> Void
     var onDeleteTapped: (DBKite) -> Void
     
@@ -10,7 +12,17 @@ struct KiteAdminView: View {
     
     var body: some View {
         ZStack {
-            HStack {
+            HStack(alignment: .center, spacing: 12) {
+                MediaImageView(
+                    ownerType: .kite,
+                    ownerId: kite.id ?? "",
+                    mediaRepository: mediaRepository,
+                    contentMode: .fit,
+                    refreshToken: mediaRefreshToken
+                )
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text(kite.name)
                         .font(.title2)
@@ -74,7 +86,12 @@ struct KiteAdminView: View {
 
 struct KiteAdmin_Previews: PreviewProvider {
     static var previews: some View {
-        KiteAdminView(kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil), onEditTapped: { _ in }, onDeleteTapped: {_ in})
+        KiteAdminView(
+            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
+            mediaRefreshToken: UUID(),
+            onEditTapped: { _ in },
+            onDeleteTapped: { _ in }
+        )
             .previewLayout(.sizeThatFits)
             .padding()
             .preferredColorScheme(.dark)

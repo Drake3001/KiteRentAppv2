@@ -6,12 +6,13 @@ struct KiteReservationView: View {
     @StateObject private var viewModel = KiteReservationViewModel()
     
     let kite: DBKite
+    var mediaRefreshToken: UUID = UUID()
     var onReservationCreated: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 10) {
             
-            ReservationHeader(kite: kite)
+            ReservationHeader(kite: kite, mediaRefreshToken: mediaRefreshToken)
             
             InstructorPickerSection(
                 instructors: viewModel.filteredInstructors,
@@ -72,11 +73,13 @@ struct KiteReservationView: View {
 struct KitesurfingReservationView_Previews: PreviewProvider {
     static var previews: some View {
         KiteReservationView(showPopup: .constant(true),
-                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
+                            mediaRefreshToken: UUID())
             .previewDisplayName("light")
         
         KiteReservationView(showPopup: .constant(true),
-                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
+                            mediaRefreshToken: UUID())
             .previewDisplayName("dark")
             .preferredColorScheme(.dark)
             

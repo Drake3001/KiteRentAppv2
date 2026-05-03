@@ -67,6 +67,7 @@ struct KitesurfingListView: View {
                     KiteReservationView(
                         showPopup: $viewModel.showPopup,
                         kite: kite,
+                        mediaRefreshToken: viewModel.mediaRefreshToken,
                         onReservationCreated: {
                             Task { await viewModel.loadKites() }
                         }
@@ -136,6 +137,7 @@ struct KitesurfingListView: View {
                         KiteGridItem(
                             kite: kite,
                             instructor: instructor,
+                            mediaRefreshToken: viewModel.mediaRefreshToken,
                             onTap: { viewModel.selectKite(kite) }
                         )
                     }
@@ -162,11 +164,12 @@ struct KitesurfingListView: View {
 private struct KiteGridItem: View {
     let kite: DBKite
     let instructor: DBInstructor?
+    let mediaRefreshToken: UUID
     let onTap: () -> Void
     
     var body: some View {
         Button(action: onTap) {
-            KiteCard(kite: kite, instructor: instructor)
+            KiteCard(kite: kite, instructor: instructor, mediaRefreshToken: mediaRefreshToken)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

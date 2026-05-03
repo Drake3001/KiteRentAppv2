@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import Firebase
 
 @main
@@ -18,6 +19,7 @@ struct KiteRentAppApp: App {
                 StartScreenView()
             }
         }
+        .modelContainer(MediaPersistence.modelContainer)
     }
 }
 

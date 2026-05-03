@@ -1,10 +1,13 @@
 import SwiftUI
 import Foundation
+import PhotosUI
+import UIKit
 
 struct KiteEditView: View {
     @Environment(\.dismiss) var dismiss
     
     @StateObject private var viewModel: AdminKiteEditViewModel
+    @State private var photoPickerItem: PhotosPickerItem?
     
     init(kite: DBKite) {
         _viewModel = StateObject(wrappedValue: AdminKiteEditViewModel(kite: kite))
@@ -58,18 +61,37 @@ struct KiteEditView: View {
                         }
                         .disabled(KiteState.allCases.isEmpty)
                     }
+
+                    Section(header: Text("Photo")) {
+                        HStack {
+                            MediaPicker(
+                                selection: $photoPickerItem,
+                                label: "Choose photo",
+                                onPicked: { data in
+                                    viewModel.setPickedImageData(data)
+                                }
+                            )
+                            if viewModel.displayImageData != nil {
+                                Button("Remove", role: .destructive) {
+                                    viewModel.clearImage()
+                                }
+                            }
+                        }
+                        if let data = viewModel.displayImageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 250)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            Text("No photo yet. Choose an image to store locally in SwiftData.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
                 
                 Spacer()
-                
-                if let uiImage = UIImage(named: viewModel.originalKite.imageName) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 250)
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
-                }
             }
             .background(Color(.systemGroupedBackground))
             .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -84,7 +106,7 @@ struct KiteEditView: View {
                     Button("Save") {
                         Task { await viewModel.save(onSuccess: { dismiss() }) }
                     }
-                    .disabled(viewModel.isSaving || !viewModel.hasChanges || !viewModel.isInputValid)
+                    .disabled(viewModel.isSaving || !viewModel.hasAnyChanges || !viewModel.isInputValid)
                 }
             }
             .overlay {

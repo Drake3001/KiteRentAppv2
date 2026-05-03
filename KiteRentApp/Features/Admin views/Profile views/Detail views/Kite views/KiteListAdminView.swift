@@ -39,6 +39,7 @@ struct KiteListAdminView: View {
                         ForEach(viewModel.filteredAndOrderedKites) { kite in
                             KiteAdminView(
                                 kite: kite,
+                                mediaRefreshToken: viewModel.mediaRefreshToken,
                                 onEditTapped: { selectedKite in
                                     selectedKiteForEditing = selectedKite
                                 },
