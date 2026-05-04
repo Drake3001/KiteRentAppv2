@@ -11,11 +11,14 @@ protocol KiteManagerProtocol {
 protocol RentalManagerProtocol {
     func getActiveRentals() async throws -> [DBRental]
     func getAllRentals() async throws -> [DBRental]
+    func getRentalsForInstructor(instructorId: String) async throws -> [DBRental]
     func createNewRental(rental: DBRental) async throws
 }
 
 protocol InstructorManagerProtocol {
     func getAllInstructors() async throws -> [DBInstructor]
+    func getInstructor(instructorId: String) async throws -> DBInstructor
+    func createInstructor(instructor: DBInstructor) async throws
     func updateInstructorFields(instructorId: String, fields: [String: Any]) async throws
 }
 

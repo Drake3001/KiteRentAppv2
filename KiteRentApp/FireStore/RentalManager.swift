@@ -20,7 +20,7 @@ final class RentalManager {
     }
     
     func createNewRental(rental: DBRental) async throws {
-        try rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: false)
+        try await rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: false)
     }
     
     func getRental(rentalId: String) async throws -> DBRental {
@@ -44,6 +44,14 @@ final class RentalManager {
            }
        }
     
+    func getRentalsForInstructor(instructorId: String) async throws -> [DBRental] {
+        let snapshot = try await rentalCollection
+            .whereField("instructor_id", isEqualTo: instructorId)
+            .getDocuments()
+
+        return try snapshot.documents.map { try $0.data(as: DBRental.self) }
+    }
+
     func getActiveRentalForKite(kiteId: String) async throws -> DBRental? {
            let now = Date()
            let allRentals = try await getAllRentals()
@@ -57,8 +65,8 @@ final class RentalManager {
         try await rentalDocument(rentalId: rentalId).updateData(fields)
     }
 
-    func updateRental(rental: DBRental) throws {
-        try rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: true)
+    func updateRental(rental: DBRental) async throws {
+        try await rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: true)
     }
 
     func deleteRental(rentalId: String) async throws {

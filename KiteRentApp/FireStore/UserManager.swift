@@ -28,7 +28,7 @@ final class UserManager {
     
     
     func createNewUser(user: DBUser) async throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: false)
+        try await userDocument(userId: user.userId).setData(from: user, merge: false)
     }
     
 //    func createNewUser(auth: AuthDataResultModel) async throws {
@@ -52,8 +52,8 @@ final class UserManager {
         try await userDocument(userId: userId).updateData(fields)
     }
 
-    func updateUser(user: DBUser) throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: true)
+    func updateUser(user: DBUser) async throws {
+        try await userDocument(userId: user.userId).setData(from: user, merge: true)
     }
 
     func deleteUser(userId: String) async throws {

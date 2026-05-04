@@ -60,7 +60,7 @@ struct AddInstructorView: View {
             )
             
             do {
-                try await InstructorManager.shared.createNewInstructor(instructor: newInstructor)
+                try await InstructorManager.shared.createInstructor(instructor: newInstructor)
                 message = "Instruktor zapisany poprawnie!"
                 clearForm()
             } catch {

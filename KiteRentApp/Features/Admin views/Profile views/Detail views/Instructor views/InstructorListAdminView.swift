@@ -11,6 +11,7 @@ struct InstructorListAdminView: View {
     @StateObject private var viewModel = InstructorListAdminViewModel()
 
     @State private var selectedInstructorForEditing: DBInstructor? = nil
+    @State private var isShowingCreateAccount = false
 
     @FocusState private var isSearchFocused: Bool
 
@@ -29,6 +30,16 @@ struct InstructorListAdminView: View {
                 )
 
                 Spacer()
+
+                Button {
+                    isShowingCreateAccount = true
+                } label: {
+                    Label("New Instructor Account", systemImage: "person.badge.plus")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal)
 
                 ScrollView {
                     VStack(spacing: 16) {
@@ -67,6 +78,11 @@ struct InstructorListAdminView: View {
             NavigationStack {
                 InstructorEditView(instructor: instructorToEdit)
             }
+        }
+        .sheet(isPresented: $isShowingCreateAccount) {
+            Task { await viewModel.loadInstructors() }
+        } content: {
+            CreateInstructorAccountView()
         }
     }
 }

@@ -20,7 +20,7 @@ final class KiteManager {
     }
     
     func createNewKite(kite: DBKite) async throws {
-        try kiteDocument(kiteId: kite.id!).setData(from: kite, merge: false)
+        try await kiteDocument(kiteId: kite.id!).setData(from: kite, merge: false)
     }
     
     func getAllKites() async throws -> [DBKite] {
@@ -70,9 +70,9 @@ final class KiteManager {
         try await kiteDocument(kiteId: kiteId).updateData(fields)
     }
 
-    func updateKite(kite: DBKite) throws {
+    func updateKite(kite: DBKite) async throws {
         guard let id = kite.id else { return }
-        try kiteDocument(kiteId: id).setData(from: kite, merge: true)
+        try await kiteDocument(kiteId: id).setData(from: kite, merge: true)
     }
 
     func deleteKite(kiteId: String) async throws {

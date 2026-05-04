@@ -19,8 +19,8 @@ final class InstructorManager {
         instructorCollection.document(instructorId)
     }
     
-    func createNewInstructor(instructor: DBInstructor) async throws {
-        try instructorDocument(instructorId: instructor.instructorId).setData(from: instructor, merge: false)
+    func createInstructor(instructor: DBInstructor) async throws {
+        try await instructorDocument(instructorId: instructor.instructorId).setData(from: instructor, merge: false)
     }
     
     func getInstructor(instructorId: String) async throws -> DBInstructor {
@@ -39,8 +39,8 @@ final class InstructorManager {
         try await instructorDocument(instructorId: instructorId).updateData(fields)
     }
 
-    func updateInstructor(instructor: DBInstructor) throws {
-        try instructorDocument(instructorId: instructor.instructorId).setData(from: instructor, merge: true)
+    func updateInstructor(instructor: DBInstructor) async throws {
+        try await instructorDocument(instructorId: instructor.instructorId).setData(from: instructor, merge: true)
     }
 
     func deleteInstructor(instructorId: String) async throws {
