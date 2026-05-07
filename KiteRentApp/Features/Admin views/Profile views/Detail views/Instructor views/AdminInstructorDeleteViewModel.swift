@@ -9,19 +9,16 @@ final class AdminInstructorDeleteViewModel: ObservableObject {
 
     private let instructorManager: InstructorManagerProtocol
     private let userManager: UserManagerProtocol
-    private let authManager: AuthenticationManagerProtocol
 
     init(
         instructorManager: InstructorManagerProtocol? = nil,
-        userManager: UserManagerProtocol? = nil,
-        authManager: AuthenticationManagerProtocol? = nil
+        userManager: UserManagerProtocol? = nil
     ) {
         self.instructorManager = instructorManager ?? InstructorManager.shared
         self.userManager = userManager ?? UserManager.shared
-        self.authManager = authManager ?? AuthenticationManager.shared
     }
 
-    /// Removes instructor rentals + instructor doc, then `users` doc, then Firebase Auth via callable `adminDeleteAuthUser`.
+    /// Removes instructor rentals + `instructors` doc, then `users/{uid}` doc. Firebase Auth credentials are left intact.
     func deleteInstructorCompletely(instructorId: String) async -> Bool {
         guard !isDeleting else { return false }
         isDeleting = true
@@ -33,10 +30,9 @@ final class AdminInstructorDeleteViewModel: ObservableObject {
             do {
                 try await userManager.deleteUser(userId: instructorId)
             } catch {
-                // User document may already be missing; continue to Auth cleanup.
+                // User document may already be missing.
             }
 
-            try await authManager.deleteRemoteAuthUser(targetUid: instructorId)
             return true
         } catch {
             errorMessage = "Failed to delete instructor: \(error.localizedDescription)"

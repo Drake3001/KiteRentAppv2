@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseAuth
-import FirebaseFunctions
 
 struct AuthDataResultModel {
     let uid: String
@@ -68,19 +67,5 @@ final class AuthenticationManager {
             throw URLError(.badServerResponse)
         }
         try await user.updatePassword(to: newPassword)
-    }
-
-    /// Deletes the Firebase Auth user identified by `targetUid`. Must be deployed as callable `adminDeleteAuthUser` (see `firebase/functions`).
-    func deleteRemoteAuthUser(targetUid: String) async throws {
-        let callable = Functions.functions().httpsCallable("adminDeleteAuthUser")
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            callable.call(["targetUid": targetUid]) { _, error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-        }
     }
 }

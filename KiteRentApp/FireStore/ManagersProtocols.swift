@@ -35,8 +35,6 @@ protocol AuthenticationManagerProtocol {
     func signOut() throws
     func reauthenticateUser(email: String, password: String) async throws
     func updatePassword(to newPassword: String) async throws
-    /// Deletes another user’s Firebase Auth account via HTTPS Callable (`adminDeleteAuthUser`). Caller must be an admin (enforced server-side).
-    func deleteRemoteAuthUser(targetUid: String) async throws
 }
 
 protocol UserManagerProtocol {

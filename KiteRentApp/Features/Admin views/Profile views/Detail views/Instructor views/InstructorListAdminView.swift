@@ -100,7 +100,7 @@ struct InstructorListAdminView: View {
             }
         } message: {
             if let inst = instructorToDelete {
-                Text("This permanently removes \(inst.name) \(inst.surname), their user profile, and their login account. This cannot be undone.")
+                Text("This removes \(inst.name) \(inst.surname) from instructors, deletes related rentals, and removes their user profile document. Login credentials in Firebase Auth stay unchanged. This cannot be undone.")
             }
         }
         .alert("Error", isPresented: $deleteViewModel.showErrorAlert) {
