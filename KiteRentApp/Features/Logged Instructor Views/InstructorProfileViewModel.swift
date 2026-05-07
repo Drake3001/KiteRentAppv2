@@ -10,6 +10,7 @@ struct InstructorRental: Identifiable {
     var id: String { rentalId }
 }
 
+/// Owned by `InstructorProfileView`: instructor name for the header and today’s schedule for the dashboard tab.
 @MainActor
 final class InstructorProfileViewModel: ObservableObject {
 
@@ -38,13 +39,13 @@ final class InstructorProfileViewModel: ObservableObject {
     func loadProfile() async {
         guard !isLoading else { return }
         isLoading = true
+        defer { isLoading = false }
         errorMessage = nil
 
         do {
             let uid = try authManager.getAuthenticatedUser().uid
 
-            let fetchedInstructor = try await instructorManager.getInstructor(instructorId: uid)
-            self.instructor = fetchedInstructor
+            instructor = try await instructorManager.getInstructor(instructorId: uid)
 
             let rentals = try await rentalManager.getRentalsForInstructor(instructorId: uid)
             let kites = try await kiteManager.getAllKites()
@@ -65,9 +66,7 @@ final class InstructorProfileViewModel: ObservableObject {
                     )
                 }
         } catch {
-            self.errorMessage = error.localizedDescription
+            errorMessage = error.localizedDescription
         }
-
-        isLoading = false
     }
 }

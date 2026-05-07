@@ -1,70 +1,104 @@
 import SwiftUI
 
 struct InstructorProfileView: View {
-    @StateObject private var viewModel = InstructorProfileViewModel()
-    @Environment(\.colorScheme) private var colorScheme
     let onOpenSettings: () -> Void
 
+    @StateObject private var profileViewModel = InstructorProfileViewModel()
+    @StateObject private var kitesViewModel = KitesurfingListViewModel()
+
+    @State private var selectedTab: InstructorTab = .dashboard
+
+    enum InstructorTab: String, CaseIterable, Identifiable {
+        case dashboard = "Dashboard"
+        case kites = "Kites"
+        case rentals = "Rentals"
+
+        var id: String { rawValue }
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            if let instructor = viewModel.instructor {
-                Text("\(instructor.name) \(instructor.surname)")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-
-                Text("Today's Schedule")
-                    .font(.headline)
-                    .foregroundStyle(Color(.secondaryLabel))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top, 4)
-            }
-
-            if viewModel.isLoading {
-                Spacer()
-                ProgressView()
-                Spacer()
-            } else if let error = viewModel.errorMessage {
-                Spacer()
-                Text(error)
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                Spacer()
-            } else if viewModel.todaysRentals.isEmpty {
-                Spacer()
-                VStack(spacing: 8) {
-                    Image(systemName: "calendar.badge.checkmark")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Color(.tertiaryLabel))
-                    Text("No lessons scheduled for today")
-                        .foregroundStyle(Color(.secondaryLabel))
-                }
-                Spacer()
-            } else {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach(viewModel.todaysRentals) { rental in
-                            InstructorRentalCard(rental: rental)
+        ZStack {
+            VStack(spacing: 0) {
+                TabView(selection: $selectedTab) {
+                    InstructorDashboardView(viewModel: profileViewModel)
+                        .tabItem {
+                            Label(InstructorTab.dashboard.rawValue, systemImage: "calendar")
                         }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
+                        .tag(InstructorTab.dashboard)
+
+                    InstructorKitesurfingTabView(viewModel: kitesViewModel)
+                        .tabItem {
+                            Label(InstructorTab.kites.rawValue, systemImage: "square.grid.2x2")
+                        }
+                        .tag(InstructorTab.kites)
+
+                    RentalListInstructorView()
+                        .tabItem {
+                            Label(InstructorTab.rentals.rawValue, systemImage: "archivebox")
+                        }
+                        .tag(InstructorTab.rentals)
                 }
-                .background(Color(.systemGroupedBackground))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .glassEffect()
+            }
+            .background(Color(.systemBackground))
+
+            if kitesViewModel.showPopup, let kite = kitesViewModel.selectedKite {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture { withAnimation { kitesViewModel.showPopup = false } }
+
+                KiteReservationView(
+                    showPopup: $kitesViewModel.showPopup,
+                    kite: kite,
+                    mediaRefreshToken: kitesViewModel.mediaRefreshToken,
+                    onReservationCreated: {
+                        Task { await kitesViewModel.loadKites() }
+                    }
+                )
+                .transition(.scale)
+                .zIndex(10)
             }
         }
-        .background(Color(.systemBackground))
-        .task { await viewModel.loadProfile() }
-        .refreshable { await viewModel.loadProfile() }
+        .animation(.spring(), value: kitesViewModel.showPopup)
+        .task { await profileViewModel.loadProfile() }
+        .onChange(of: kitesViewModel.showScanner) { _, isShowing in
+            if isShowing {
+                Task { await kitesViewModel.loadKites() }
+            }
+        }
+        .alert("Błąd", isPresented: $kitesViewModel.showErrorAlert) {
+            Button("OK") { kitesViewModel.showErrorAlert = false }
+        } message: {
+            Text(kitesViewModel.errorMessage ?? "")
+        }
+        .fullScreenCover(isPresented: $kitesViewModel.showScanner) {
+            QRScannerView(
+                onFound: { kiteId in
+                    kitesViewModel.showScanner = false
+                    Task {
+                        await kitesViewModel.handleScannedKiteWithReloadIfNeeded(kiteId: kiteId)
+                    }
+                },
+                onCancel: { kitesViewModel.showScanner = false }
+            )
+            .ignoresSafeArea()
+        }
         .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color(.systemBackground), for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button { } label: {
+                Button {
+                    kitesViewModel.showScanner = true
+                } label: {
                     Image(systemName: "wind").font(.headline)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                if let instructor = profileViewModel.instructor {
+                    Text(Self.shortDisplayName(for: instructor))
+                        .font(.headline)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -74,37 +108,27 @@ struct InstructorProfileView: View {
             }
         }
     }
+
+    private static func shortDisplayName(for instructor: DBInstructor) -> String {
+        let name = instructor.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let surname = instructor.surname.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let first = surname.first else {
+            return name
+        }
+        return "\(name) \(String(first).uppercased())."
+    }
 }
 
-private struct InstructorRentalCard: View {
-    let rental: InstructorRental
-    @Environment(\.colorScheme) private var colorScheme
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(rental.kiteName)
-                .font(.title2)
-                .fontWeight(.bold)
-                .lineLimit(1)
+#Preview("light") {
+    NavigationStack {
+        InstructorProfileView(onOpenSettings: {})
+    }
+}
 
-            HStack {
-                HStack {
-                    Image(systemName: "clock")
-                    Text("\(rental.startTime.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))) - \(rental.endTime.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)))")
-                }
-
-                Spacer()
-
-                let diff = Calendar.current.dateComponents([.hour, .minute], from: rental.startTime, to: rental.endTime)
-                Text("\(diff.hour ?? 0)h \(diff.minute ?? 0)m")
-            }
-            .font(.subheadline)
-            .foregroundStyle(Color(.secondaryLabel))
-        }
-        .padding()
-        .background(Color(.tertiarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .shadow(color: Color.primary.opacity(colorScheme == .dark ? 0.15 : 0.05), radius: 2, y: 4)
-        .frame(maxWidth: .infinity)
+#Preview("dark") {
+    NavigationStack {
+        InstructorProfileView(onOpenSettings: {})
+            .preferredColorScheme(.dark)
     }
 }

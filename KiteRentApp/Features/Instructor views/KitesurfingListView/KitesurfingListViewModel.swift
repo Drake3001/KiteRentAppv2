@@ -66,6 +66,25 @@ final class KitesurfingListViewModel: ObservableObject {
             showErrorAlert = true
             return
         }
+        applyScanResult(for: kite, kiteId: kiteId)
+    }
+
+    /// Reloads kites once if the id is missing (e.g. wind opened scanner before first tab load).
+    func handleScannedKiteWithReloadIfNeeded(kiteId: String) async {
+        if let kite = filteredAndOrderedKites.first(where: { $0.id == kiteId }) {
+            applyScanResult(for: kite, kiteId: kiteId)
+            return
+        }
+        await loadKites()
+        if let kite = filteredAndOrderedKites.first(where: { $0.id == kiteId }) {
+            applyScanResult(for: kite, kiteId: kiteId)
+        } else {
+            errorMessage = "Nie znaleziono kite o ID \(kiteId)."
+            showErrorAlert = true
+        }
+    }
+
+    private func applyScanResult(for kite: DBKite, kiteId: String) {
         switch kite.state {
         case .free:
             selectedKite = kite
