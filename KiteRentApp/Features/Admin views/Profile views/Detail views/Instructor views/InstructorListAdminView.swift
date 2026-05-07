@@ -17,11 +17,9 @@ struct InstructorListAdminView: View {
 
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 12) {
                 SearchBarView(text: $viewModel.searchText)
                     .focused($isSearchFocused)
-
-                Spacer()
 
                 FilterRowView(
                     numberOfElements: viewModel.filteredAndOrderedInstructors.count,
@@ -29,31 +27,22 @@ struct InstructorListAdminView: View {
                     isAscending: viewModel.isSortAscending
                 )
 
-                Spacer()
-
-                Button {
-                    isShowingCreateAccount = true
-                } label: {
-                    Label("New Instructor Account", systemImage: "person.badge.plus")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.horizontal)
+                newInstructorButton
 
                 ScrollView {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 14) {
                         ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
                             InstructorAdminView(instructor: instructor) { instructor in
                                 selectedInstructorForEditing = instructor
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color(.systemGroupedBackground))
+                .scrollIndicators(.hidden)
             }
 
             if isSearchFocused {
@@ -66,6 +55,7 @@ struct InstructorListAdminView: View {
                     .zIndex(1)
             }
         }
+        .background(Color.clear)
         .task {
             await viewModel.loadInstructors()
         }
@@ -85,8 +75,52 @@ struct InstructorListAdminView: View {
             CreateInstructorAccountView()
         }
     }
+
+    private var newInstructorButton: some View {
+        Button {
+            isShowingCreateAccount = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "person.badge.plus")
+                    .font(.body.weight(.semibold))
+                Text("New Instructor Account")
+                    .font(.subheadline.weight(.semibold))
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .foregroundStyle(.primary)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(.regularMaterial)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.38),
+                                Color.white.opacity(0.08),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+            .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
+    }
 }
 
 #Preview {
-    InstructorListAdminView()
+    ZStack {
+        AdminGlassBackground()
+        InstructorListAdminView()
+    }
 }

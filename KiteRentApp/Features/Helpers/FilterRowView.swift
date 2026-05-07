@@ -19,13 +19,20 @@ struct FilterRowView: View {
                 HStack(spacing: 6) {
                     Text("Sort")
                         .font(.subheadline)
+                        .fontWeight(.medium)
                     Image(systemName: isAscending ? "arrow.up" : "arrow.down")
                         .font(.caption)
                 }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 12)
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 14)
+                .background {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+                }
             }
             Spacer()
             Text("\(numberOfElements) results")

@@ -20,11 +20,9 @@ struct KiteListAdminView: View {
 
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 12) {
                 SearchBarView(text: $viewModel.searchText)
                     .focused($isSearchFocused)
-
-                Spacer()
 
                 FilterRowView(
                     numberOfElements: viewModel.filteredAndOrderedKites.count,
@@ -32,10 +30,8 @@ struct KiteListAdminView: View {
                     isAscending: viewModel.isSortAscending
                 )
 
-                Spacer()
-
                 ScrollView {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 14) {
                         ForEach(viewModel.filteredAndOrderedKites) { kite in
                             KiteAdminView(
                                 kite: kite,
@@ -50,11 +46,12 @@ struct KiteListAdminView: View {
                             )
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color(.systemGroupedBackground))
+                .scrollIndicators(.hidden)
             }
 
             if isSearchFocused {
@@ -67,6 +64,7 @@ struct KiteListAdminView: View {
                     .zIndex(1)
             }
         }
+        .background(Color.clear)
         .task {
             await viewModel.loadKites()
         }
@@ -105,6 +103,9 @@ struct KiteListAdminView: View {
 }
 
 #Preview {
-    KiteListAdminView()
-        .preferredColorScheme(.dark)
+    ZStack {
+        AdminGlassBackground()
+        KiteListAdminView()
+    }
+    .preferredColorScheme(.dark)
 }

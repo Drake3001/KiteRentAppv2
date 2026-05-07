@@ -6,53 +6,47 @@
 //
 
 import SwiftUI
-import PhotosUI
-import UIKit
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
-    @State private var profilePhotoPickerItem: PhotosPickerItem?
-    
+
     @State private var selectedAdminView: AdminViewType = .kites
-   
+
     enum AdminViewType: String, CaseIterable, Identifiable {
         case kites = "Kites"
         case instructors = "Instructors"
         case rentals = "Rentals"
-        
+
         var id: String { self.rawValue }
     }
-    
-    let onOpenSettings: () -> Void
-    var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 12) {
-                profileAvatar
-                if let email = viewModel.user?.email {
-                    Text(email)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 12)
 
-            Picker("Admin View Selection", selection: $selectedAdminView) {
-                ForEach(AdminViewType.allCases) { viewType in
-                    Text(viewType.rawValue).tag(viewType)
+    let onOpenSettings: () -> Void
+
+    var body: some View {
+        ZStack {
+            AdminGlassBackground()
+
+            VStack(spacing: 0) {
+                adminHeaderCard
+
+                Picker("Admin View Selection", selection: $selectedAdminView) {
+                    ForEach(AdminViewType.allCases) { viewType in
+                        Text(viewType.rawValue).tag(viewType)
+                    }
                 }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+
+                currentAdminContentView()
             }
-            .pickerStyle(.segmented)
-            .padding([.horizontal, .bottom])
-            
-            currentAdminContentView()
         }
-        .background(Color(.systemBackground))
         .task { try? await viewModel.loadCurrentUser() }
-        .navigationBarBackButtonHidden(true) 
+        .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    
                 } label: {
                     Image(systemName: "wind").font(.headline)
                 }
@@ -67,56 +61,66 @@ struct ProfileView: View {
         }
     }
 
-    private var profileAvatar: some View {
-        HStack(spacing: 16) {
-            Group {
-                if let data = viewModel.profileImageData, let ui = UIImage(data: data) {
-                    Image(uiImage: ui)
-                        .resizable()
-                        .scaledToFill()
-                } else {
+    private var adminHeaderCard: some View {
+        GlassCard(cornerRadius: 22, material: .thinMaterial, contentPadding: 16) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 72, height: 72)
+                        .overlay {
+                            Circle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.45),
+                                            Color.white.opacity(0.1),
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        }
+
                     Image(systemName: "person.crop.circle.fill")
                         .resizable()
                         .scaledToFit()
-                        .foregroundColor(.secondary)
-                        .padding(12)
+                        .foregroundStyle(.secondary)
+                        .padding(14)
+                        .frame(width: 72, height: 72)
                 }
-            }
-            .frame(width: 72, height: 72)
-            .background(Color(.systemGray5))
-            .clipShape(Circle())
 
-            VStack(alignment: .leading, spacing: 8) {
-                MediaPicker(
-                    selection: $profilePhotoPickerItem,
-                    label: "Choose profile photo",
-                    onPicked: { data in
-                        Task { await viewModel.setProfileImage(data: data) }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Administrator")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    if let email = viewModel.user?.email {
+                        Text(email)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
                     }
-                )
-                if viewModel.profileImageData != nil {
-                    Button("Remove photo", role: .destructive) {
-                        Task { await viewModel.clearProfileImage() }
-                    }
-                    .font(.subheadline)
                 }
+                Spacer(minLength: 0)
             }
-            Spacer()
         }
         .padding(.horizontal)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
-    
+
     @ViewBuilder
-        private func currentAdminContentView() -> some View {
-            switch selectedAdminView {
-            case .kites:
-                KiteListAdminView()
-            case .instructors:
-                InstructorListAdminView()
-            case .rentals:
-                RentalListAdminView()
-            }
+    private func currentAdminContentView() -> some View {
+        switch selectedAdminView {
+        case .kites:
+            KiteListAdminView()
+        case .instructors:
+            InstructorListAdminView()
+        case .rentals:
+            RentalListAdminView()
         }
+    }
 }
 
 #Preview("light") {
@@ -131,5 +135,3 @@ struct ProfileView: View {
             .preferredColorScheme(.dark)
     }
 }
-
-

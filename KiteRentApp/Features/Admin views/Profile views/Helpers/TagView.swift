@@ -14,11 +14,21 @@ struct TagView: View {
     var body: some View {
         Text(text)
             .font(.subheadline)
-            .fontWeight(.medium)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background(backgroundColor)
-            .cornerRadius(12)
+            .fontWeight(.semibold)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .background {
+                Capsule()
+                    .fill(.ultraThinMaterial)
+                    .overlay {
+                        Capsule()
+                            .fill(backgroundColor.opacity(0.22))
+                    }
+            }
+            .overlay {
+                Capsule()
+                    .strokeBorder(backgroundColor.opacity(0.5), lineWidth: 1)
+            }
     }
 }
 
