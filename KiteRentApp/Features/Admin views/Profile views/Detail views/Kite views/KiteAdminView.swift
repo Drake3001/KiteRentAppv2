@@ -41,7 +41,7 @@ struct KiteAdminView: View {
                 } label: {
                     Image(systemName: "pencil.circle.fill")
                         .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
+                        .font(.system(size: 34))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
@@ -51,7 +51,7 @@ struct KiteAdminView: View {
                 } label: {
                     Image(systemName: "trash.circle.fill")
                         .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
+                        .font(.system(size: 34))
                         .foregroundStyle(.red)
                 }
                 .buttonStyle(.plain)

@@ -11,6 +11,7 @@ struct InstructorAdminView: View {
     var instructor: DBInstructor
 
     var onEditTapped: (DBInstructor) -> Void
+    var onDeleteTapped: (DBInstructor) -> Void
 
     var body: some View {
         GlassCard(cornerRadius: 22, material: .thinMaterial, contentPadding: 14) {
@@ -45,8 +46,18 @@ struct InstructorAdminView: View {
                 } label: {
                     Image(systemName: "pencil.circle.fill")
                         .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
+                        .font(.system(size: 34))
                         .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    onDeleteTapped(instructor)
+                } label: {
+                    Image(systemName: "trash.circle.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .font(.system(size: 34))
+                        .foregroundStyle(.red)
                 }
                 .buttonStyle(.plain)
             }
@@ -76,7 +87,11 @@ struct InstructorAdminView: View {
 #Preview {
     ZStack {
         AdminGlassBackground()
-        InstructorAdminView(instructor: DBInstructor(instructorId: "123", name: "John", surname: "Smith", phoneNumber: "123456789", dateCreated: Date.now, state: .inactive), onEditTapped: { _ in })
-            .padding()
+        InstructorAdminView(
+            instructor: DBInstructor(instructorId: "123", name: "John", surname: "Smith", phoneNumber: "123456789", dateCreated: Date.now, state: .inactive),
+            onEditTapped: { _ in },
+            onDeleteTapped: { _ in }
+        )
+        .padding()
     }
 }

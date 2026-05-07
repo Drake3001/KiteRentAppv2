@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel()
-
     @State private var selectedAdminView: AdminViewType = .kites
 
     enum AdminViewType: String, CaseIterable, Identifiable {
@@ -27,8 +25,6 @@ struct ProfileView: View {
             AdminGlassBackground()
 
             VStack(spacing: 0) {
-                adminHeaderCard
-
                 Picker("Admin View Selection", selection: $selectedAdminView) {
                     ForEach(AdminViewType.allCases) { viewType in
                         Text(viewType.rawValue).tag(viewType)
@@ -41,7 +37,8 @@ struct ProfileView: View {
                 currentAdminContentView()
             }
         }
-        .task { try? await viewModel.loadCurrentUser() }
+        .navigationTitle("Kitesurfing school")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
@@ -59,55 +56,6 @@ struct ProfileView: View {
                 }
             }
         }
-    }
-
-    private var adminHeaderCard: some View {
-        GlassCard(cornerRadius: 22, material: .thinMaterial, contentPadding: 16) {
-            HStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                        .frame(width: 72, height: 72)
-                        .overlay {
-                            Circle()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        colors: [
-                                            Color.white.opacity(0.45),
-                                            Color.white.opacity(0.1),
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1
-                                )
-                        }
-
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.secondary)
-                        .padding(14)
-                        .frame(width: 72, height: 72)
-                }
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Administrator")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                    if let email = viewModel.user?.email {
-                        Text(email)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
-                    }
-                }
-                Spacer(minLength: 0)
-            }
-        }
-        .padding(.horizontal)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
     }
 
     @ViewBuilder

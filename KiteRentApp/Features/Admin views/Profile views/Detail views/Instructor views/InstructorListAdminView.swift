@@ -9,9 +9,13 @@ import SwiftUI
 
 struct InstructorListAdminView: View {
     @StateObject private var viewModel = InstructorListAdminViewModel()
+    @StateObject private var deleteViewModel = AdminInstructorDeleteViewModel()
 
     @State private var selectedInstructorForEditing: DBInstructor? = nil
     @State private var isShowingCreateAccount = false
+
+    @State private var instructorToDelete: DBInstructor? = nil
+    @State private var showDeleteConfirmation = false
 
     @FocusState private var isSearchFocused: Bool
 
@@ -32,9 +36,16 @@ struct InstructorListAdminView: View {
                 ScrollView {
                     LazyVStack(spacing: 14) {
                         ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
-                            InstructorAdminView(instructor: instructor) { instructor in
-                                selectedInstructorForEditing = instructor
-                            }
+                            InstructorAdminView(
+                                instructor: instructor,
+                                onEditTapped: { inst in
+                                    selectedInstructorForEditing = inst
+                                },
+                                onDeleteTapped: { inst in
+                                    instructorToDelete = inst
+                                    showDeleteConfirmation = true
+                                }
+                            )
                         }
                     }
                     .padding(.horizontal)
@@ -73,6 +84,29 @@ struct InstructorListAdminView: View {
             Task { await viewModel.loadInstructors() }
         } content: {
             CreateInstructorAccountView()
+        }
+        .confirmationDialog(
+            "Delete instructor?",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete instructor", role: .destructive) {
+                if let inst = instructorToDelete {
+                    Task { await performDeletion(inst) }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                instructorToDelete = nil
+            }
+        } message: {
+            if let inst = instructorToDelete {
+                Text("This permanently removes \(inst.name) \(inst.surname), their user profile, and their login account. This cannot be undone.")
+            }
+        }
+        .alert("Error", isPresented: $deleteViewModel.showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(deleteViewModel.errorMessage)
         }
     }
 
@@ -115,6 +149,14 @@ struct InstructorListAdminView: View {
         }
         .buttonStyle(.plain)
         .padding(.horizontal)
+    }
+
+    private func performDeletion(_ instructor: DBInstructor) async {
+        let ok = await deleteViewModel.deleteInstructorCompletely(instructorId: instructor.instructorId)
+        instructorToDelete = nil
+        if ok {
+            await viewModel.loadInstructors()
+        }
     }
 }
 

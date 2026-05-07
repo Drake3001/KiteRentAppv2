@@ -15,6 +15,7 @@ struct KiteListAdminView: View {
 
     @State private var kiteToDelete: DBKite? = nil
     @State private var showingDeleteAlert: Bool = false
+    @State private var isShowingAddKite: Bool = false
 
     @FocusState private var isSearchFocused: Bool
 
@@ -29,6 +30,8 @@ struct KiteListAdminView: View {
                     onSortTapped: { viewModel.isSortAscending.toggle() },
                     isAscending: viewModel.isSortAscending
                 )
+
+                addKiteButton
 
                 ScrollView {
                     LazyVStack(spacing: 14) {
@@ -78,6 +81,13 @@ struct KiteListAdminView: View {
                 KiteEditView(kite: kiteToEdit)
             }
         }
+        .sheet(isPresented: $isShowingAddKite) {
+            Task { await viewModel.loadKites() }
+        } content: {
+            NavigationStack {
+                AdminKiteCreateView()
+            }
+        }
         .alert("Confirm Deletion", isPresented: $showingDeleteAlert, presenting: kiteToDelete) { kite in
             Button("Delete Kite", role: .destructive) {
                 Task { await performDeletion(kite: kite) }
@@ -91,6 +101,47 @@ struct KiteListAdminView: View {
         } message: {
             Text(deleteViewModel.errorMessage)
         }
+    }
+
+    private var addKiteButton: some View {
+        Button {
+            isShowingAddKite = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.body.weight(.semibold))
+                Text("Add Kite")
+                    .font(.subheadline.weight(.semibold))
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .foregroundStyle(.primary)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(.regularMaterial)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.38),
+                                Color.white.opacity(0.08),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+            .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
     }
 
     private func performDeletion(kite: DBKite) async {
