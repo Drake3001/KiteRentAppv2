@@ -25,10 +25,10 @@ struct HeaderView: View {
                     .shadow(radius: 2)
                     .foregroundStyle(.blue)
             }
-
+            
             Spacer()
             
-            Button{
+            Button {
                 onLoginTapped?()
             } label: {
                 let uiImage = UIImage(named: "loginIcon")!
@@ -43,6 +43,7 @@ struct HeaderView: View {
                     .shadow(radius: 2)
                     .foregroundStyle(.blue)
             }
+            
         }
         .padding(.horizontal)
         .padding(.top, 4)

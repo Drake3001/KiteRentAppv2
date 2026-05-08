@@ -1,23 +1,40 @@
 import SwiftUI
 
-struct KiteReservationView: View {
+private struct KiteReservationFormView: View {
     @Binding var showPopup: Bool
-    
-    @StateObject private var viewModel = KiteReservationViewModel()
-    
     let kite: DBKite
-    var mediaRefreshToken: UUID = UUID()
+    let instructorMode: ReservationInstructorMode
     var onReservationCreated: (() -> Void)? = nil
-    
+
+    @StateObject private var viewModel: KiteReservationViewModel
+
+    init(
+        showPopup: Binding<Bool>,
+        kite: DBKite,
+        instructorMode: ReservationInstructorMode,
+        onReservationCreated: (() -> Void)? = nil
+    ) {
+        self._showPopup = showPopup
+        self.kite = kite
+        self.instructorMode = instructorMode
+        self.onReservationCreated = onReservationCreated
+        self._viewModel = StateObject(wrappedValue: KiteReservationViewModel(instructorMode: instructorMode))
+    }
+
     var body: some View {
         VStack(spacing: 10) {
             
-            ReservationHeader(kite: kite, mediaRefreshToken: mediaRefreshToken)
-            
-            InstructorPickerSection(
-                instructors: viewModel.filteredInstructors,
-                selectedInstructor: $viewModel.selectedInstructor
-            )
+            ReservationHeader(kite: kite)
+
+            switch instructorMode {
+            case .selectable:
+                InstructorPickerSection(
+                    instructors: viewModel.filteredInstructors,
+                    selectedInstructor: $viewModel.selectedInstructor
+                )
+            case .fixed:
+                EmptyView()
+            }
             
             TimePickerSection(
                 title: "Godzina rozpoczęcia",
@@ -70,16 +87,45 @@ struct KiteReservationView: View {
     }
 }
 
+struct KiteReservationView: View {
+    @Binding var showPopup: Bool
+    let kite: DBKite
+    var onReservationCreated: (() -> Void)? = nil
+
+    var body: some View {
+        KiteReservationFormView(
+            showPopup: $showPopup,
+            kite: kite,
+            instructorMode: .selectable,
+            onReservationCreated: onReservationCreated
+        )
+    }
+}
+
+struct InstructorKiteReservationView: View {
+    @Binding var showPopup: Bool
+    let kite: DBKite
+    let instructor: DBInstructor
+    var onReservationCreated: (() -> Void)? = nil
+
+    var body: some View {
+        KiteReservationFormView(
+            showPopup: $showPopup,
+            kite: kite,
+            instructorMode: .fixed(instructor),
+            onReservationCreated: onReservationCreated
+        )
+    }
+}
+
 struct KitesurfingReservationView_Previews: PreviewProvider {
     static var previews: some View {
         KiteReservationView(showPopup: .constant(true),
-                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
-                            mediaRefreshToken: UUID())
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
             .previewDisplayName("light")
         
         KiteReservationView(showPopup: .constant(true),
-                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil),
-                            mediaRefreshToken: UUID())
+                            kite: DBKite(id: "demo", name: "Demo", imageName: "demo", state: .free, brand: "demo", kiteModel: "demo", size: "9", dateCreated: nil))
             .previewDisplayName("dark")
             .preferredColorScheme(.dark)
             
