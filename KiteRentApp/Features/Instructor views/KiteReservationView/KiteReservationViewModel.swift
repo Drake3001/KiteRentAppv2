@@ -32,6 +32,7 @@ final class KiteReservationViewModel: ObservableObject {
     private let kiteManager: KiteManagerProtocol
     private let rentalManager: RentalManagerProtocol
     private let instructorManager: InstructorManagerProtocol
+    private let instructorMode: ReservationInstructorMode
 
     var filteredInstructors: [DBInstructor] {
         return instructors.filter { $0.state == .active }
@@ -59,10 +60,12 @@ final class KiteReservationViewModel: ObservableObject {
 
     init(kiteManager: KiteManagerProtocol? = nil,
          rentalManager: RentalManagerProtocol? = nil,
-         instructorManager: InstructorManagerProtocol? = nil) {
+         instructorManager: InstructorManagerProtocol? = nil,
+         instructorMode: ReservationInstructorMode = .selectable) {
         self.kiteManager = kiteManager ?? KiteManager.shared
         self.rentalManager = rentalManager ?? RentalManager.shared
         self.instructorManager = instructorManager ?? InstructorManager.shared
+        self.instructorMode = instructorMode
 
         let times = Self.initTime()
         self.startHour = times.startHour
@@ -74,6 +77,13 @@ final class KiteReservationViewModel: ObservableObject {
         self.startHours = Array(AppConstants.defaultWorkStartHour ..< times.startHour + 1)
         self.endHours = Array(AppConstants.defaultWorkStartHour ..< AppConstants.defaultWorkEndHour + 1)
         self.endMinutes = Array(stride(from: 0, through: 55, by: 15))
+
+        switch instructorMode {
+        case .selectable:
+            break
+        case .fixed(let instructor):
+            self.selectedInstructor = instructor
+        }
     }
 
     func getValidMinutes(for hour: Int) -> [Int] {
@@ -94,6 +104,7 @@ final class KiteReservationViewModel: ObservableObject {
     }
 
     func loadInstructors() async {
+        guard case .selectable = instructorMode else { return }
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
@@ -113,7 +124,11 @@ final class KiteReservationViewModel: ObservableObject {
         createdRentalId = nil
 
         guard let instructorId = selectedInstructorId else {
-            errorMessage = "Wybierz instruktora."
+            if case .selectable = instructorMode {
+                errorMessage = "Wybierz instruktora."
+            } else {
+                errorMessage = "Brak instruktora."
+            }
             return
         }
         guard endTime > startTime else {

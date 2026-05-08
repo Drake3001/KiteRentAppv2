@@ -25,26 +25,25 @@ struct HeaderView: View {
                     .shadow(radius: 2)
                     .foregroundStyle(.blue)
             }
-
+            
             Spacer()
-
-            if let onLoginTapped {
-                Button {
-                    onLoginTapped()
-                } label: {
-                    let uiImage = UIImage(named: "loginIcon")!
-                    Image(uiImage: uiImage)
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 22, height: 22)
-                        .padding(8)
-                        .background(Color(.tertiarySystemBackground))
-                        .clipShape(Circle())
-                        .shadow(radius: 2)
-                        .foregroundStyle(.blue)
-                }
+            
+            Button {
+                onLoginTapped?()
+            } label: {
+                let uiImage = UIImage(named: "loginIcon")!
+                Image(uiImage: uiImage)
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 22, height: 22)
+                    .padding(8)
+                    .background(Color(.tertiarySystemBackground))
+                    .clipShape(Circle())
+                    .shadow(radius: 2)
+                    .foregroundStyle(.blue)
             }
+            
         }
         .padding(.horizontal)
         .padding(.top, 4)

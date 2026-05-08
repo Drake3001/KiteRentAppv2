@@ -34,6 +34,7 @@ struct RentalListInstructorView: View {
                 .scrollDismissesKeyboard(.immediately)
                 .background(Color(.systemGroupedBackground))
             }
+            .background(Color(.systemBackground))
 
             if isSearchFocused {
                 Color.clear
@@ -54,6 +55,11 @@ struct RentalListInstructorView: View {
     }
 }
 
-#Preview {
+#Preview("light") {
     RentalListInstructorView()
+}
+
+#Preview("dark") {
+    RentalListInstructorView()
+        .preferredColorScheme(.dark)
 }

@@ -41,21 +41,53 @@ struct InstructorProfileView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .glassEffect()
             }
-            .background(Color(.systemBackground))
 
-            if kitesViewModel.showPopup, let kite = kitesViewModel.selectedKite {
+            if kitesViewModel.showPopup,
+               let kite = kitesViewModel.selectedKite {
                 Color.black.opacity(0.35)
                     .ignoresSafeArea()
                     .onTapGesture { withAnimation { kitesViewModel.showPopup = false } }
 
-                KiteReservationView(
-                    showPopup: $kitesViewModel.showPopup,
-                    kite: kite,
-                    mediaRefreshToken: kitesViewModel.mediaRefreshToken,
-                    onReservationCreated: {
-                        Task { await kitesViewModel.loadKites() }
+                Group {
+                    if let instructor = profileViewModel.instructor {
+                        InstructorKiteReservationView(
+                            showPopup: $kitesViewModel.showPopup,
+                            kite: kite,
+                            instructor: instructor,
+                            onReservationCreated: {
+                                Task { await kitesViewModel.loadKites() }
+                            }
+                        )
+                    } else if let error = profileViewModel.errorMessage, !error.isEmpty {
+                        VStack(spacing: 10) {
+                            Text("Błąd")
+                                .font(.headline)
+                            Text(error)
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                            Button("Zamknij") { kitesViewModel.showPopup = false }
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue.opacity(0.9))
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(20)
+                        .frame(maxWidth: 280)
+                        .background(Color(.tertiarySystemBackground))
+                        .cornerRadius(18)
+                        .shadow(radius: 10)
+                    } else {
+                        VStack(spacing: 12) {
+                            ProgressView("Ładowanie…")
+                        }
+                        .padding(20)
+                        .frame(maxWidth: 280)
+                        .background(Color(.tertiarySystemBackground))
+                        .cornerRadius(18)
+                        .shadow(radius: 10)
                     }
-                )
+                }
                 .transition(.scale)
                 .zIndex(10)
             }
@@ -97,7 +129,7 @@ struct InstructorProfileView: View {
             }
             ToolbarItem(placement: .principal) {
                 if let instructor = profileViewModel.instructor {
-                    Text(Self.shortDisplayName(for: instructor))
+                    Text(instructor.shortName)
                         .font(.headline)
                 }
             }
@@ -107,15 +139,6 @@ struct InstructorProfileView: View {
                 }
             }
         }
-    }
-
-    private static func shortDisplayName(for instructor: DBInstructor) -> String {
-        let name = instructor.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let surname = instructor.surname.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let first = surname.first else {
-            return name
-        }
-        return "\(name) \(String(first).uppercased())."
     }
 }
 

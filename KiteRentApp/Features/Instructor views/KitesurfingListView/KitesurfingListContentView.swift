@@ -70,7 +70,6 @@ struct KitesurfingListContentView: View {
                 KiteReservationView(
                     showPopup: $viewModel.showPopup,
                     kite: kite,
-                    mediaRefreshToken: viewModel.mediaRefreshToken,
                     onReservationCreated: {
                         Task { await viewModel.loadKites() }
                     }
