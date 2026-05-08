@@ -14,6 +14,7 @@ protocol RentalManagerProtocol {
     func getAllRentals() async throws -> [DBRental]
     func getRentalsForInstructor(instructorId: String) async throws -> [DBRental]
     func createNewRental(rental: DBRental) async throws
+    func updateRentalFields(rentalId: String, fields: [String: Any]) async throws
 }
 
 protocol InstructorManagerProtocol {

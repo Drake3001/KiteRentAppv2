@@ -34,8 +34,8 @@ final class AdminKiteCreateViewModel: ObservableObject {
     }
 
     func setPickedImageData(_ data: Data) {
-        if let jpg = ImageDownscale.jpegDataResized(data) {
-            displayImageData = jpg
+        if let png = ImageDownscale.pngDataResized(data) {
+            displayImageData = png
         } else {
             displayImageData = data
         }

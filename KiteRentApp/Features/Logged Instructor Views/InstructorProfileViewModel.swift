@@ -3,6 +3,7 @@ import Combine
 
 struct InstructorRental: Identifiable {
     let rentalId: String
+    let kiteId: String
     let kiteName: String
     let startTime: Date
     let endTime: Date
@@ -18,6 +19,12 @@ final class InstructorProfileViewModel: ObservableObject {
     @Published private(set) var todaysRentals: [InstructorRental] = []
     @Published private(set) var isLoading = false
     @Published private(set) var errorMessage: String?
+    
+    @Published var selectedRental: InstructorRental?
+    @Published var isEditPopupPresented: Bool = false
+    @Published var actionErrorMessage: String?
+    /// Bumped when rentals are reloaded so `MediaImageView` can refresh.
+    @Published var mediaRefreshToken: UUID = UUID()
 
     private let authManager: AuthenticationManagerProtocol
     private let instructorManager: InstructorManagerProtocol
@@ -60,13 +67,50 @@ final class InstructorProfileViewModel: ObservableObject {
                 .map { rental in
                     InstructorRental(
                         rentalId: rental.rentalId,
+                        kiteId: rental.kiteId,
                         kiteName: kiteMap[rental.kiteId] ?? "Unknown kite",
                         startTime: rental.startTime,
                         endTime: rental.endTime
                     )
                 }
+            mediaRefreshToken = UUID()
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    func openEdit(for rental: InstructorRental) {
+        selectedRental = rental
+        isEditPopupPresented = true
+    }
+
+    func closeEdit() {
+        isEditPopupPresented = false
+        selectedRental = nil
+    }
+
+    func endRental(_ rental: InstructorRental) async {
+        do {
+            try await rentalManager.updateRentalFields(
+                rentalId: rental.rentalId,
+                fields: ["end_time": Date()]
+            )
+            await loadProfile()
+        } catch {
+            actionErrorMessage = error.localizedDescription
+        }
+    }
+
+    func updateRentalEndTime(_ rental: InstructorRental, endTime: Date) async {
+        do {
+            try await rentalManager.updateRentalFields(
+                rentalId: rental.rentalId,
+                fields: ["end_time": endTime]
+            )
+            closeEdit()
+            await loadProfile()
+        } catch {
+            actionErrorMessage = error.localizedDescription
         }
     }
 }

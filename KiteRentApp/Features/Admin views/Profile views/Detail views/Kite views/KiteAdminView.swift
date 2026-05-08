@@ -31,30 +31,35 @@ struct KiteAdminView: View {
                         .fontWeight(.bold)
                         .lineLimit(1)
 
-                    TagView(text: textFromState(state: kite.state), backgroundColor: colorFromState(state: kite.state))
+                    HStack {
+                        TagView(text: textFromState(state: kite.state), backgroundColor: colorFromState(state: kite.state))
+                        
+                        Spacer(minLength: 8)
+                        
+                        Button {
+                            onEditTapped(kite)
+                        } label: {
+                            Image(systemName: "pencil.circle.fill")
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.system(size: 34))
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            onDeleteTapped(kite)
+                        } label: {
+                            Image(systemName: "trash.circle.fill")
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.system(size: 34))
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
                 }
 
-                Spacer(minLength: 8)
-
-                Button {
-                    onEditTapped(kite)
-                } label: {
-                    Image(systemName: "pencil.circle.fill")
-                        .symbolRenderingMode(.hierarchical)
-                        .font(.system(size: 34))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    onDeleteTapped(kite)
-                } label: {
-                    Image(systemName: "trash.circle.fill")
-                        .symbolRenderingMode(.hierarchical)
-                        .font(.system(size: 34))
-                        .foregroundStyle(.red)
-                }
-                .buttonStyle(.plain)
+                
             }
         }
         .frame(maxWidth: .infinity)

@@ -20,8 +20,8 @@ struct MediaPicker: View {
             guard let newItem else { return }
             Task {
                 if let data = try? await newItem.loadTransferable(type: Data.self) {
-                    if downscale, let jpg = ImageDownscale.jpegDataResized(data) {
-                        onPicked(jpg)
+                    if downscale, let png = ImageDownscale.pngDataResized(data) {
+                        onPicked(png)
                     } else {
                         onPicked(data)
                     }
