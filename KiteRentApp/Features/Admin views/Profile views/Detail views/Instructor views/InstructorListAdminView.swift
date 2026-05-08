@@ -9,19 +9,21 @@ import SwiftUI
 
 struct InstructorListAdminView: View {
     @StateObject private var viewModel = InstructorListAdminViewModel()
+    @StateObject private var deleteViewModel = AdminInstructorDeleteViewModel()
 
     @State private var selectedInstructorForEditing: DBInstructor? = nil
     @State private var isShowingCreateAccount = false
+
+    @State private var instructorToDelete: DBInstructor? = nil
+    @State private var showDeleteConfirmation = false
 
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 12) {
                 SearchBarView(text: $viewModel.searchText)
                     .focused($isSearchFocused)
-
-                Spacer()
 
                 FilterRowView(
                     numberOfElements: viewModel.filteredAndOrderedInstructors.count,
@@ -29,31 +31,29 @@ struct InstructorListAdminView: View {
                     isAscending: viewModel.isSortAscending
                 )
 
-                Spacer()
-
-                Button {
-                    isShowingCreateAccount = true
-                } label: {
-                    Label("New Instructor Account", systemImage: "person.badge.plus")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.horizontal)
+                newInstructorButton
 
                 ScrollView {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 14) {
                         ForEach(viewModel.filteredAndOrderedInstructors) { instructor in
-                            InstructorAdminView(instructor: instructor) { instructor in
-                                selectedInstructorForEditing = instructor
-                            }
+                            InstructorAdminView(
+                                instructor: instructor,
+                                onEditTapped: { inst in
+                                    selectedInstructorForEditing = inst
+                                },
+                                onDeleteTapped: { inst in
+                                    instructorToDelete = inst
+                                    showDeleteConfirmation = true
+                                }
+                            )
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color(.systemGroupedBackground))
+                .scrollIndicators(.hidden)
             }
 
             if isSearchFocused {
@@ -66,6 +66,7 @@ struct InstructorListAdminView: View {
                     .zIndex(1)
             }
         }
+        .background(Color.clear)
         .task {
             await viewModel.loadInstructors()
         }
@@ -84,9 +85,84 @@ struct InstructorListAdminView: View {
         } content: {
             CreateInstructorAccountView()
         }
+        .confirmationDialog(
+            "Delete instructor?",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete instructor", role: .destructive) {
+                if let inst = instructorToDelete {
+                    Task { await performDeletion(inst) }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                instructorToDelete = nil
+            }
+        } message: {
+            if let inst = instructorToDelete {
+                Text("This removes \(inst.name) \(inst.surname) from instructors, deletes related rentals, and removes their user profile document. Login credentials in Firebase Auth stay unchanged. This cannot be undone.")
+            }
+        }
+        .alert("Error", isPresented: $deleteViewModel.showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(deleteViewModel.errorMessage)
+        }
+    }
+
+    private var newInstructorButton: some View {
+        Button {
+            isShowingCreateAccount = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "person.badge.plus")
+                    .font(.body.weight(.semibold))
+                Text("New Instructor Account")
+                    .font(.subheadline.weight(.semibold))
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .foregroundStyle(.primary)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(.regularMaterial)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.38),
+                                Color.white.opacity(0.08),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+            .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
+    }
+
+    private func performDeletion(_ instructor: DBInstructor) async {
+        let ok = await deleteViewModel.deleteInstructorCompletely(instructorId: instructor.instructorId)
+        instructorToDelete = nil
+        if ok {
+            await viewModel.loadInstructors()
+        }
     }
 }
 
 #Preview {
-    InstructorListAdminView()
+    ZStack {
+        AdminGlassBackground()
+        InstructorListAdminView()
+    }
 }

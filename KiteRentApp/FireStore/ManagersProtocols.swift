@@ -3,6 +3,7 @@ import Foundation
 protocol KiteManagerProtocol {
     func syncKiteStatesWithRentals() async throws
     func getAllKites() async throws -> [DBKite]
+    func createNewKite(kite: DBKite) async throws
     func updateKiteState(kiteId: String, state: KiteState) async throws
     func updateKiteFields(kiteId: String, fields: [String: Any]) async throws
     func deleteKite(kiteId: String) async throws
@@ -20,6 +21,7 @@ protocol InstructorManagerProtocol {
     func getInstructor(instructorId: String) async throws -> DBInstructor
     func createInstructor(instructor: DBInstructor) async throws
     func updateInstructorFields(instructorId: String, fields: [String: Any]) async throws
+    func deleteInstructor(instructorId: String) async throws
 }
 
 extension KiteManager: KiteManagerProtocol {}
@@ -38,6 +40,7 @@ protocol AuthenticationManagerProtocol {
 protocol UserManagerProtocol {
     func createNewUser(user: DBUser) async throws
     func getUser(userId: String) async throws -> DBUser
+    func deleteUser(userId: String) async throws
 }
 
 extension AuthenticationManager: AuthenticationManagerProtocol {}

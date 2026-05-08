@@ -3,15 +3,11 @@ import Foundation
 import PhotosUI
 import UIKit
 
-struct KiteEditView: View {
-    @Environment(\.dismiss) var dismiss
+struct AdminKiteCreateView: View {
+    @Environment(\.dismiss) private var dismiss
 
-    @StateObject private var viewModel: AdminKiteEditViewModel
+    @StateObject private var viewModel = AdminKiteCreateViewModel()
     @State private var photoPickerItem: PhotosPickerItem?
-
-    init(kite: DBKite) {
-        _viewModel = StateObject(wrappedValue: AdminKiteEditViewModel(kite: kite))
-    }
 
     var body: some View {
         ZStack {
@@ -21,13 +17,13 @@ struct KiteEditView: View {
                 VStack(spacing: 22) {
                     GlassEditorSection(title: "Kite details") {
                         VStack(spacing: 14) {
-                            GlassTextField(title: "Name", placeholder: "Enter name", text: $viewModel.editableName)
-                            GlassTextField(title: "Brand", placeholder: "Enter brand", text: $viewModel.editableBrand)
-                            GlassTextField(title: "Model", placeholder: "Enter model", text: $viewModel.editableModel)
+                            GlassTextField(title: "Name", placeholder: "Enter name", text: $viewModel.name)
+                            GlassTextField(title: "Brand", placeholder: "Enter brand", text: $viewModel.brand)
+                            GlassTextField(title: "Model", placeholder: "Enter model", text: $viewModel.model)
                             GlassTextField(
                                 title: "Size (meters)",
                                 placeholder: "e.g. 9, 12",
-                                text: $viewModel.editableSize,
+                                text: $viewModel.size,
                                 keyboardType: .decimalPad
                             )
 
@@ -36,7 +32,7 @@ struct KiteEditView: View {
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                                 Spacer()
-                                Picker("Kite State", selection: $viewModel.editableState) {
+                                Picker("Kite State", selection: $viewModel.state) {
                                     ForEach(KiteState.allCases) { state in
                                         Text(state.rawValue.capitalized).tag(state)
                                     }
@@ -89,7 +85,7 @@ struct KiteEditView: View {
                                             .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
                                     }
                             } else {
-                                Text("No photo yet. Choose an image to store locally in SwiftData.")
+                                Text("Optional: add a photo stored locally in SwiftData.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -101,8 +97,7 @@ struct KiteEditView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-        .navigationTitle("Edit \(viewModel.originalKite.name)")
+        .navigationTitle("New Kite")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
@@ -112,15 +107,15 @@ struct KiteEditView: View {
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button("Create") {
                     Task { await viewModel.save(onSuccess: { dismiss() }) }
                 }
-                .disabled(viewModel.isSaving || !viewModel.hasAnyChanges || !viewModel.isInputValid)
+                .disabled(viewModel.isSaving || !viewModel.isInputValid)
             }
         }
         .overlay {
             if viewModel.isSaving {
-                ProgressView("Saving Changes...")
+                ProgressView("Creating…")
                     .padding(22)
                     .background {
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -143,8 +138,6 @@ struct KiteEditView: View {
 
 #Preview {
     NavigationStack {
-        KiteEditView(
-            kite: DBKite(id: "123", name: "North reach 9", imageName: "reach9", state: .free, brand: "North", kiteModel: "Reach", size: "9", dateCreated: Date())
-        )
+        AdminKiteCreateView()
     }
 }

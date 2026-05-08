@@ -14,11 +14,9 @@ struct RentalListAdminView: View {
 
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 12) {
                 SearchBarView(text: $viewModel.searchText)
                     .focused($isSearchFocused)
-
-                Spacer()
 
                 FilterRowAdminView(
                     selectedDate: $viewModel.selectedDate,
@@ -27,19 +25,19 @@ struct RentalListAdminView: View {
                     isAscending: viewModel.isSortAscending
                 )
 
-                Spacer()
-
                 ScrollView {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 14) {
                         ForEach(viewModel.filteredAndOrderedRentals) { rental in
                             RentalAdminView(rental: rental)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                .background(Color(.systemGroupedBackground))
+                .scrollIndicators(.hidden)
+                .background(Color.clear)
             }
 
             if isSearchFocused {
@@ -52,6 +50,7 @@ struct RentalListAdminView: View {
                     .zIndex(1)
             }
         }
+        .background(Color.clear)
         .task {
             await viewModel.initRentals()
         }
@@ -62,5 +61,8 @@ struct RentalListAdminView: View {
 }
 
 #Preview {
-    RentalListAdminView()
+    ZStack {
+        AdminGlassBackground()
+        RentalListAdminView()
+    }
 }
