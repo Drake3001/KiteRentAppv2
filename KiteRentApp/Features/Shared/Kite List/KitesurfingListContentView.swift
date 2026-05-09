@@ -5,12 +5,6 @@ struct KitesurfingListContentView: View {
     @ObservedObject var viewModel: KitesurfingListViewModel
     @FocusState private var isSearchFocused: Bool
 
-    /// When nil, the login button is hidden (e.g. embedded instructor tab).
-    var onLoginTapped: (() -> Void)?
-
-    /// Public main flow keeps wind/login header; instructor profile uses toolbar wind + no header.
-    var showsHeader: Bool = true
-
     /// Instructor shell presents scanner and errors on `InstructorProfileView`.
     var presentsScannerSheet: Bool = true
     var presentsErrorAlert: Bool = true
@@ -25,14 +19,6 @@ struct KitesurfingListContentView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                if showsHeader {
-                    HeaderView(
-                        onWindTapped: { viewModel.showScanner = true },
-                        onLoginTapped: onLoginTapped
-                    )
-                    .offset(y: -20)
-                }
-
                 SearchBarView(text: $viewModel.searchText)
                     .focused($isSearchFocused)
 

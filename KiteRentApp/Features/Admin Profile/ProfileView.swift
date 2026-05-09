@@ -37,7 +37,7 @@ struct ProfileView: View {
                 currentAdminContentView()
             }
         }
-        .navigationTitle("Kitesurfing school")
+        .navigationTitle("Admin")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)

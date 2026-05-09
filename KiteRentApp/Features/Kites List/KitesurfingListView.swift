@@ -15,8 +15,7 @@ struct KitesurfingListView: View {
     var body: some View {
         NavigationStack(path: $path) {
             KitesurfingListContentView(
-                viewModel: viewModel,
-                onLoginTapped: { path.append(Destination.adminLogin) }
+                viewModel: viewModel
             )
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -41,6 +40,22 @@ struct KitesurfingListView: View {
                     SettingsView(
                         onLogout: { path = NavigationPath() }
                     )
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        viewModel.showScanner = true
+                    } label: {
+                        Image(systemName: "wind").font(.headline)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        path.append(Destination.adminLogin)
+                    } label: {
+                        Image(systemName: "gear").font(.headline)
+                    }
                 }
             }
         }
