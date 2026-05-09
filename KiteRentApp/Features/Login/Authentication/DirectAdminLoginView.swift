@@ -36,7 +36,7 @@ struct DirectAdminLoginView: View {
                         .foregroundColor(.blue)
                         .padding(.top, 20)
                     
-                    Text("DirectAdminLogin")
+                    Text("Login")
                         .font(.headline)
                         .foregroundColor(.primary)
                     
