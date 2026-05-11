@@ -22,6 +22,9 @@ final class KitesurfingListViewModel: ObservableObject {
 
     private var rentalRefreshTask: Task<Void, Never>? = nil
 
+    /// Hoisted admin tab VM: skip redundant full sync when returning to the Kites tab.
+    private(set) var adminKitesListInitialLoadFinished = false
+
     private let kiteManager: KiteManagerProtocol
     private let rentalManager: RentalManagerProtocol
     private let instructorManager: InstructorManagerProtocol
@@ -112,6 +115,15 @@ final class KitesurfingListViewModel: ObservableObject {
         }
         isLoading = false
         mediaRefreshToken = UUID()
+    }
+
+    /// Used by `KiteListAdminView` when its view model is owned by `ProfileView` so tab switches do not re-run a full sync.
+    func loadKitesForAdminListIfNeeded() async {
+        guard !adminKitesListInitialLoadFinished else { return }
+        await loadKites()
+        if errorMessage == nil {
+            adminKitesListInitialLoadFinished = true
+        }
     }
 
     private func loadActiveRentalsWithInstructors() async {

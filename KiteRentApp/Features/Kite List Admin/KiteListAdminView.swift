@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct KiteListAdminView: View {
-    @StateObject private var viewModel = KitesurfingListViewModel()
+    @ObservedObject var viewModel: KitesurfingListViewModel
     @StateObject private var deleteViewModel = AdminKiteDeleteViewModel()
 
     @State private var selectedKiteForEditing: DBKite? = nil
@@ -69,7 +69,7 @@ struct KiteListAdminView: View {
         }
         .background(Color.clear)
         .task {
-            await viewModel.loadKites()
+            await viewModel.loadKitesForAdminListIfNeeded()
         }
         .refreshable {
             await viewModel.loadKites()
@@ -153,10 +153,18 @@ struct KiteListAdminView: View {
     }
 }
 
-#Preview {
-    ZStack {
-        AdminGlassBackground()
-        KiteListAdminView()
+private struct KiteListAdminViewPreviewHost: View {
+    @StateObject private var viewModel = KitesurfingListViewModel()
+
+    var body: some View {
+        ZStack {
+            AdminGlassBackground()
+            KiteListAdminView(viewModel: viewModel)
+        }
+        .preferredColorScheme(.dark)
     }
-    .preferredColorScheme(.dark)
+}
+
+#Preview {
+    KiteListAdminViewPreviewHost()
 }

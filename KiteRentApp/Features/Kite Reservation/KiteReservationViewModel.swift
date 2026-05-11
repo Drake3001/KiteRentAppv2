@@ -139,16 +139,26 @@ final class KiteReservationViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        let rentalId = UUID().uuidString
-        let rental = DBRental(
-            rentalId: rentalId,
-            kiteId: kiteId,
-            instructorId: instructorId,
-            startTime: startTime,
-            endTime: endTime
-        )
-
         do {
+            let hasConflict = try await rentalManager.hasOverlappingRental(
+                kiteId: kiteId,
+                start: startTime,
+                end: endTime
+            )
+            guard !hasConflict else {
+                errorMessage = "Ten kite jest już zarezerwowany w wybranym przedziale czasowym."
+                return
+            }
+
+            let rentalId = UUID().uuidString
+            let rental = DBRental(
+                rentalId: rentalId,
+                kiteId: kiteId,
+                instructorId: instructorId,
+                startTime: startTime,
+                endTime: endTime
+            )
+
             try await rentalManager.createNewRental(rental: rental)
             try await kiteManager.updateKiteState(kiteId: kiteId, state: .used)
 

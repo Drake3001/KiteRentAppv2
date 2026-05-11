@@ -8,34 +8,47 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var selectedAdminView: AdminViewType = .kites
+    @StateObject private var adminKitesViewModel = KitesurfingListViewModel()
+    @StateObject private var adminInstructorsViewModel = InstructorListAdminViewModel()
+    @StateObject private var adminRentalsViewModel = RentalListAdminViewModel()
 
-    enum AdminViewType: String, CaseIterable, Identifiable {
+    @State private var selectedTab: AdminTab = .kites
+
+    enum AdminTab: String, CaseIterable, Identifiable {
         case kites = "Kites"
         case instructors = "Instructors"
         case rentals = "Rentals"
 
-        var id: String { self.rawValue }
+        var id: String { rawValue }
     }
 
     let onOpenSettings: () -> Void
 
     var body: some View {
-        ZStack {
-            AdminGlassBackground()
-
-            VStack(spacing: 0) {
-                Picker("Admin View Selection", selection: $selectedAdminView) {
-                    ForEach(AdminViewType.allCases) { viewType in
-                        Text(viewType.rawValue).tag(viewType)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.bottom, 8)
-
-                currentAdminContentView()
+        TabView(selection: $selectedTab) {
+            adminTab(.kites) {
+                KiteListAdminView(viewModel: adminKitesViewModel)
             }
+            .tabItem {
+                Label(AdminTab.kites.rawValue, systemImage: "square.grid.2x2")
+            }
+            .tag(AdminTab.kites)
+
+            adminTab(.instructors) {
+                InstructorListAdminView(viewModel: adminInstructorsViewModel)
+            }
+            .tabItem {
+                Label(AdminTab.instructors.rawValue, systemImage: "person")
+            }
+            .tag(AdminTab.instructors)
+
+            adminTab(.rentals) {
+                RentalListAdminView(viewModel: adminRentalsViewModel)
+            }
+            .tabItem {
+                Label(AdminTab.rentals.rawValue, systemImage: "archivebox")
+            }
+            .tag(AdminTab.rentals)
         }
         .navigationTitle("Admin")
         .navigationBarTitleDisplayMode(.inline)
@@ -59,15 +72,17 @@ struct ProfileView: View {
     }
 
     @ViewBuilder
-    private func currentAdminContentView() -> some View {
-        switch selectedAdminView {
-        case .kites:
-            KiteListAdminView()
-        case .instructors:
-            InstructorListAdminView()
-        case .rentals:
-            RentalListAdminView()
+    private func adminTab<Content: View>(_ tab: AdminTab, @ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            AdminGlassBackground()
+
+            if selectedTab == tab {
+                content()
+            } else {
+                Color.clear
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

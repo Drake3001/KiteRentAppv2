@@ -25,6 +25,9 @@ final class RentalListAdminViewModel: ObservableObject {
     private var kites: [DBKite] = []
     private var instructors: [DBInstructor] = []
 
+    /// Hoisted admin tab VM: skip redundant full init when returning to the Rentals tab.
+    private(set) var adminRentalsListInitialLoadFinished = false
+
     init(
         rentalManager: RentalManagerProtocol? = nil,
         instructorManager: InstructorManagerProtocol? = nil,
@@ -73,6 +76,13 @@ final class RentalListAdminViewModel: ObservableObject {
         
         let computedRentals =  await computeRentals(rentals: fetchedRentals)
         self.rentals = computedRentals
+    }
+
+    /// Used when the view model is owned by `ProfileView` so tab switches do not re-run full init every time.
+    func initRentalsForAdminListIfNeeded() async {
+        guard !adminRentalsListInitialLoadFinished else { return }
+        await initRentals()
+        adminRentalsListInitialLoadFinished = true
     }
     
     func loadRentals() async {

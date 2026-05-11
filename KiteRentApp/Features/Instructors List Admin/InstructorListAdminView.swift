@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InstructorListAdminView: View {
-    @StateObject private var viewModel = InstructorListAdminViewModel()
+    @ObservedObject var viewModel: InstructorListAdminViewModel
     @StateObject private var deleteViewModel = AdminInstructorDeleteViewModel()
 
     @State private var selectedInstructorForEditing: DBInstructor? = nil
@@ -68,7 +68,7 @@ struct InstructorListAdminView: View {
         }
         .background(Color.clear)
         .task {
-            await viewModel.loadInstructors()
+            await viewModel.loadInstructorsForAdminListIfNeeded()
         }
         .refreshable {
             await viewModel.loadInstructors()
@@ -160,9 +160,17 @@ struct InstructorListAdminView: View {
     }
 }
 
-#Preview {
-    ZStack {
-        AdminGlassBackground()
-        InstructorListAdminView()
+private struct InstructorListAdminViewPreviewHost: View {
+    @StateObject private var viewModel = InstructorListAdminViewModel()
+
+    var body: some View {
+        ZStack {
+            AdminGlassBackground()
+            InstructorListAdminView(viewModel: viewModel)
+        }
     }
+}
+
+#Preview {
+    InstructorListAdminViewPreviewHost()
 }

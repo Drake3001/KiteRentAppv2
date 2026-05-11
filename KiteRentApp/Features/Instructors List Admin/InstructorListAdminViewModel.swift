@@ -17,6 +17,9 @@ final class InstructorListAdminViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isSortAscending: Bool = true
 
+    /// Hoisted admin tab VM: skip redundant fetch when returning to the Instructors tab.
+    private(set) var adminInstructorListInitialLoadFinished = false
+
     private let instructorManager: InstructorManagerProtocol
 
     init(instructorManager: InstructorManagerProtocol? = nil) {
@@ -35,7 +38,16 @@ final class InstructorListAdminViewModel: ObservableObject {
         }
         isLoading = false
     }
-    
+
+    /// Used when the view model is owned by `ProfileView` so tab switches do not re-fetch every time.
+    func loadInstructorsForAdminListIfNeeded() async {
+        guard !adminInstructorListInitialLoadFinished else { return }
+        await loadInstructors()
+        if errorMessage == nil {
+            adminInstructorListInitialLoadFinished = true
+        }
+    }
+
     var filteredAndOrderedInstructors: [DBInstructor] {
         let base: [DBInstructor]
         if searchText.isEmpty {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RentalListAdminView: View {
-    @StateObject private var viewModel = RentalListAdminViewModel()
+    @ObservedObject var viewModel: RentalListAdminViewModel
 
     @FocusState private var isSearchFocused: Bool
 
@@ -52,7 +52,7 @@ struct RentalListAdminView: View {
         }
         .background(Color.clear)
         .task {
-            await viewModel.initRentals()
+            await viewModel.initRentalsForAdminListIfNeeded()
         }
         .refreshable {
             await viewModel.initRentals()
@@ -60,9 +60,17 @@ struct RentalListAdminView: View {
     }
 }
 
-#Preview {
-    ZStack {
-        AdminGlassBackground()
-        RentalListAdminView()
+private struct RentalListAdminViewPreviewHost: View {
+    @StateObject private var viewModel = RentalListAdminViewModel()
+
+    var body: some View {
+        ZStack {
+            AdminGlassBackground()
+            RentalListAdminView(viewModel: viewModel)
+        }
     }
+}
+
+#Preview {
+    RentalListAdminViewPreviewHost()
 }

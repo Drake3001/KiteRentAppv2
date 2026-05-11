@@ -61,6 +61,22 @@ final class RentalManager {
            }
        }
 
+    func getRentalsForKite(kiteId: String) async throws -> [DBRental] {
+        let snapshot = try await rentalCollection
+            .whereField("kite_id", isEqualTo: kiteId)
+            .getDocuments()
+
+        return try snapshot.documents.map { try $0.data(as: DBRental.self) }
+    }
+
+    /// Two intervals overlap when each one starts before the other ends.
+    func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
+        let existing = try await getRentalsForKite(kiteId: kiteId)
+        return existing.contains { rental in
+            rental.startTime < end && rental.endTime > start
+        }
+    }
+
     func updateRentalFields(rentalId: String, fields: [String: Any]) async throws {
         try await rentalDocument(rentalId: rentalId).updateData(fields)
     }

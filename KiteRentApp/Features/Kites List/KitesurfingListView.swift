@@ -54,7 +54,9 @@ struct KitesurfingListView: View {
                     Button {
                         path.append(Destination.adminLogin)
                     } label: {
-                        Image(systemName: "gear").font(.headline)
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.headline)
+                            .offset(x: 2.5)
                     }
                 }
             }

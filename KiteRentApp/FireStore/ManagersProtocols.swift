@@ -15,6 +15,7 @@ protocol RentalManagerProtocol {
     func getRentalsForInstructor(instructorId: String) async throws -> [DBRental]
     func createNewRental(rental: DBRental) async throws
     func updateRentalFields(rentalId: String, fields: [String: Any]) async throws
+    func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool
 }
 
 protocol InstructorManagerProtocol {
