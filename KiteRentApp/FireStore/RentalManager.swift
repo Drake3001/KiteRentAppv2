@@ -61,9 +61,17 @@ final class RentalManager {
            }
        }
 
-    func getRentalsForKite(kiteId: String) async throws -> [DBRental] {
+    /// Rentals for this kite whose **start** falls on the same local calendar day as `dayContaining`.
+    /// Matches day-based reservation UI; avoids loading the kite’s full rental history.
+    private func getRentalsForKite(_ kiteId: String, startingOnCalendarDayContaining dayContaining: Date, calendar: Calendar = .current) async throws -> [DBRental] {
+        let startOfDay = calendar.startOfDay(for: dayContaining)
+        guard let startOfNextDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
+            return []
+        }
         let snapshot = try await rentalCollection
             .whereField("kite_id", isEqualTo: kiteId)
+            .whereField("start_time", isGreaterThanOrEqualTo: startOfDay)
+            .whereField("start_time", isLessThan: startOfNextDay)
             .getDocuments()
 
         return try snapshot.documents.map { try $0.data(as: DBRental.self) }
@@ -71,7 +79,7 @@ final class RentalManager {
 
     /// Two intervals overlap when each one starts before the other ends.
     func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
-        let existing = try await getRentalsForKite(kiteId: kiteId)
+        let existing = try await getRentalsForKite(kiteId, startingOnCalendarDayContaining: start)
         return existing.contains { rental in
             rental.startTime < end && rental.endTime > start
         }
