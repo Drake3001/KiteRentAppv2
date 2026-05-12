@@ -4,6 +4,8 @@ struct KitesurfingListView: View {
     @StateObject private var viewModel = KitesurfingListViewModel()
 
     @State private var path = NavigationPath()
+    @State private var instructorProfileReloadToken = 0
+    @State private var settingsOpenedFromInstructor = false
 
     enum Destination: Hashable {
         case adminLogin
@@ -30,15 +32,28 @@ struct KitesurfingListView: View {
                     })
                 case .profile:
                     ProfileView(
-                        onOpenSettings: { path.append(Destination.settings) }
+                        onOpenSettings: {
+                            settingsOpenedFromInstructor = false
+                            path.append(Destination.settings)
+                        }
                     )
                 case .instructorProfile:
                     InstructorProfileView(
-                        onOpenSettings: { path.append(Destination.settings) }
+                        onOpenSettings: {
+                            settingsOpenedFromInstructor = true
+                            path.append(Destination.settings)
+                        },
+                        profileReloadToken: instructorProfileReloadToken
                     )
                 case .settings:
                     SettingsView(
-                        onLogout: { path = NavigationPath() }
+                        onLogout: { path = NavigationPath() },
+                        onProfileUpdated: {
+                            if settingsOpenedFromInstructor {
+                                instructorProfileReloadToken += 1
+                            }
+                        },
+                        showInstructorEditProfile: settingsOpenedFromInstructor
                     )
                 }
             }

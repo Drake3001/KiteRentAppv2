@@ -10,16 +10,26 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @State private var showChangePassword = false
-    
+    @State private var showEditProfile = false
+
     let onLogout: () -> Void
+    var onProfileUpdated: (() -> Void)? = nil
+    /// When `true`, shows instructor self-service profile editing (opened from instructor flow).
+    var showInstructorEditProfile: Bool = false
+
     var body: some View {
         List {
             Section {
+                if showInstructorEditProfile {
+                    Button("Edit Profile") {
+                        showEditProfile = true
+                    }
+                }
                 Button("Change Password") {
                     showChangePassword = true
                 }
             }
-            
+
             Section {
                 Button("Log out") {
                     Task {
@@ -37,7 +47,10 @@ struct SettingsView: View {
         .sheet(isPresented: $showChangePassword) {
             ChangePasswordView()
         }
+        .sheet(isPresented: $showEditProfile) {
+            EditInstructorProfileView {
+                onProfileUpdated?()
+            }
+        }
     }
 }
-
-

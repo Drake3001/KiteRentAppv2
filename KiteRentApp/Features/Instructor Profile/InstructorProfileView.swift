@@ -2,6 +2,8 @@ import SwiftUI
 
 struct InstructorProfileView: View {
     let onOpenSettings: () -> Void
+    /// Incremented from parent after instructor saves profile in Settings so this view reloads Firestore + media.
+    var profileReloadToken: Int = 0
 
     @StateObject private var profileViewModel = InstructorProfileViewModel()
     @StateObject private var kitesViewModel = KitesurfingListViewModel()
@@ -94,6 +96,9 @@ struct InstructorProfileView: View {
         }
         .animation(.spring(), value: kitesViewModel.showPopup)
         .task { await profileViewModel.loadProfile() }
+        .onChange(of: profileReloadToken) { _, _ in
+            Task { await profileViewModel.loadProfile() }
+        }
         .onChange(of: kitesViewModel.showScanner) { _, isShowing in
             if isShowing {
                 Task { await kitesViewModel.loadKites() }
@@ -129,8 +134,21 @@ struct InstructorProfileView: View {
             }
             ToolbarItem(placement: .principal) {
                 if let instructor = profileViewModel.instructor {
-                    Text(instructor.shortName)
-                        .font(.headline)
+                    HStack(spacing: 8) {
+                        MediaImageView(
+                            ownerType: .userProfile,
+                            ownerId: instructor.instructorId,
+                            mediaRepository: MediaRepository.shared,
+                            contentMode: .fill,
+                            refreshToken: profileViewModel.mediaRefreshToken,
+                            useThumbnail: true
+                        )
+                        .frame(width: 28, height: 28)
+                        .clipShape(Circle())
+
+                        Text(instructor.shortName)
+                            .font(.headline)
+                    }
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -145,13 +163,13 @@ struct InstructorProfileView: View {
 
 #Preview("light") {
     NavigationStack {
-        InstructorProfileView(onOpenSettings: {})
+        InstructorProfileView(onOpenSettings: {}, profileReloadToken: 0)
     }
 }
 
 #Preview("dark") {
     NavigationStack {
-        InstructorProfileView(onOpenSettings: {})
+        InstructorProfileView(onOpenSettings: {}, profileReloadToken: 0)
             .preferredColorScheme(.dark)
     }
 }
