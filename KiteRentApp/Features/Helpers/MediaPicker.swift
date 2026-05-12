@@ -9,7 +9,7 @@ import PhotosUI
 struct MediaPicker: View {
     @Binding var selection: PhotosPickerItem?
     var label: String
-    var onPicked: (Data) -> Void
+    var onPicked: (MediaProcessor.Result) -> Void
     var downscale: Bool = true
 
     var body: some View {
@@ -20,10 +20,9 @@ struct MediaPicker: View {
             guard let newItem else { return }
             Task {
                 if let data = try? await newItem.loadTransferable(type: Data.self) {
-                    if downscale, let png = ImageDownscale.pngDataResized(data) {
-                        onPicked(png)
-                    } else {
-                        onPicked(data)
+                    let maxLongEdge: CGFloat = downscale ? 2048 : 8192
+                    if let result = try? await MediaProcessor.process(data, maxLongEdge: maxLongEdge) {
+                        await MainActor.run { onPicked(result) }
                     }
                 }
                 await MainActor.run { selection = nil }

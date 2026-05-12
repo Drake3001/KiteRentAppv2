@@ -63,9 +63,7 @@ struct KiteEditView: View {
                                 MediaPicker(
                                     selection: $photoPickerItem,
                                     label: "Choose photo",
-                                    onPicked: { data in
-                                        viewModel.setPickedImageData(data)
-                                    }
+                                    onPicked: { viewModel.applyPickedMedia($0) }
                                 )
                                 .buttonStyle(.bordered)
 

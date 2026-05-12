@@ -18,6 +18,9 @@ final class AdminKiteCreateViewModel: ObservableObject {
     private let kiteManager: KiteManagerProtocol
     private let mediaRepository: MediaRepositoryProtocol
 
+    /// Latest processed pick; used on save with correct mime, thumbnail, and dimensions.
+    private var processedPick: MediaProcessor.Result?
+
     init(
         kiteManager: KiteManagerProtocol? = nil,
         mediaRepository: MediaRepositoryProtocol? = nil
@@ -33,16 +36,14 @@ final class AdminKiteCreateViewModel: ObservableObject {
         Double(size.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func setPickedImageData(_ data: Data) {
-        if let png = ImageDownscale.pngDataResized(data) {
-            displayImageData = png
-        } else {
-            displayImageData = data
-        }
+    func applyPickedMedia(_ result: MediaProcessor.Result) {
+        processedPick = result
+        displayImageData = result.data
     }
 
     func clearImage() {
         displayImageData = nil
+        processedPick = nil
     }
 
     func save(onSuccess: @escaping () -> Void) async {
@@ -77,8 +78,16 @@ final class AdminKiteCreateViewModel: ObservableObject {
 
         do {
             try await kiteManager.createNewKite(kite: kite)
-            if let data = displayImageData {
-                try await mediaRepository.setImageData(ownerType: .kite, ownerId: kiteId, data: data)
+            if let pick = processedPick {
+                try await mediaRepository.setImageData(
+                    ownerType: .kite,
+                    ownerId: kiteId,
+                    data: pick.data,
+                    mimeType: pick.mimeType,
+                    thumbnailData: pick.thumbnailData,
+                    width: pick.pixelWidth,
+                    height: pick.pixelHeight
+                )
             }
             onSuccess()
         } catch {

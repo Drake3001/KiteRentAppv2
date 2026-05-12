@@ -16,7 +16,8 @@ struct KiteAdminView: View {
                     ownerId: kite.id ?? "",
                     mediaRepository: mediaRepository,
                     contentMode: .fit,
-                    refreshToken: mediaRefreshToken
+                    refreshToken: mediaRefreshToken,
+                    useThumbnail: true
                 )
                 .frame(width: 64, height: 64)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))

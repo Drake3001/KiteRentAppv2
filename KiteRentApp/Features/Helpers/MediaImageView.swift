@@ -14,12 +14,14 @@ struct MediaImageView: View {
     var contentMode: ContentMode = .fit
     /// When this value changes, the view reloads from the repository (e.g. after a list refresh).
     var refreshToken: UUID? = nil
+    /// When `true`, loads the stored thumbnail when available (better for list cells).
+    var useThumbnail: Bool = false
 
-    @State private var imageData: Data?
+    @State private var uiImage: UIImage?
 
     var body: some View {
         Group {
-            if let data = imageData, let ui = UIImage(data: data) {
+            if let ui = uiImage {
                 Image(uiImage: ui)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
@@ -39,18 +41,28 @@ struct MediaImageView: View {
 
     private var taskIdentity: String {
         let token = refreshToken.map { $0.uuidString } ?? "none"
-        return "\(ownerType.rawValue)-\(ownerId)-\(token)"
+        let thumb = useThumbnail ? "t" : "f"
+        return "\(ownerType.rawValue)-\(ownerId)-\(token)-\(thumb)"
     }
 
     private func load() async {
         guard !ownerId.isEmpty else {
-            imageData = nil
+            await MainActor.run { uiImage = nil }
             return
         }
         do {
-            imageData = try await mediaRepository.getImageData(ownerType: ownerType, ownerId: ownerId)
+            let data: Data?
+            if useThumbnail {
+                data = try await mediaRepository.getThumbnailData(ownerType: ownerType, ownerId: ownerId)
+            } else {
+                data = try await mediaRepository.getImageData(ownerType: ownerType, ownerId: ownerId)
+            }
+            let decoded = await Task.detached(priority: .userInitiated) {
+                data.flatMap { UIImage(data: $0) }
+            }.value
+            await MainActor.run { uiImage = decoded }
         } catch {
-            imageData = nil
+            await MainActor.run { uiImage = nil }
         }
     }
 }

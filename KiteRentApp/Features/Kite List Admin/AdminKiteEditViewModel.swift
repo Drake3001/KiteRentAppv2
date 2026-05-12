@@ -22,6 +22,8 @@ final class AdminKiteEditViewModel: ObservableObject {
     private let kiteManager: KiteManagerProtocol
     private let mediaRepository: MediaRepositoryProtocol
 
+    private var processedPick: MediaProcessor.Result?
+
     init(
         kite: DBKite,
         kiteManager: KiteManagerProtocol? = nil,
@@ -67,22 +69,22 @@ final class AdminKiteEditViewModel: ObservableObject {
             let data = try await mediaRepository.getImageData(ownerType: .kite, ownerId: kiteId)
             imageDataOnLoad = data
             displayImageData = data
+            processedPick = nil
         } catch {
             imageDataOnLoad = nil
             displayImageData = nil
+            processedPick = nil
         }
     }
 
-    func setPickedImageData(_ data: Data) {
-        if let png = ImageDownscale.pngDataResized(data) {
-            displayImageData = png
-        } else {
-            displayImageData = data
-        }
+    func applyPickedMedia(_ result: MediaProcessor.Result) {
+        processedPick = result
+        displayImageData = result.data
     }
 
     func clearImage() {
         displayImageData = nil
+        processedPick = nil
     }
 
     func save(onSuccess: @escaping () -> Void) async {
@@ -125,14 +127,23 @@ final class AdminKiteEditViewModel: ObservableObject {
             }
 
             if hasImageChange {
-                if let data = displayImageData {
-                    try await mediaRepository.setImageData(ownerType: .kite, ownerId: kiteId, data: data)
+                if let pick = processedPick {
+                    try await mediaRepository.setImageData(
+                        ownerType: .kite,
+                        ownerId: kiteId,
+                        data: pick.data,
+                        mimeType: pick.mimeType,
+                        thumbnailData: pick.thumbnailData,
+                        width: pick.pixelWidth,
+                        height: pick.pixelHeight
+                    )
                 } else {
                     if imageDataOnLoad != nil {
                         try await mediaRepository.deleteImage(ownerType: .kite, ownerId: kiteId)
                     }
                 }
                 imageDataOnLoad = displayImageData
+                processedPick = nil
             }
 
             onSuccess()
