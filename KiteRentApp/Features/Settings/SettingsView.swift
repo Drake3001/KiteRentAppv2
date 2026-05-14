@@ -11,6 +11,7 @@ struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @State private var showChangePassword = false
     @State private var showEditProfile = false
+    @State private var showMediaPlayback = false
 
     let onLogout: () -> Void
     var onProfileUpdated: (() -> Void)? = nil
@@ -27,6 +28,9 @@ struct SettingsView: View {
                 }
                 Button("Change Password") {
                     showChangePassword = true
+                }
+                Button("video & audio") {
+                    showMediaPlayback = true
                 }
             }
 
@@ -47,10 +51,8 @@ struct SettingsView: View {
         .sheet(isPresented: $showChangePassword) {
             ChangePasswordView()
         }
-        .sheet(isPresented: $showEditProfile) {
-            EditInstructorProfileView {
-                onProfileUpdated?()
-            }
+        .sheet(isPresented: $showMediaPlayback) {
+            SettingsMediaPlaybackView()
         }
     }
 }
