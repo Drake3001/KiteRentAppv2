@@ -41,7 +41,6 @@ struct InstructorProfileView: View {
                         .tag(InstructorTab.rentals)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .glassEffect()
             }
 
             if kitesViewModel.showPopup,
