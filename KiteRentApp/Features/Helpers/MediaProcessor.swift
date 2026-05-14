@@ -51,9 +51,18 @@ enum MediaProcessor {
                 mimeType = "image/jpeg"
             }
 
-            let flatThumb = Self.flattenedForJPEG(thumbSource)
-            guard let thumbnailData = flatThumb.jpegData(compressionQuality: 0.72) else {
-                throw MediaProcessingError.encodeFailed
+            let thumbnailData: Data
+            if preserveAlpha {
+                guard let png = thumbSource.pngData() else {
+                    throw MediaProcessingError.encodeFailed
+                }
+                thumbnailData = png
+            } else {
+                let flatThumb = Self.flattenedForJPEG(thumbSource)
+                guard let jpeg = flatThumb.jpegData(compressionQuality: 0.72) else {
+                    throw MediaProcessingError.encodeFailed
+                }
+                thumbnailData = jpeg
             }
 
             let w = Int(mainImage.size.width * mainImage.scale)
