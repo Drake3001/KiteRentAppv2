@@ -30,3 +30,25 @@ struct MediaPicker: View {
         }
     }
 }
+
+/// Loads the original photo bytes without resizing or compression. Use for kite flows that run their own pipeline.
+struct RawPhotoPicker: View {
+    @Binding var selection: PhotosPickerItem?
+    var label: String
+    var onPicked: (Data) -> Void
+
+    var body: some View {
+        PhotosPicker(selection: $selection, matching: .images, photoLibrary: .shared()) {
+            Text(label)
+        }
+        .onChange(of: selection) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                if let data = try? await newItem.loadTransferable(type: Data.self) {
+                    await MainActor.run { onPicked(data) }
+                }
+                await MainActor.run { selection = nil }
+            }
+        }
+    }
+}

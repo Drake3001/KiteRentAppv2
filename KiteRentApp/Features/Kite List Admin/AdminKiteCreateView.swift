@@ -56,10 +56,10 @@ struct AdminKiteCreateView: View {
                     GlassEditorSection(title: "Photo") {
                         VStack(alignment: .leading, spacing: 14) {
                             HStack(spacing: 12) {
-                                MediaPicker(
+                                RawPhotoPicker(
                                     selection: $photoPickerItem,
                                     label: "Choose photo",
-                                    onPicked: { viewModel.applyPickedMedia($0) }
+                                    onPicked: { viewModel.applyRawPicked($0) }
                                 )
                                 .buttonStyle(.bordered)
 
@@ -72,20 +72,53 @@ struct AdminKiteCreateView: View {
                                 Spacer(minLength: 0)
                             }
 
-                            if let data = viewModel.displayImageData, let uiImage = UIImage(data: data) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxHeight: 250)
-                                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                                    .overlay {
-                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                            .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
-                                    }
-                            } else {
-                                Text("Optional: add a photo stored locally in SwiftData.")
-                                    .font(.caption)
+                            HStack {
+                                Text("Remove background")
+                                    .font(.subheadline)
                                     .foregroundStyle(.secondary)
+                                Spacer()
+                                Toggle("", isOn: $viewModel.removeBackground)
+                                    .labelsHidden()
+                                    .disabled(viewModel.rawImageData == nil)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 10)
+                            .background {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(.ultraThinMaterial)
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .strokeBorder(Color.white.opacity(0.14), lineWidth: 1)
+                            }
+                            .onChange(of: viewModel.removeBackground) { _, _ in
+                                Task { await viewModel.reprocessKiteImage() }
+                            }
+
+                            ZStack {
+                                if let data = viewModel.displayImageData, let uiImage = UIImage(data: data) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxHeight: 250)
+                                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                                        }
+                                } else {
+                                    Text("Optional: add a photo stored locally in SwiftData.")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                if viewModel.isProcessingImage {
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .fill(Color.black.opacity(0.35))
+                                        .frame(maxHeight: 250)
+                                    ProgressView()
+                                        .tint(.white)
+                                }
                             }
                         }
                     }
@@ -108,7 +141,7 @@ struct AdminKiteCreateView: View {
                 Button("Create") {
                     Task { await viewModel.save(onSuccess: { dismiss() }) }
                 }
-                .disabled(viewModel.isSaving || !viewModel.isInputValid)
+                .disabled(viewModel.isSaving || viewModel.isProcessingImage || !viewModel.isInputValid)
             }
         }
         .overlay {

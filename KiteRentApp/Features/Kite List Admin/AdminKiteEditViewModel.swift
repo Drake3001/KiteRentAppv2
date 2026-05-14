@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 @MainActor
 final class AdminKiteEditViewModel: ObservableObject {
@@ -12,6 +12,10 @@ final class AdminKiteEditViewModel: ObservableObject {
     /// Shown in the editor; may differ from SwiftData until Save.
     @Published var displayImageData: Data?
     private var imageDataOnLoad: Data?
+    /// Original bytes for re-processing (picker or loaded from repository).
+    @Published private(set) var rawImageData: Data?
+    @Published var removeBackground: Bool = false
+    @Published var isProcessingImage: Bool = false
 
     @Published var isSaving: Bool = false
     @Published var showErrorAlert: Bool = false
@@ -42,10 +46,10 @@ final class AdminKiteEditViewModel: ObservableObject {
 
     var hasFieldChanges: Bool {
         editableName != originalKite.name ||
-        editableBrand != originalKite.brand ||
-        editableModel != originalKite.kiteModel ||
-        editableSize != String(originalKite.size) ||
-        editableState != originalKite.state
+            editableBrand != originalKite.brand ||
+            editableModel != originalKite.kiteModel ||
+            editableSize != String(originalKite.size) ||
+            editableState != originalKite.state
     }
 
     var hasImageChange: Bool {
@@ -58,9 +62,9 @@ final class AdminKiteEditViewModel: ObservableObject {
 
     var isInputValid: Bool {
         !editableName.isEmpty &&
-        !editableBrand.isEmpty &&
-        !editableModel.isEmpty &&
-        Double(editableSize) != nil
+            !editableBrand.isEmpty &&
+            !editableModel.isEmpty &&
+            Double(editableSize) != nil
     }
 
     func loadImageFromRepository() async {
@@ -69,22 +73,57 @@ final class AdminKiteEditViewModel: ObservableObject {
             let data = try await mediaRepository.getImageData(ownerType: .kite, ownerId: kiteId)
             imageDataOnLoad = data
             displayImageData = data
+            rawImageData = data
             processedPick = nil
         } catch {
             imageDataOnLoad = nil
             displayImageData = nil
+            rawImageData = nil
             processedPick = nil
         }
     }
 
-    func applyPickedMedia(_ result: MediaProcessor.Result) {
-        processedPick = result
-        displayImageData = result.data
+    func applyRawPicked(_ data: Data) {
+        rawImageData = data
+        Task { await reprocessKiteImage() }
+    }
+
+    func reprocessKiteImage() async {
+        guard let raw = rawImageData else { return }
+        isProcessingImage = true
+        defer { isProcessingImage = false }
+
+        var preserveAlpha = false
+        let working: Data
+        if removeBackground {
+            do {
+                working = try await BackgroundRemover.removeBackground(from: raw)
+                preserveAlpha = true
+            } catch {
+                errorMessage = "Could not remove background. Try on a physical device, or turn this option off."
+                showErrorAlert = true
+                working = raw
+                preserveAlpha = false
+            }
+        } else {
+            working = raw
+        }
+
+        do {
+            let result = try await MediaProcessor.process(working, preserveAlpha: preserveAlpha)
+            processedPick = result
+            displayImageData = result.data
+        } catch {
+            errorMessage = "Could not process image: \(error.localizedDescription)"
+            showErrorAlert = true
+        }
     }
 
     func clearImage() {
         displayImageData = nil
+        rawImageData = nil
         processedPick = nil
+        removeBackground = false
     }
 
     func save(onSuccess: @escaping () -> Void) async {
@@ -99,6 +138,7 @@ final class AdminKiteEditViewModel: ObservableObject {
             return
         }
 
+        guard !isProcessingImage else { return }
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
@@ -143,6 +183,7 @@ final class AdminKiteEditViewModel: ObservableObject {
                     }
                 }
                 imageDataOnLoad = displayImageData
+                rawImageData = displayImageData
                 processedPick = nil
             }
 
