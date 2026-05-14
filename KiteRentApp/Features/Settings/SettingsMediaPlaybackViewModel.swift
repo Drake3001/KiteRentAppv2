@@ -3,11 +3,11 @@ import Combine
 import Foundation
 import UIKit
 
-/// Loads tutorial **video** from a bundle file URL when possible (best for 4K), otherwise from an asset
-/// catalog **Data set**. Loads **audio** from the `SettingsTutorialAudio` data set.
+/// Loads tutorial **video** from a bundle file only (`SettingsTutorialVideo.mp4` / `.mov` / `.m4v`).
+/// Loads **audio** from the `SettingsTutorialAudio` asset catalog data set.
 @MainActor
 final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
-    static let videoAssetName = "SettingsTutorialVideo"
+    static let videoResourceName = "SettingsTutorialVideo"
     static let audioAssetName = "SettingsTutorialAudio"
 
     @Published private(set) var videoPlayer: AVPlayer?
@@ -16,15 +16,13 @@ final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
     @Published private(set) var isAudioPlaying = false
 
     private var audioPlayer: AVAudioPlayer?
-    /// Set when video was materialized from an `NSDataAsset` (deleted on teardown). Nil when using a bundle file URL.
-    private var tempVideoFileURL: URL?
 
     override init() {
         super.init()
     }
 
     func onAppear() {
-        loadVideoFromAsset()
+        loadBundledVideo()
         validateAudioAsset()
     }
 
@@ -36,11 +34,6 @@ final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
         audioPlayer?.stop()
         audioPlayer = nil
         isAudioPlaying = false
-
-        if let url = tempVideoFileURL {
-            try? FileManager.default.removeItem(at: url)
-            tempVideoFileURL = nil
-        }
     }
 
     func toggleAudioPlayback() {
@@ -77,10 +70,8 @@ final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
         }
     }
 
-    /// Prefer a **bundle resource** (`SettingsTutorialVideo.mp4` / `.mov` / `.m4v`) so playback reads from disk
-    /// without loading the whole file into memory (important for 4K). Falls back to the asset catalog **Data set**.
     private func bundledVideoURL() -> URL? {
-        let name = Self.videoAssetName
+        let name = Self.videoResourceName
         for ext in ["mp4", "mov", "m4v"] {
             if let url = Bundle.main.url(forResource: name, withExtension: ext) {
                 return url
@@ -103,42 +94,16 @@ final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
         return player
     }
 
-    private func loadVideoFromAsset() {
+    private func loadBundledVideo() {
         videoUnavailableReason = nil
         videoPlayer = nil
-        if let old = tempVideoFileURL {
-            try? FileManager.default.removeItem(at: old)
-            tempVideoFileURL = nil
-        }
 
-        if let bundleURL = bundledVideoURL() {
-            videoPlayer = makePlayer(forFileURL: bundleURL)
-            return
-        }
-
-        guard let asset = NSDataAsset(name: Self.videoAssetName) else {
+        guard let bundleURL = bundledVideoURL() else {
             videoUnavailableReason =
-                "Video is not configured. Add \(Self.videoAssetName).mp4 to the app target, or a Data set named \(Self.videoAssetName) in Assets."
+                "Video is not configured. Add \(Self.videoResourceName).mp4 (or .mov / .m4v) to the app target."
             return
         }
-        guard !asset.data.isEmpty else {
-            videoUnavailableReason =
-                "Video data is empty. Add a file to the \(Self.videoAssetName) data set in Assets."
-            return
-        }
-
-        let temp = FileManager.default.temporaryDirectory
-            .appendingPathComponent("SettingsTutorialVideo-\(UUID().uuidString).mp4", isDirectory: false)
-        do {
-            let payload = asset.data
-            try payload.write(to: temp, options: .atomic)
-            tempVideoFileURL = temp
-            videoPlayer = makePlayer(forFileURL: temp)
-        } catch {
-            videoUnavailableReason = error.localizedDescription
-            try? FileManager.default.removeItem(at: temp)
-            tempVideoFileURL = nil
-        }
+        videoPlayer = makePlayer(forFileURL: bundleURL)
     }
 
     private func validateAudioAsset() {
