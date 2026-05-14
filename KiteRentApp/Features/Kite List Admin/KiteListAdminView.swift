@@ -94,7 +94,7 @@ struct KiteListAdminView: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: { _ in
-            Text("This action cannot be undone. All associated rental history for this kite will be lost.")
+            Text("This action cannot be undone.")
         }
         .alert("Error", isPresented: $deleteViewModel.showErrorAlert) {
             Button("OK", role: .cancel) {}

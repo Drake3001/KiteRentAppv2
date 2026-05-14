@@ -111,7 +111,7 @@ struct KiteEditView: View {
                                                 .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
                                         }
                                 } else {
-                                    Text("No photo yet. Choose an image to store locally in SwiftData.")
+                                    Text("No photo yet. Choose an image to store locally.")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }

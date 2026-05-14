@@ -100,7 +100,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
         if let cached = dataCache.object(forKey: key) {
             return cached as Data
         }
-        let data = try await MainActor.run {
+        let data = try await MainActor.run { () throws -> Data? in
             let context = ModelContext(modelContainer)
             let row = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
             if let thumb = row?.thumbnailData, !thumb.isEmpty {
