@@ -60,7 +60,7 @@ enum BackgroundRemover {
                 throw BackgroundRemovalError.composeFailed
             }
 
-            let context = CIContext(options: [.useSoftwareRenderer: false])
+            let static context = CIContext(options: [.useSoftwareRenderer: false])
             guard let cgImage = context.createCGImage(output, from: output.extent) else {
                 throw BackgroundRemovalError.composeFailed
             }

@@ -12,6 +12,12 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
 
     private let modelContainer: ModelContainer
 
+    private let dataCache: NSCache<NSString, NSData> = {
+        let cache = NSCache<NSString, NSData>()
+        cache.countLimit = 30
+        return cache
+    }()
+
     init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
         Task { @MainActor in
@@ -64,16 +70,37 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
         return row
     }
 
+    private func cacheKey(ownerType: MediaOwnerType, ownerId: String, thumbnail: Bool) -> NSString {
+        "\(ownerType.rawValue):\(ownerId):\(thumbnail ? "thumb" : "full")" as NSString
+    }
+
+    private func removeCachedData(for ownerType: MediaOwnerType, ownerId: String) {
+        dataCache.removeObject(forKey: cacheKey(ownerType: ownerType, ownerId: ownerId, thumbnail: false))
+        dataCache.removeObject(forKey: cacheKey(ownerType: ownerType, ownerId: ownerId, thumbnail: true))
+    }
+
     func getImageData(ownerType: MediaOwnerType, ownerId: String) async throws -> Data? {
-        try await MainActor.run {
+        let key = cacheKey(ownerType: ownerType, ownerId: ownerId, thumbnail: false)
+        if let cached = dataCache.object(forKey: key) {
+            return cached as Data
+        }
+        let data = try await MainActor.run {
             let context = ModelContext(modelContainer)
             let row = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
             return row?.data
         }
+        if let data {
+            dataCache.setObject(data as NSData, forKey: key)
+        }
+        return data
     }
 
     func getThumbnailData(ownerType: MediaOwnerType, ownerId: String) async throws -> Data? {
-        try await MainActor.run {
+        let key = cacheKey(ownerType: ownerType, ownerId: ownerId, thumbnail: true)
+        if let cached = dataCache.object(forKey: key) {
+            return cached as Data
+        }
+        let data = try await MainActor.run {
             let context = ModelContext(modelContainer)
             let row = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
             if let thumb = row?.thumbnailData, !thumb.isEmpty {
@@ -81,6 +108,10 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
             }
             return row?.data
         }
+        if let data {
+            dataCache.setObject(data as NSData, forKey: key)
+        }
+        return data
     }
 
     func setImageData(
@@ -119,6 +150,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
                 context.insert(insert)
             }
             try context.save()
+            removeCachedData(for: ownerType, ownerId: ownerId)
         }
     }
 
@@ -138,6 +170,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
             if !rows.isEmpty {
                 try context.save()
             }
+            removeCachedData(for: ownerType, ownerId: ownerId)
         }
     }
 }
