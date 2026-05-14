@@ -32,7 +32,8 @@ struct KiteCard: View {
                     ownerId: kite.id ?? "",
                     mediaRepository: mediaRepository,
                     contentMode: .fit,
-                    refreshToken: mediaRefreshToken
+                    refreshToken: mediaRefreshToken,
+                    useThumbnail: true
                 )
                 .scaledToFit()
                 .frame(height: 140)

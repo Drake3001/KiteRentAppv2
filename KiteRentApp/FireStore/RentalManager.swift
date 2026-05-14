@@ -36,31 +36,22 @@ final class RentalManager {
     }
     
     func getActiveRentals() async throws -> [DBRental] {
-           let now = Date()
-           let allRentals = try await getAllRentals()
-           
-           return allRentals.filter { rental in
-               rental.endTime > now
-           }
-       }
+        let snapshot = try await rentalCollection
+            .whereField("end_time", isGreaterThan: Date())
+            .getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: DBRental.self)
+        }
+    }
     
     func getRentalsForInstructor(instructorId: String) async throws -> [DBRental] {
         let snapshot = try await rentalCollection
             .whereField("instructor_id", isEqualTo: instructorId)
             .getDocuments()
-
+        
         return try snapshot.documents.map { try $0.data(as: DBRental.self) }
     }
-
-    func getActiveRentalForKite(kiteId: String) async throws -> DBRental? {
-           let now = Date()
-           let allRentals = try await getAllRentals()
-           
-           return allRentals.first { rental in
-               rental.kiteId == kiteId && rental.endTime > now
-           }
-       }
-
     /// Rentals for this kite whose **start** falls on the same local calendar day as `dayContaining`.
     /// Matches day-based reservation UI; avoids loading the kite’s full rental history.
     private func getRentalsForKite(_ kiteId: String, startingOnCalendarDayContaining dayContaining: Date, calendar: Calendar = .current) async throws -> [DBRental] {
@@ -73,10 +64,10 @@ final class RentalManager {
             .whereField("start_time", isGreaterThanOrEqualTo: startOfDay)
             .whereField("start_time", isLessThan: startOfNextDay)
             .getDocuments()
-
+        
         return try snapshot.documents.map { try $0.data(as: DBRental.self) }
     }
-
+    
     /// Two intervals overlap when each one starts before the other ends.
     func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
         let existing = try await getRentalsForKite(kiteId, startingOnCalendarDayContaining: start)
@@ -84,15 +75,15 @@ final class RentalManager {
             rental.startTime < end && rental.endTime > start
         }
     }
-
+    
     func updateRentalFields(rentalId: String, fields: [String: Any]) async throws {
         try await rentalDocument(rentalId: rentalId).updateData(fields)
     }
-
+    
     func updateRental(rental: DBRental) async throws {
         try await rentalDocument(rentalId: rental.rentalId).setData(from: rental, merge: true)
     }
-
+    
     func deleteRental(rentalId: String) async throws {
         try await rentalDocument(rentalId: rentalId).delete()
     }

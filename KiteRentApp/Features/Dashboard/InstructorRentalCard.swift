@@ -25,7 +25,8 @@ struct InstructorRentalCard: View {
                 ownerId: rental.kiteId,
                 mediaRepository: mediaRepository,
                 contentMode: .fit,
-                refreshToken: mediaRefreshToken
+                refreshToken: mediaRefreshToken,
+                useThumbnail: true
             )
             .scaledToFit()
             .frame(maxWidth: .infinity, alignment: .center)

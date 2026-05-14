@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InstructorAdminView: View {
     var instructor: DBInstructor
+    var mediaRepository: MediaRepositoryProtocol = MediaRepository.shared
 
     var onEditTapped: (DBInstructor) -> Void
     var onDeleteTapped: (DBInstructor) -> Void
@@ -16,18 +17,18 @@ struct InstructorAdminView: View {
     var body: some View {
         GlassCard(cornerRadius: 22, material: .thinMaterial, contentPadding: 14) {
             HStack(alignment: .center, spacing: 12) {
-                ZStack {
+                MediaImageView(
+                    ownerType: .userProfile,
+                    ownerId: instructor.instructorId,
+                    mediaRepository: mediaRepository,
+                    contentMode: .fill,
+                    useThumbnail: true
+                )
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                        .frame(width: 64, height: 64)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.22), lineWidth: 1)
-                        }
-
-                    Image(systemName: "person.crop.circle.fill")
-                        .font(.system(size: 36))
-                        .foregroundStyle(.secondary)
+                        .strokeBorder(Color.white.opacity(0.22), lineWidth: 1)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {

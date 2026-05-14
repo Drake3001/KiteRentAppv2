@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 @MainActor
 final class AdminKiteCreateViewModel: ObservableObject {
@@ -10,6 +10,10 @@ final class AdminKiteCreateViewModel: ObservableObject {
     @Published var state: KiteState = .free
 
     @Published var displayImageData: Data?
+    /// Original bytes from the photo picker; used when toggling background removal.
+    @Published private(set) var rawImageData: Data?
+    @Published var removeBackground: Bool = false
+    @Published var isProcessingImage: Bool = false
 
     @Published var isSaving: Bool = false
     @Published var showErrorAlert: Bool = false
@@ -17,6 +21,9 @@ final class AdminKiteCreateViewModel: ObservableObject {
 
     private let kiteManager: KiteManagerProtocol
     private let mediaRepository: MediaRepositoryProtocol
+
+    /// Latest processed result; used on save with correct mime, thumbnail, and dimensions.
+    private var processedPick: MediaProcessor.Result?
 
     init(
         kiteManager: KiteManagerProtocol? = nil,
@@ -28,21 +35,52 @@ final class AdminKiteCreateViewModel: ObservableObject {
 
     var isInputValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !brand.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        Double(size.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
+            !brand.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            !model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            Double(size.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func setPickedImageData(_ data: Data) {
-        if let png = ImageDownscale.pngDataResized(data) {
-            displayImageData = png
+    func applyRawPicked(_ data: Data) {
+        rawImageData = data
+        Task { await reprocessKiteImage() }
+    }
+
+    func reprocessKiteImage() async {
+        guard let raw = rawImageData else { return }
+        isProcessingImage = true
+        defer { isProcessingImage = false }
+
+        var preserveAlpha = false
+        let working: Data
+        if removeBackground {
+            do {
+                working = try await BackgroundRemover.removeBackground(from: raw)
+                preserveAlpha = true
+            } catch {
+                errorMessage = "Could not remove background. Try on a physical device, or turn this option off."
+                showErrorAlert = true
+                working = raw
+                preserveAlpha = false
+            }
         } else {
-            displayImageData = data
+            working = raw
+        }
+
+        do {
+            let result = try await MediaProcessor.process(working, preserveAlpha: preserveAlpha)
+            processedPick = result
+            displayImageData = result.data
+        } catch {
+            errorMessage = "Could not process image: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 
     func clearImage() {
+        rawImageData = nil
         displayImageData = nil
+        processedPick = nil
+        removeBackground = false
     }
 
     func save(onSuccess: @escaping () -> Void) async {
@@ -59,6 +97,7 @@ final class AdminKiteCreateViewModel: ObservableObject {
             return
         }
 
+        guard !isProcessingImage else { return }
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
@@ -77,8 +116,16 @@ final class AdminKiteCreateViewModel: ObservableObject {
 
         do {
             try await kiteManager.createNewKite(kite: kite)
-            if let data = displayImageData {
-                try await mediaRepository.setImageData(ownerType: .kite, ownerId: kiteId, data: data)
+            if let pick = processedPick {
+                try await mediaRepository.setImageData(
+                    ownerType: .kite,
+                    ownerId: kiteId,
+                    data: pick.data,
+                    mimeType: pick.mimeType,
+                    thumbnailData: pick.thumbnailData,
+                    width: pick.pixelWidth,
+                    height: pick.pixelHeight
+                )
             }
             onSuccess()
         } catch {

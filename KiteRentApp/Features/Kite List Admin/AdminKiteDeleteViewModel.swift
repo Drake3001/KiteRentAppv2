@@ -8,9 +8,14 @@ final class AdminKiteDeleteViewModel: ObservableObject {
     @Published var errorMessage: String = ""
 
     private let kiteManager: KiteManagerProtocol
+    private let mediaRepository: MediaRepositoryProtocol
 
-    init(kiteManager: KiteManagerProtocol? = nil) {
+    init(
+        kiteManager: KiteManagerProtocol? = nil,
+        mediaRepository: MediaRepositoryProtocol? = nil
+    ) {
         self.kiteManager = kiteManager ?? KiteManager.shared
+        self.mediaRepository = mediaRepository ?? MediaRepository.shared
     }
 
     func deleteKite(kiteId: String) async -> Bool {
@@ -20,6 +25,7 @@ final class AdminKiteDeleteViewModel: ObservableObject {
 
         do {
             try await kiteManager.deleteKite(kiteId: kiteId)
+            try? await mediaRepository.deleteImage(ownerType: .kite, ownerId: kiteId)
             return true
         } catch {
             errorMessage = "Failed to delete kite: \(error.localizedDescription)"
@@ -28,4 +34,3 @@ final class AdminKiteDeleteViewModel: ObservableObject {
         }
     }
 }
-
