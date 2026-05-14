@@ -14,7 +14,8 @@ final class MediaAsset {
     var ownerId: String
     /// Stable key `"\(ownerType.rawValue):\(ownerId)"`; backfilled for legacy rows.
     var storageKey: String?
-    @Attribute(.externalStorage) var data: Data
+    /// Basename of the full-size image under `Application Support/MediaImages/`.
+    var imageFilename: String?
     @Attribute(.externalStorage) var thumbnailData: Data?
     var createdAt: Date
     var updatedAt: Date
@@ -26,7 +27,7 @@ final class MediaAsset {
         id: UUID = UUID(),
         ownerType: MediaOwnerType,
         ownerId: String,
-        data: Data,
+        imageFilename: String?,
         thumbnailData: Data?,
         mimeType: String,
         width: Int?,
@@ -38,7 +39,7 @@ final class MediaAsset {
         self.ownerType = ownerType.rawValue
         self.ownerId = ownerId
         self.storageKey = Self.makeStorageKey(ownerType: ownerType, ownerId: ownerId)
-        self.data = data
+        self.imageFilename = imageFilename
         self.thumbnailData = thumbnailData
         self.createdAt = createdAt
         self.updatedAt = updatedAt

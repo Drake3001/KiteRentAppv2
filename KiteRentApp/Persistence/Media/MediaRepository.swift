@@ -70,6 +70,30 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
         return row
     }
 
+    private func makeImageBasename(ownerType: MediaOwnerType, ownerId: String, mimeType: String) -> String {
+        let ext: String
+        switch mimeType.lowercased() {
+        case "image/jpeg", "image/jpg":
+            ext = "jpeg"
+        case "image/png":
+            ext = "png"
+        default:
+            ext = "dat"
+        }
+        return "\(ownerType.rawValue)_\(ownerId).\(ext)"
+    }
+
+    private func deleteImageFile(filename: String?) {
+        guard let filename, !filename.isEmpty else { return }
+        do {
+            let dir = try MediaPersistence.imageStorageDirectory()
+            let url = dir.appendingPathComponent(filename, isDirectory: false)
+            try? FileManager.default.removeItem(at: url)
+        } catch {
+            // Non-fatal
+        }
+    }
+
     private func cacheKey(ownerType: MediaOwnerType, ownerId: String, thumbnail: Bool) -> NSString {
         "\(ownerType.rawValue):\(ownerId):\(thumbnail ? "thumb" : "full")" as NSString
     }
@@ -84,10 +108,14 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
         if let cached = dataCache.object(forKey: key) {
             return cached as Data
         }
-        let data = try await MainActor.run {
+        let data = try await MainActor.run { () throws -> Data? in
             let context = ModelContext(modelContainer)
             let row = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
-            return row?.data
+            guard let name = row?.imageFilename, !name.isEmpty else { return nil }
+            let dir = try MediaPersistence.imageStorageDirectory()
+            let url = dir.appendingPathComponent(name, isDirectory: false)
+            guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+            return try Data(contentsOf: url)
         }
         if let data {
             dataCache.setObject(data as NSData, forKey: key)
@@ -100,13 +128,11 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
         if let cached = dataCache.object(forKey: key) {
             return cached as Data
         }
-        let data = try await MainActor.run { () throws -> Data? in
+        let data = try await MainActor.run {
             let context = ModelContext(modelContainer)
             let row = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
-            if let thumb = row?.thumbnailData, !thumb.isEmpty {
-                return thumb
-            }
-            return row?.data
+            guard let thumb = row?.thumbnailData, !thumb.isEmpty else { return nil }
+            return thumb
         }
         if let data {
             dataCache.setObject(data as NSData, forKey: key)
@@ -127,8 +153,16 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
             let context = ModelContext(modelContainer)
             let existing = try fetchAsset(context: context, ownerType: ownerType, ownerId: ownerId)
             let now = Date()
+            let basename = makeImageBasename(ownerType: ownerType, ownerId: ownerId, mimeType: mimeType)
+            let dir = try MediaPersistence.imageStorageDirectory()
+            let fileURL = dir.appendingPathComponent(basename, isDirectory: false)
+
             if let row = existing {
-                row.data = data
+                if let old = row.imageFilename, old != basename {
+                    deleteImageFile(filename: old)
+                }
+                try data.write(to: fileURL, options: .atomic)
+                row.imageFilename = basename
                 row.thumbnailData = thumbnailData
                 row.mimeType = mimeType
                 row.width = width
@@ -136,10 +170,11 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
                 row.updatedAt = now
                 row.storageKey = MediaAsset.makeStorageKey(ownerType: ownerType, ownerId: ownerId)
             } else {
+                try data.write(to: fileURL, options: .atomic)
                 let insert = MediaAsset(
                     ownerType: ownerType,
                     ownerId: ownerId,
-                    data: data,
+                    imageFilename: basename,
                     thumbnailData: thumbnailData,
                     mimeType: mimeType,
                     width: width,
@@ -165,6 +200,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
             )
             let rows = try context.fetch(descriptor)
             for row in rows {
+                deleteImageFile(filename: row.imageFilename)
                 context.delete(row)
             }
             if !rows.isEmpty {
