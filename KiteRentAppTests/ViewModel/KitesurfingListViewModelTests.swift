@@ -9,7 +9,7 @@ import XCTest
 @MainActor
 final class KitesurfingListViewModelTests: XCTestCase {
 
-    func testFilteredAndOrderedKites_filtersBySearchText() {
+    func testFilteredAndOrderedKites_filtersBySearchText() async {
         let sut = KitesurfingListViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),
@@ -24,7 +24,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         XCTAssertEqual(names, ["North Reach"])
     }
 
-    func testFilteredAndOrderedKites_sortsBySizeDescending() {
+    func testFilteredAndOrderedKites_sortsBySizeDescending() async {
         let sut = KitesurfingListViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),
@@ -39,7 +39,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         XCTAssertEqual(sizes, ["12", "9"])
     }
 
-    func testFilteredAndOrderedKites_groupsByState() {
+    func testFilteredAndOrderedKites_groupsByState() async {
         let sut = KitesurfingListViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),
@@ -53,7 +53,7 @@ final class KitesurfingListViewModelTests: XCTestCase {
         XCTAssertEqual(states, [.free, .used])
     }
 
-    func testGetInstructorForKite_returnsMappedInstructor() {
+    func testGetInstructorForKite_returnsMappedInstructor() async {
         let sut = KitesurfingListViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),

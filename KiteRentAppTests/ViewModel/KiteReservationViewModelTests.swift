@@ -9,7 +9,7 @@ import XCTest
 @MainActor
 final class KiteReservationViewModelTests: XCTestCase {
 
-    func testFilteredInstructors_excludesInactive() {
+    func testFilteredInstructors_excludesInactive() async {
         let sut = KiteReservationViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),
