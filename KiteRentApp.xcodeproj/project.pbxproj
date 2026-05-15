@@ -14,6 +14,7 @@
 
 /* Begin PBXFileReference section */
 		441ADD042ED0E39800123048 /* KiteRentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiteRentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		441BDD012ED0E39800123048 /* KiteRentAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiteRentAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -35,6 +36,11 @@
 			path = KiteRentApp;
 			sourceTree = "<group>";
 		};
+		441BDD002ED0E39800123048 /* KiteRentAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = KiteRentAppTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +54,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		441BDD042ED0E39800123048 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -55,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				441ADD062ED0E39800123048 /* KiteRentApp */,
+				441BDD002ED0E39800123048 /* KiteRentAppTests */,
 				441ADD1F2ED0F3E900123048 /* Frameworks */,
 				441ADD052ED0E39800123048 /* Products */,
 			);
@@ -64,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				441ADD042ED0E39800123048 /* KiteRentApp.app */,
+				441BDD012ED0E39800123048 /* KiteRentAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -103,6 +118,29 @@
 			productReference = 441ADD042ED0E39800123048 /* KiteRentApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		441BDD022ED0E39800123048 /* KiteRentAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 441BDD062ED0E39800123048 /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */;
+			buildPhases = (
+				441BDD032ED0E39800123048 /* Sources */,
+				441BDD042ED0E39800123048 /* Frameworks */,
+				441BDD052ED0E39800123048 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				441BDD0A2ED0E39800123048 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				441BDD002ED0E39800123048 /* KiteRentAppTests */,
+			);
+			name = KiteRentAppTests;
+			packageProductDependencies = (
+			);
+			productName = KiteRentAppTests;
+			productReference = 441BDD012ED0E39800123048 /* KiteRentAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -115,6 +153,10 @@
 				TargetAttributes = {
 					441ADD032ED0E39800123048 = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					441BDD022ED0E39800123048 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 441ADD032ED0E39800123048;
 					};
 				};
 			};
@@ -136,12 +178,20 @@
 			projectRoot = "";
 			targets = (
 				441ADD032ED0E39800123048 /* KiteRentApp */,
+				441BDD022ED0E39800123048 /* KiteRentAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		441ADD022ED0E39800123048 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		441BDD052ED0E39800123048 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -158,7 +208,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		441BDD032ED0E39800123048 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		441BDD092ED0E39800123048 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 441ADCFC2ED0E39800123048 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 441ADD032ED0E39800123048 /* KiteRentApp */;
+			remoteInfo = KiteRentApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		441BDD0A2ED0E39800123048 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 441ADD032ED0E39800123048 /* KiteRentApp */;
+			targetProxy = 441BDD092ED0E39800123048 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		441ADD0D2ED0E39B00123048 /* Debug */ = {
@@ -293,6 +368,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 75MBKR7QM2;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KiteRentApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -326,6 +402,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KiteRentApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -351,6 +428,50 @@
 			};
 			name = Release;
 		};
+		441BDD072ED0E39800123048 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 75MBKR7QM2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
+			};
+			name = Debug;
+		};
+		441BDD082ED0E39800123048 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 75MBKR7QM2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.blazejkowal.KiteRentAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiteRentApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiteRentApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -368,6 +489,15 @@
 			buildConfigurations = (
 				441ADD102ED0E39B00123048 /* Debug */,
 				441ADD112ED0E39B00123048 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		441BDD062ED0E39800123048 /* Build configuration list for PBXNativeTarget "KiteRentAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				441BDD072ED0E39800123048 /* Debug */,
+				441BDD082ED0E39800123048 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

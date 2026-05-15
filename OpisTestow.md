@@ -1,4 +1,23 @@
-### KiteRentAppTests
+### KiteRentAppTests — zaimplementowane (XCTest)
+
+Uruchomienie: w Xcode wybierz schemat **KiteRentApp** ([KiteRentApp.xcodeproj/xcshareddata/xcschemes/KiteRentApp.xcscheme](KiteRentApp.xcodeproj/xcshareddata/xcschemes/KiteRentApp.xcscheme)), symulator iOS, **Product → Test** (`Cmd+U`). Pakiet testów zależy od aplikacji hosta (`TEST_HOST`); na Windowsie w repozytorium nie ma narzędzia `xcodebuild`.
+
+| Plik | Typ | Zakres |
+|------|-----|--------|
+| [KiteRentAppTests/PureFunction/KiteReservationTimeTests.swift](KiteRentAppTests/PureFunction/KiteReservationTimeTests.swift) | testy jednostkowe (logika czasu) | `clampToWorkHours`, `validMinutes` |
+| [KiteRentAppTests/PureFunction/ChangePasswordValidationTests.swift](KiteRentAppTests/PureFunction/ChangePasswordValidationTests.swift) | testy jednostkowe (UI VM, sync) | `ChangePasswordViewModel` — siła hasła, dopasowanie, `canSubmit` |
+| [KiteRentAppTests/PureFunction/ModelLogicTests.swift](KiteRentAppTests/PureFunction/ModelLogicTests.swift) | testy jednostkowe (modele) | `KiteState`, `MediaAsset.makeStorageKey`, JSON `DBUser` |
+| [KiteRentAppTests/ViewModel/KitesurfingListViewModelTests.swift](KiteRentAppTests/ViewModel/KitesurfingListViewModelTests.swift) | testy jednostkowe z mockami | filtrowanie, sortowanie, `loadKites` (sukces / błąd sync) |
+| [KiteRentAppTests/ViewModel/KiteReservationViewModelTests.swift](KiteRentAppTests/ViewModel/KiteReservationViewModelTests.swift) | testy jednostkowe z mockami | instruktorzy, `confirmReservation` (brak instruktora, konflikt, sukces) |
+| [KiteRentAppTests/ViewModel/DirectAdminLoginViewModelTests.swift](KiteRentAppTests/ViewModel/DirectAdminLoginViewModelTests.swift) | testy jednostkowe z mockami | logowanie — puste pola, rola admin / instructor |
+| [KiteRentAppTests/Integration/MediaRepositoryIntegrationTests.swift](KiteRentAppTests/Integration/MediaRepositoryIntegrationTests.swift) | testy integracyjne SwiftData | `MediaRepository` z in-memory `ModelContainer` — zapis/odczyt, aktualizacja, miniatura, usuwanie |
+| [KiteRentAppTests/Helpers/](KiteRentAppTests/Helpers/) | — | `TestFixtures`, mocki protokołów z `ManagersProtocols` |
+
+Mocki nie używają Firebase — cała warstwa sieciowa jest zastąpiona w testach.
+
+---
+
+### KiteRentAppTests — plan rozszerzenia (niezaimplementowane)
 
 #### AdditionalRentalTests.swift
 - Testuje nietypowe i brzegowe przypadki w logice wypożyczeń.

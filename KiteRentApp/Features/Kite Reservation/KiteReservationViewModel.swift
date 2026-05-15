@@ -86,7 +86,8 @@ final class KiteReservationViewModel: ObservableObject {
         }
     }
 
-    func getValidMinutes(for hour: Int) -> [Int] {
+    /// Shared with `getValidMinutes(for:)` so unit tests can assert minute bounds without constructing a full VM.
+    static func validMinutes(for hour: Int, maxHour: Int, maxMinute: Int) -> [Int] {
         if hour < maxHour {
             return Array(stride(from: 0, through: 55, by: 15))
         } else if hour == maxHour {
@@ -94,6 +95,10 @@ final class KiteReservationViewModel: ObservableObject {
         } else {
             return []
         }
+    }
+
+    func getValidMinutes(for hour: Int) -> [Int] {
+        Self.validMinutes(for: hour, maxHour: maxHour, maxMinute: maxMinute)
     }
 
     func clampStartMinuteIfNeeded() {

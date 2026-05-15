@@ -12,7 +12,12 @@ struct AuthDataResultModel {
     let uid: String
     let email: String?
 //    let photoUrl: String?
-    
+
+    init(uid: String, email: String? = nil) {
+        self.uid = uid
+        self.email = email
+    }
+
     init(user: User) {
         self.uid = user.uid
         self.email = user.email
