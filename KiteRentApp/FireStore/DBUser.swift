@@ -21,7 +21,7 @@ struct DBUser: Codable {
     }
 }
 
-enum UserRole: String, Codable {
+enum UserRole: String, Codable, Hashable {
     case instructor
     case admin
 }

@@ -13,15 +13,14 @@ struct SettingsView: View {
     @State private var showEditProfile = false
     @State private var showMediaPlayback = false
 
+    let userRole: UserRole
     let onLogout: () -> Void
     var onProfileUpdated: (() -> Void)? = nil
-    /// When `true`, shows instructor self-service profile editing (opened from instructor flow).
-    var showInstructorEditProfile: Bool = false
 
     var body: some View {
         List {
             Section {
-                if showInstructorEditProfile {
+                if userRole == .instructor {
                     Button("Edit Profile") {
                         showEditProfile = true
                     }
@@ -50,6 +49,11 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .sheet(isPresented: $showChangePassword) {
             ChangePasswordView()
+        }
+        .sheet(isPresented: $showEditProfile) {
+            EditInstructorProfileView {
+                onProfileUpdated?()
+            }
         }
         .sheet(isPresented: $showMediaPlayback) {
             SettingsMediaPlaybackView()

@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct InstructorProfileView: View {
-    let onOpenSettings: () -> Void
+    /// Passes `.instructor` when opening settings from the instructor panel.
+    let onOpenSettings: (UserRole) -> Void
     /// Incremented from parent after instructor saves profile in Settings so this view reloads Firestore + media.
     var profileReloadToken: Int = 0
 
@@ -151,7 +152,7 @@ struct InstructorProfileView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button { onOpenSettings() } label: {
+                Button { onOpenSettings(.instructor) } label: {
                     Image(systemName: "gear").font(.headline)
                 }
             }
@@ -162,13 +163,13 @@ struct InstructorProfileView: View {
 
 #Preview("light") {
     NavigationStack {
-        InstructorProfileView(onOpenSettings: {}, profileReloadToken: 0)
+        InstructorProfileView(onOpenSettings: { _ in }, profileReloadToken: 0)
     }
 }
 
 #Preview("dark") {
     NavigationStack {
-        InstructorProfileView(onOpenSettings: {}, profileReloadToken: 0)
+        InstructorProfileView(onOpenSettings: { _ in }, profileReloadToken: 0)
             .preferredColorScheme(.dark)
     }
 }

@@ -5,13 +5,12 @@ struct KitesurfingListView: View {
 
     @State private var path = NavigationPath()
     @State private var instructorProfileReloadToken = 0
-    @State private var settingsOpenedFromInstructor = false
 
     enum Destination: Hashable {
         case adminLogin
         case profile
         case instructorProfile
-        case settings
+        case settings(userRole: UserRole)
     }
 
     var body: some View {
@@ -32,28 +31,26 @@ struct KitesurfingListView: View {
                     })
                 case .profile:
                     ProfileView(
-                        onOpenSettings: {
-                            settingsOpenedFromInstructor = false
-                            path.append(Destination.settings)
+                        onOpenSettings: {_ in 
+                            path.append(Destination.settings(userRole: .admin))
                         }
                     )
                 case .instructorProfile:
                     InstructorProfileView(
-                        onOpenSettings: {
-                            settingsOpenedFromInstructor = true
-                            path.append(Destination.settings)
+                        onOpenSettings: {_ in 
+                            path.append(Destination.settings(userRole: .instructor))
                         },
                         profileReloadToken: instructorProfileReloadToken
                     )
-                case .settings:
+                case .settings(let userRole):
                     SettingsView(
+                        userRole: userRole,
                         onLogout: { path = NavigationPath() },
                         onProfileUpdated: {
-                            if settingsOpenedFromInstructor {
+                            if userRole == .instructor {
                                 instructorProfileReloadToken += 1
                             }
-                        },
-                        showInstructorEditProfile: settingsOpenedFromInstructor
+                        }
                     )
                 }
             }
