@@ -16,7 +16,6 @@ enum BackgroundRemovalError: Error {
     case encodeFailed
 }
 
-/// Lifts the foreground subject using Vision (iOS 17+). Intended for device; Simulator often fails.
 enum BackgroundRemover {
     static func removeBackground(from imageData: Data) async throws -> Data {
         try await Task.detached(priority: .userInitiated) {

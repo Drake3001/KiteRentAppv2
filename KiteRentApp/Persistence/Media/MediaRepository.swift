@@ -6,7 +6,6 @@
 import Foundation
 import SwiftData
 
-/// SwiftData `ModelContext` must be used on the main actor; image decode stays off-main in callers.
 final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
     static let shared = MediaRepository(modelContainer: MediaPersistence.modelContainer)
 
@@ -43,7 +42,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
                 try context.save()
             }
         } catch {
-            // Non-fatal; per-read backfill in `fetchAsset` still applies.
+
         }
     }
 
@@ -90,7 +89,7 @@ final class MediaRepository: MediaRepositoryProtocol, @unchecked Sendable {
             let url = dir.appendingPathComponent(filename, isDirectory: false)
             try? FileManager.default.removeItem(at: url)
         } catch {
-            // Non-fatal
+            
         }
     }
 

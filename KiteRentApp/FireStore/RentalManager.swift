@@ -69,11 +69,15 @@ final class RentalManager {
     }
     
     /// Two intervals overlap when each one starts before the other ends.
-    func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
-        let existing = try await getRentalsForKite(kiteId, startingOnCalendarDayContaining: start)
-        return existing.contains { rental in
+    static func hasOverlap(in existing: [DBRental], start: Date, end: Date) -> Bool {
+        existing.contains { rental in
             rental.startTime < end && rental.endTime > start
         }
+    }
+
+    func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
+        let existing = try await getRentalsForKite(kiteId, startingOnCalendarDayContaining: start)
+        return Self.hasOverlap(in: existing, start: start, end: end)
     }
     
     func updateRentalFields(rentalId: String, fields: [String: Any]) async throws {

@@ -9,10 +9,8 @@ import SwiftData
 @Model
 final class MediaAsset {
     @Attribute(.unique) var id: UUID
-    /// Backed by `MediaOwnerType.rawValue`
     var ownerType: String
     var ownerId: String
-    /// Stable key `"\(ownerType.rawValue):\(ownerId)"`; backfilled for legacy rows.
     var storageKey: String?
     /// Basename of the full-size image under `Application Support/MediaImages/`.
     var imageFilename: String?
