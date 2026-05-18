@@ -22,8 +22,7 @@ struct ProfileView: View {
         var id: String { rawValue }
     }
 
-    /// Passes `.admin` when opening settings from the admin panel.
-    let onOpenSettings: (UserRole) -> Void
+    let onOpenSettings: () -> Void
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -64,7 +63,7 @@ struct ProfileView: View {
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    onOpenSettings(.admin)
+                    onOpenSettings()
                 } label: {
                     Image(systemName: "gear").font(.headline)
                 }
@@ -89,13 +88,13 @@ struct ProfileView: View {
 
 #Preview("light") {
     NavigationStack {
-        ProfileView(onOpenSettings: { _ in })
+        ProfileView(onOpenSettings: {})
     }
 }
 
 #Preview("dark") {
     NavigationStack {
-        ProfileView(onOpenSettings: { _ in })
+        ProfileView(onOpenSettings: {})
             .preferredColorScheme(.dark)
     }
 }

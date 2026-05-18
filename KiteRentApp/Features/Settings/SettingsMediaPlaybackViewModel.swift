@@ -86,10 +86,10 @@ final class SettingsMediaPlaybackViewModel: NSObject, ObservableObject {
             options: [AVURLAssetPreferPreciseDurationAndTimingKey: false]
         )
         let item = AVPlayerItem(asset: urlAsset)
-        // A few seconds of forward buffer helps avoid stalls on high‑bitrate 4K from storage.
         item.preferredForwardBufferDuration = 5
+        
         let player = AVPlayer(playerItem: item)
-        // Local file: avoid extra “wait to minimize stalling” delay before first frames.
+        
         player.automaticallyWaitsToMinimizeStalling = false
         return player
     }

@@ -31,13 +31,13 @@ struct KitesurfingListView: View {
                     })
                 case .profile:
                     ProfileView(
-                        onOpenSettings: {_ in 
+                        onOpenSettings: {
                             path.append(Destination.settings(userRole: .admin))
                         }
                     )
                 case .instructorProfile:
                     InstructorProfileView(
-                        onOpenSettings: {_ in 
+                        onOpenSettings: {
                             path.append(Destination.settings(userRole: .instructor))
                         },
                         profileReloadToken: instructorProfileReloadToken
