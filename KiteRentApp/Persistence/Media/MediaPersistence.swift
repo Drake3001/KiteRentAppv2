@@ -6,9 +6,7 @@
 import Foundation
 import SwiftData
 
-/// Single shared `ModelContainer` for media so the app and `MediaRepository` use the same store.
 enum MediaPersistence {
-    /// Full-size images live here as plain files; SwiftData only stores `imageFilename` + thumbnail.
     static func imageStorageDirectory() throws -> URL {
         let appSupport = try FileManager.default.url(
             for: .applicationSupportDirectory,
@@ -46,8 +44,6 @@ enum MediaPersistence {
     private static func createModelContainer() throws -> ModelContainer {
         let schema = Schema([MediaAsset.self])
 
-        // Ensure `Library/Application Support` exists before Core Data / SwiftData opens the store.
-        // Default `ModelContainer(for:)` can hit errno 2 + sandbox denials if the directory is missing on first launch.
         let appSupport = try applicationSupportDirectory()
         try FileManager.default.createDirectory(
             at: appSupport,
