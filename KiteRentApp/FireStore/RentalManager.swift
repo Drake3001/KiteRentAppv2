@@ -68,16 +68,9 @@ final class RentalManager {
         return try snapshot.documents.map { try $0.data(as: DBRental.self) }
     }
     
-    /// Two intervals overlap when each one starts before the other ends.
-    static func hasOverlap(in existing: [DBRental], start: Date, end: Date) -> Bool {
-        existing.contains { rental in
-            rental.startTime < end && rental.endTime > start
-        }
-    }
-
     func hasOverlappingRental(kiteId: String, start: Date, end: Date) async throws -> Bool {
         let existing = try await getRentalsForKite(kiteId, startingOnCalendarDayContaining: start)
-        return Self.hasOverlap(in: existing, start: start, end: end)
+        return RentalOverlap.hasOverlap(in: existing, start: start, end: end)
     }
     
     func updateRentalFields(rentalId: String, fields: [String: Any]) async throws {

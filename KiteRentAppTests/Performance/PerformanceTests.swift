@@ -8,7 +8,6 @@ import UIKit
 import XCTest
 @testable import KiteRentApp
 
-@MainActor
 final class PerformanceTests: XCTestCase {
 
     private var measureOptions: XCTMeasureOptions {
@@ -33,6 +32,7 @@ final class PerformanceTests: XCTestCase {
 
     // MARK: - MediaRepository
 
+    @MainActor
     func testMediaRepository_getImageData_inMemorySwiftData_performance() async throws {
         let container = try ModelContainer(
             for: MediaAsset.self,
@@ -54,7 +54,7 @@ final class PerformanceTests: XCTestCase {
 
         measure(options: measureOptions) {
             let exp = expectation(description: "read")
-            Task {
+            Task { @MainActor in
                 _ = try? await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
                 exp.fulfill()
             }
@@ -64,24 +64,27 @@ final class PerformanceTests: XCTestCase {
 
     // MARK: - KitesurfingListViewModel
 
+    @MainActor
     func testKitesurfingListViewModel_filteredAndOrderedKites_performance() {
         let sut = KitesurfingListViewModel(
             kiteManager: MockKiteManager(),
             rentalManager: MockRentalManager(),
             instructorManager: MockInstructorManager()
         )
-        let kites = Self.makeManyKites(count: 120)
-        sut.kites = kites
+        sut.kites = Self.makeManyKites(count: 120)
         sut.searchText = "north"
 
+        // measure {} runs off the main thread; ViewModel is @MainActor.
         measure(options: measureOptions) {
-            _ = sut.filteredAndOrderedKites
+            DispatchQueue.main.sync {
+                _ = sut.filteredAndOrderedKites
+            }
         }
     }
 
-    // MARK: - RentalManager overlap
+    // MARK: - Rental overlap (no Firestore — RentalOverlap, not RentalManager)
 
-    func testRentalManager_hasOverlap_largeDataset_performance() {
+    func testRentalOverlap_hasOverlap_largeDataset_performance() {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
         let rentals = Self.makeManyRentals(count: 200, kiteId: "kite-perf", dayStart: startOfDay)
@@ -89,7 +92,7 @@ final class PerformanceTests: XCTestCase {
         let proposedEnd = calendar.date(byAdding: .hour, value: 12, to: startOfDay)!
 
         measure(options: measureOptions) {
-            _ = RentalManager.hasOverlap(in: rentals, start: proposedStart, end: proposedEnd)
+            _ = RentalOverlap.hasOverlap(in: rentals, start: proposedStart, end: proposedEnd)
         }
     }
 
