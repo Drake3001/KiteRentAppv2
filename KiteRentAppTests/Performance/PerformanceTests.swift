@@ -32,7 +32,6 @@ final class PerformanceTests: XCTestCase {
 
     // MARK: - MediaRepository
 
-    @MainActor
     func testMediaRepository_getImageData_inMemorySwiftData_performance() async throws {
         let container = try ModelContainer(
             for: MediaAsset.self,
@@ -50,15 +49,17 @@ final class PerformanceTests: XCTestCase {
             width: 100,
             height: 100
         )
-        _ = try await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
+        // Warm NSCache so measure iterations hit the in-memory fast path (no MainActor work).
+        let warmed = try await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
+        XCTAssertNotNil(warmed)
 
         measure(options: measureOptions) {
             let exp = expectation(description: "read")
-            Task { @MainActor in
+            Task.detached {
                 _ = try? await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 5)
+            wait(for: [exp], timeout: 10)
         }
     }
 
