@@ -8,8 +8,8 @@ import Foundation
 
 enum TestFixtures {
 
+    /// In-memory test kites must not set `@DocumentID` — Firestore ignores manual IDs and logs warnings.
     static func makeKite(
-        id: String = "kite-1",
         name: String = "Alpha",
         imageName: String = "img",
         state: KiteState = .free,
@@ -19,7 +19,7 @@ enum TestFixtures {
         dateCreated: Date? = nil
     ) -> DBKite {
         DBKite(
-            id: id,
+            id: nil,
             name: name,
             imageName: imageName,
             state: state,
