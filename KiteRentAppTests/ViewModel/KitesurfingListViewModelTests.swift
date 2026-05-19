@@ -16,8 +16,8 @@ final class KitesurfingListViewModelTests: XCTestCase {
             instructorManager: MockInstructorManager()
         )
         sut.kites = [
-            TestFixtures.makeKite(id: "1", name: "North Reach"),
-            TestFixtures.makeKite(id: "2", name: "Duotone Evo")
+            TestFixtures.makeKite(name: "North Reach"),
+            TestFixtures.makeKite(name: "Duotone Evo")
         ]
         sut.searchText = "reach"
         let names = sut.filteredAndOrderedKites.map(\.name)
@@ -31,8 +31,8 @@ final class KitesurfingListViewModelTests: XCTestCase {
             instructorManager: MockInstructorManager()
         )
         sut.kites = [
-            TestFixtures.makeKite(id: "1", name: "A", size: "12"),
-            TestFixtures.makeKite(id: "2", name: "B", size: "9")
+            TestFixtures.makeKite(name: "A", size: "12"),
+            TestFixtures.makeKite(name: "B", size: "9")
         ]
         sut.isSortAscending = false
         let sizes = sut.filteredAndOrderedKites.map(\.size)
@@ -46,8 +46,8 @@ final class KitesurfingListViewModelTests: XCTestCase {
             instructorManager: MockInstructorManager()
         )
         sut.kites = [
-            TestFixtures.makeKite(id: "1", name: "Used", state: .used),
-            TestFixtures.makeKite(id: "2", name: "Free", state: .free)
+            TestFixtures.makeKite(name: "Used", state: .used),
+            TestFixtures.makeKite(name: "Free", state: .free)
         ]
         let states = sut.filteredAndOrderedKites.map(\.state)
         XCTAssertEqual(states, [.free, .used])
@@ -82,8 +82,8 @@ final class KitesurfingListViewModelTests: XCTestCase {
     func testLoadKites_success_populatesKites() async {
         let kiteMock = MockKiteManager()
         kiteMock.kitesToReturn = [
-            TestFixtures.makeKite(id: "a", name: "K1"),
-            TestFixtures.makeKite(id: "b", name: "K2")
+            TestFixtures.makeKite(name: "K1"),
+            TestFixtures.makeKite(name: "K2")
         ]
         let sut = KitesurfingListViewModel(
             kiteManager: kiteMock,

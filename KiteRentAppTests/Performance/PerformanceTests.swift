@@ -11,13 +11,19 @@ import XCTest
 @MainActor
 final class PerformanceTests: XCTestCase {
 
+    private var measureOptions: XCTMeasureOptions {
+        let options = XCTMeasureOptions()
+        options.iterationCount = 5
+        return options
+    }
+
     // MARK: - MediaProcessor
 
     func testMediaProcessor_resize4000x3000_performance() {
         let input = Self.largeJPEG4000x3000()
-        measure {
+        measure(options: measureOptions) {
             let exp = expectation(description: "process")
-            Task {
+            Task.detached(priority: .userInitiated) {
                 _ = try? await MediaProcessor.process(input, maxLongEdge: 2048)
                 exp.fulfill()
             }
@@ -46,9 +52,9 @@ final class PerformanceTests: XCTestCase {
         )
         _ = try await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
 
-        measure {
+        measure(options: measureOptions) {
             let exp = expectation(description: "read")
-            Task { @MainActor in
+            Task {
                 _ = try? await mediaRepo.getImageData(ownerType: .kite, ownerId: ownerId)
                 exp.fulfill()
             }
@@ -64,10 +70,11 @@ final class PerformanceTests: XCTestCase {
             rentalManager: MockRentalManager(),
             instructorManager: MockInstructorManager()
         )
-        sut.kites = Self.makeManyKites(count: 120)
+        let kites = Self.makeManyKites(count: 120)
+        sut.kites = kites
         sut.searchText = "north"
 
-        measure {
+        measure(options: measureOptions) {
             _ = sut.filteredAndOrderedKites
         }
     }
@@ -81,7 +88,7 @@ final class PerformanceTests: XCTestCase {
         let proposedStart = calendar.date(byAdding: .hour, value: 10, to: startOfDay)!
         let proposedEnd = calendar.date(byAdding: .hour, value: 12, to: startOfDay)!
 
-        measure {
+        measure(options: measureOptions) {
             _ = RentalManager.hasOverlap(in: rentals, start: proposedStart, end: proposedEnd)
         }
     }
@@ -111,7 +118,6 @@ final class PerformanceTests: XCTestCase {
         let brands = ["North", "Duotone", "Cabrinha", "F-One"]
         return (0..<count).map { i in
             TestFixtures.makeKite(
-                id: "kite-\(i)",
                 name: "\(brands[i % brands.count]) \(i)",
                 state: states[i % states.count],
                 brand: brands[i % brands.count],
