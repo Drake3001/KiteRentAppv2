@@ -64,21 +64,16 @@ final class PerformanceTests: XCTestCase {
 
     // MARK: - KitesurfingListViewModel
 
-    @MainActor
     func testKitesurfingListViewModel_filteredAndOrderedKites_performance() {
-        let sut = KitesurfingListViewModel(
-            kiteManager: MockKiteManager(),
-            rentalManager: MockRentalManager(),
-            instructorManager: MockInstructorManager()
-        )
-        sut.kites = Self.makeManyKites(count: 120)
-        sut.searchText = "north"
+        let kites = Self.makeManyKites(count: 120)
+        let searchText = "north"
 
-        // measure {} runs off the main thread; ViewModel is @MainActor.
         measure(options: measureOptions) {
-            DispatchQueue.main.sync {
-                _ = sut.filteredAndOrderedKites
-            }
+            _ = KitesurfingListViewModel.filteredAndOrdered(
+                kites: kites,
+                searchText: searchText,
+                isSortAscending: false
+            )
         }
     }
 

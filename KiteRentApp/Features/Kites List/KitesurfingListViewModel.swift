@@ -38,6 +38,15 @@ final class KitesurfingListViewModel: ObservableObject {
     }
 
     var filteredAndOrderedKites: [DBKite] {
+        Self.filteredAndOrdered(kites: kites, searchText: searchText, isSortAscending: isSortAscending)
+    }
+
+    /// Pure filter/sort logic; `nonisolated` so it can be benchmarked without MainActor.
+    nonisolated static func filteredAndOrdered(
+        kites: [DBKite],
+        searchText: String,
+        isSortAscending: Bool
+    ) -> [DBKite] {
         let base: [DBKite]
         if searchText.isEmpty {
             base = kites
@@ -50,7 +59,6 @@ final class KitesurfingListViewModel: ObservableObject {
         } else {
             sizeSorted = base.sorted { (Double($0.size) ?? 0) > (Double($1.size) ?? 0) }
         }
-
         return sizeSorted.sorted { $0.state < $1.state }
     }
 
